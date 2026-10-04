@@ -1076,49 +1076,33 @@ export default function HomePage() {
         {/* =================================================================== */}
         <section className="w-full py-16 sm:py-24 px-4 sm:px-6 bg-[#FDFBF7]">
           <div
-            className="max-w-4xl mx-auto p-8 sm:p-14 rounded-[38px] text-white text-center space-y-6 shadow-2xl shadow-rose-500/25 relative overflow-hidden bg-cover bg-top bg-[#FF5369]"
+            className="max-w-4xl mx-auto rounded-[38px] text-white text-center shadow-2xl shadow-rose-500/25 relative overflow-hidden bg-cover bg-top bg-no-repeat bg-[#FF5369] min-h-[580px] sm:min-h-[600px] md:min-h-[660px] flex flex-col justify-end items-center pb-6 sm:pb-10 px-4 sm:px-8"
             style={{ backgroundImage: "url('/images/grand-cta-bg.jpg')" }}
           >
-            {/* Top spacing to display the 3D heart balloon baked into the background image */}
-            <div className="h-20 sm:h-28 pointer-events-none" />
-
-            {/* Headline matching image */}
-            <h2 className="font-extrabold text-3xl sm:text-5xl text-white tracking-tight leading-[1.15] max-w-2xl mx-auto">
-              Their reaction will be worth every second.
-            </h2>
-
-            {/* Subheading matching image */}
-            <p className="text-sm sm:text-base text-white/90 max-w-xl mx-auto leading-relaxed font-medium">
-              You&apos;ve already imagined the moment. Now make it real. LoveLink takes your photos, your music, and your story and turns them into something they&apos;ll scan, share, and keep forever.
-            </p>
-
-            {/* Pill tag */}
-            <p className="text-[11px] font-extrabold uppercase tracking-widest text-white/80">
-              READY IN 2 MINUTES • 100% PRIVATE • ₹99 ONE-TIME
-            </p>
+            <h2 className="sr-only">Create Your LoveLink Website - Their reaction will be worth every second</h2>
 
             {/* Action Buttons & QR Code Matching Reference Image */}
-            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-5 sm:gap-8">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-8">
               <Link
                 href="/create"
                 onClick={() => soundFx.playPop()}
-                className="px-8 py-4 rounded-full bg-white hover:bg-rose-50 text-[#FF4D63] font-extrabold text-sm sm:text-base shadow-lg transition-all active:scale-95 flex items-center gap-2 cursor-pointer group"
+                className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-white hover:bg-rose-50 text-[#FF4D63] font-extrabold text-sm sm:text-base shadow-lg transition-all active:scale-95 flex items-center gap-2 cursor-pointer group"
               >
                 <span>Create Your LoveLink Website (₹99)</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
 
               {/* Scannable Phone QR Code */}
-              <div className="flex flex-col items-center gap-1.5">
-                <div className="p-2 rounded-2xl bg-white shadow-md">
+              <div className="flex flex-col items-center gap-1">
+                <div className="p-1.5 sm:p-2 rounded-xl sm:rounded-2xl bg-white shadow-md">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https%3A%2F%2Fourlove.in%2Fcreate"
                     alt="Scan with phone"
-                    className="w-16 h-16 object-contain"
+                    className="w-12 h-12 sm:w-16 sm:h-16 object-contain"
                   />
                 </div>
-                <span className="text-[10px] font-bold text-white/85">Or scan with your phone</span>
+                <span className="text-[9px] sm:text-[10px] font-bold text-white/90">Or scan with your phone</span>
               </div>
             </div>
           </div>

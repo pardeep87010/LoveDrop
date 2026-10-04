@@ -1,140 +1,250 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import Link from "next/link";
 import {
   Heart,
+  Palette,
+  PenLine,
+  Camera,
   Sparkles,
+  Eye,
+  Check,
   ArrowRight,
   ArrowLeft,
-  Check,
-  Copy,
-  Share2,
-  ExternalLink,
   Lock,
-  Camera,
-  Mail,
-  Zap,
-  CheckCircle2,
-  QrCode,
   Download,
   Smartphone,
-  ShieldCheck,
+  Play,
+  Pause,
+  ImagePlus,
+  X,
+  Lightbulb,
+  Music,
+  Calendar,
+  MessageCircle,
+  ExternalLink,
+  Share2,
 } from "lucide-react";
 import { soundFx } from "@/lib/soundFx";
-import { LoveSurpriseData, OccasionType, DodgeIntensity } from "@/lib/types";
+import { LoveSurpriseData, OccasionType, DodgeIntensity, AudioTrackId } from "@/lib/types";
 import { generateSecureSlug, hashPasscode, sanitizeInput } from "@/lib/security";
 import { saveSurpriseData } from "@/lib/storage";
 
 interface CreatorWizardProps {
   initialOccasion?: OccasionType;
+  initialTheme?: string;
 }
 
-const EMOTIONAL_SPARKS = [
-  { text: "Your laugh can rescue almost any day ✨", category: "Romantic" },
-  { text: "Even boring days feel good when you are there ☕", category: "Romantic" },
-  { text: "You remind me who I am when I forget 🤍", category: "Heartfelt" },
-  { text: "Yeh kabhi nahi kaha, par tumne meri har version dekhi hai aur kabhi judge nahi kiya 💖", category: "Hinglish" },
-  { text: "My worst days feel less heavy after talking to you 🌸", category: "Heartfelt" },
-  { text: "You are the calm I did not know I needed in this chaotic world 🏡", category: "Romantic" },
-  { text: "Loving you is not about never messing up — it is about always coming back. 🙏", category: "Apology" },
-  { text: "You remember the small details I did not know mattered 💫", category: "Heartfelt" },
-  { text: "Zyadatar cheezein tumhare saath hi sabse achi lagti hain 🥺", category: "Hinglish" },
-  { text: "You still give me butterflies on the most random days 🦋", category: "Romantic" },
-  { text: "Hum kitna bhi lad lein, din ke aakhir me tum hi chahiye ❤️", category: "Hinglish" },
+// 6 Beautiful Themes matching reference image 2
+const THEMES = [
+  {
+    id: "classic",
+    name: "Classic",
+    cardBg: "bg-[#FFF0F3]",
+    cardBorder: "border-pink-200",
+    accent: "#FF2E63",
+    iconBg: "bg-[#FF2E63]",
+    badgeColor: "text-[#FF2E63]",
+  },
+  {
+    id: "classic-romance",
+    name: "Classic Romance",
+    cardBg: "bg-[#FDE2E6]",
+    cardBorder: "border-rose-200",
+    accent: "#E0245E",
+    iconBg: "bg-[#E0245E]",
+    badgeColor: "text-[#E0245E]",
+  },
+  {
+    id: "first-love",
+    name: "First Love",
+    cardBg: "bg-[#E8F8F5]",
+    cardBorder: "border-emerald-200",
+    accent: "#10B981",
+    iconBg: "bg-[#10B981]",
+    badgeColor: "text-[#10B981]",
+  },
+  {
+    id: "minimalist-love",
+    name: "Minimalist Love",
+    cardBg: "bg-[#F0F3FF]",
+    cardBorder: "border-indigo-200",
+    accent: "#6366F1",
+    iconBg: "bg-[#6366F1]",
+    badgeColor: "text-[#6366F1]",
+  },
+  {
+    id: "golden-hour",
+    name: "Golden Hour",
+    cardBg: "bg-[#FFF8E7]",
+    cardBorder: "border-amber-200",
+    accent: "#F59E0B",
+    iconBg: "bg-[#F59E0B]",
+    badgeColor: "text-[#F59E0B]",
+  },
+  {
+    id: "midnight-galaxy",
+    name: "Midnight Galaxy",
+    cardBg: "bg-[#1A1D36]",
+    cardBorder: "border-purple-900",
+    accent: "#8B5CF6",
+    iconBg: "bg-[#8B5CF6]",
+    badgeColor: "text-[#8B5CF6]",
+    dark: true,
+  },
 ];
 
-const LETTER_SPARKS = [
-  "I wanted to say this properly, here it goes... 💌",
-  "Loving someone isn't about never messing up — it's about always coming back. 🙏",
-  "Yeh likhna thoda ajeeb lag raha hai kyunki hum seedha bol dete hain, par is baar words mein daalna tha. ❤️",
-  "Some things deserve more than a quick text. You mean the absolute world to me, and I wanted you to know that properly.",
+const WRITING_TIPS = [
+  "What made you fall in love with them?",
+  "Mention your favorite little habit of theirs that always makes you smile.",
+  "Share a memory only the two of you know about.",
+  "Tell them what your ordinary days feel like since they entered your life.",
 ];
 
-export default function CreatorWizard({ initialOccasion = "proposal" }: CreatorWizardProps) {
-  // Step 1 to 5
-  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
+const QUICK_STARTERS = [
+  "Every moment with you feels like magic.",
+  "You make my heart skip a beat.",
+  "I fall more in love with you every day.",
+  "You are my favorite person in the world.",
+  "Life is so much better with you in it.",
+  "I can't imagine my life without you.",
+];
 
-  // Step 1: Details
+const QUESTION_PRESETS = [
+  "Do you love me?",
+  "Will you be mine forever?",
+  "Am I your favorite person?",
+  "Do you miss me when I'm gone?",
+  "Will you always love me?",
+];
+
+const SAMPLE_ROMANTIC_PHOTOS = [
+  "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=600&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=600&auto=format&fit=crop&q=80",
+];
+
+export default function CreatorWizard({
+  initialOccasion = "proposal",
+  initialTheme = "classic",
+}: CreatorWizardProps) {
+  // Step 1 to 6
+  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5 | 6>(1);
+
+  // Stage 1: Recipient
+  const [recipientName, setRecipientName] = useState("My Love");
+  const [senderName, setSenderName] = useState("Me");
   const [occasion, setOccasion] = useState<OccasionType>(initialOccasion);
-  const [relation, setRelation] = useState("Partner");
-  const [recipientName, setRecipientName] = useState("Simran");
-  const [senderName, setSenderName] = useState("Aman");
-  const [whatsapp, setWhatsapp] = useState("+91 98765 43210");
 
-  // Step 2: Emotional Sparks & 3 Reasons
-  const [sparkFilter, setSparkFilter] = useState("All");
-  const [reasons, setReasons] = useState<string[]>([
-    "Your cute laugh that instantly melts my stress away ✨",
-    "How special our late night talks and chai dates feel ☕",
-    "Being my safest, warmest home in this entire world 🏡",
-  ]);
-  const [dodgeIntensity, setDodgeIntensity] = useState<DodgeIntensity>("savage");
+  // Stage 2: Style / Theme
+  const [theme, setTheme] = useState(initialTheme);
 
-  // Step 3: Letter & Photos & PIN
+  // Stage 3: Message & The Big Question
+  const [tipIndex, setTipIndex] = useState(0);
   const [letterText, setLetterText] = useState(
-    "Dear Simran,\n\nSome things deserve more than a text. From the moment you entered my life, you've made ordinary days feel special.\n\nThank you for choosing me, for understanding my silly moods, and for being my biggest comfort. I promise to always listen, make you smile, and never take you for granted.\n\nAlways yours,\nAman ❤️"
+    "Some things deserve more than a quick text message.\n\nFrom the moment you entered my life, you turned ordinary days into unforgettable memories. Thank you for your warm smiles, your patient listening, and the way you always make me feel safe.\n\nI promise to love you, cherish every single moment with you, and never take you for granted. You mean the entire world to me! ❤️"
   );
-  const [photos] = useState<string[]>([
-    "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600&auto=format&fit=crop&q=80",
-    "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=600&auto=format&fit=crop&q=80",
-  ]);
+  const [question, setQuestion] = useState("do you love me ??");
+
+  // Stage 3 Live Preview Runaway Button State
+  const [previewDodgePos, setPreviewDodgePos] = useState<{ x: number; y: number } | null>(null);
+  const [previewDodgeCount, setPreviewDodgeCount] = useState(0);
+  const [previewYesClicked, setPreviewYesClicked] = useState(false);
+
+  // Stage 4: Photos
+  const [photos, setPhotos] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Stage 5: Features
+  const [bgMusic, setBgMusic] = useState<AudioTrackId>("romantic-lofi");
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const audioPreviewRef = useRef<HTMLAudioElement | null>(null);
+
+  const [enableAnniversary, setEnableAnniversary] = useState(true);
+  const [anniversaryDate, setAnniversaryDate] = useState("2023-02-14");
+
   const [enablePin, setEnablePin] = useState(false);
   const [secretPin, setSecretPin] = useState("1402");
 
-  // Step 4: Preview State
-  const [isEnvelopeUnsealed, setIsEnvelopeUnsealed] = useState(false);
-  const [previewDodgePos, setPreviewDodgePos] = useState<{ x: number; y: number } | null>(null);
-  const [previewDodgeCount, setPreviewDodgeCount] = useState(0);
-  const [previewYesAccepted, setPreviewYesAccepted] = useState(false);
-  const [isProcessingPay, setIsProcessingPay] = useState(false);
+  const [enableEnvelope, setEnableEnvelope] = useState(true);
+  const [enableConfetti, setEnableConfetti] = useState(true);
 
-  // Step 5: Multi-Channel Share State
+  // Stage 6: Launch & Sharing
+  const [isProcessingPay, setIsProcessingPay] = useState(false);
+  const [isCreated, setIsCreated] = useState(false);
   const [createdSlug, setCreatedSlug] = useState("");
   const [copiedLink, setCopiedLink] = useState(false);
-  const [showQrCard, setShowQrCard] = useState(false);
+  const [showQrModal, setShowQrModal] = useState(false);
 
-  const handleApplySpark = (text: string) => {
+  // Auto-save draft to localStorage
+  useEffect(() => {
+    try {
+      const draft = {
+        recipientName,
+        senderName,
+        theme,
+        letterText,
+        question,
+        photos,
+        bgMusic,
+        anniversaryDate,
+        enablePin,
+        secretPin,
+      };
+      localStorage.setItem("lovelink_wizard_draft", JSON.stringify(draft));
+    } catch {}
+  }, [
+    recipientName,
+    senderName,
+    theme,
+    letterText,
+    question,
+    photos,
+    bgMusic,
+    anniversaryDate,
+    enablePin,
+    secretPin,
+  ]);
+
+  // Audio preview playback toggle
+  const toggleAudioPreview = () => {
     soundFx.playPop();
-    const emptyIndex = reasons.findIndex((r) => !r.trim());
-    if (emptyIndex !== -1) {
-      const copy = [...reasons];
-      copy[emptyIndex] = text;
-      setReasons(copy);
+    if (!audioPreviewRef.current) {
+      const audio = new Audio(
+        bgMusic === "summer-guitar" ? "/music/summer-gouyad-5.mp3" : "/music/love-bgm.mp3"
+      );
+      audio.loop = true;
+      audioPreviewRef.current = audio;
     } else {
-      const copy = [...reasons];
-      copy[0] = text;
-      setReasons(copy);
+      audioPreviewRef.current.src =
+        bgMusic === "summer-guitar" ? "/music/summer-gouyad-5.mp3" : "/music/love-bgm.mp3";
+    }
+
+    if (isAudioPlaying) {
+      audioPreviewRef.current.pause();
+      setIsAudioPlaying(false);
+    } else {
+      audioPreviewRef.current
+        .play()
+        .then(() => setIsAudioPlaying(true))
+        .catch(() => setIsAudioPlaying(false));
     }
   };
 
-  const handleNextToSparks = () => {
-    soundFx.playPop();
-    if (!recipientName.trim() || !senderName.trim()) {
-      alert("Please enter both names to personalize the surprise ❤️");
-      return;
-    }
-    setStep(2);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  useEffect(() => {
+    return () => {
+      if (audioPreviewRef.current) {
+        audioPreviewRef.current.pause();
+        audioPreviewRef.current = null;
+      }
+    };
+  }, []);
 
-  const handleNextToLetter = () => {
-    soundFx.playPop();
-    setStep(3);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handleNextToPreview = () => {
-    soundFx.playPop();
-    const secureSlug = generateSecureSlug(recipientName, senderName);
-    setCreatedSlug(secureSlug);
-    setStep(4);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handleDodgeNo = () => {
+  // Handle Dodge button in Live Preview
+  const handleDodgeHover = () => {
     soundFx.playPop();
     setPreviewDodgeCount((prev) => prev + 1);
     const rx = (Math.random() - 0.5) * 160;
@@ -144,925 +254,1328 @@ export default function CreatorWizard({ initialOccasion = "proposal" }: CreatorW
 
   const handlePreviewYes = () => {
     soundFx.playSuccessChime();
-    setPreviewYesAccepted(true);
+    setPreviewYesClicked(true);
+    confetti({
+      particleCount: 50,
+      spread: 60,
+      origin: { y: 0.7 },
+      colors: ["#FF2E63", "#FF6B8B", "#FFD166"],
+    });
+    setTimeout(() => setPreviewYesClicked(false), 3000);
   };
 
+  // Runaway button funny phrases
+  const getRunawayLabel = () => {
+    const labels = [
+      "Are you sure? 😅",
+      "Wait...",
+      "Think again! 😜",
+      "Wrong button! 🏃",
+      "Nice try! 😂",
+      "Almost! 💖",
+    ];
+    return labels[previewDodgeCount % labels.length];
+  };
+
+  // Add sample photos
+  const handleAddSamplePhotos = () => {
+    soundFx.playPop();
+    setPhotos([...SAMPLE_ROMANTIC_PHOTOS]);
+  };
+
+  // Handle local file uploads
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    soundFx.playPop();
+    const files = Array.from(e.target.files).slice(0, 3 - photos.length);
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (uploadEvent) => {
+        if (uploadEvent.target?.result) {
+          setPhotos((prev) => [...prev, uploadEvent.target!.result as string].slice(0, 6));
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleRemovePhoto = (index: number) => {
+    soundFx.playPop();
+    setPhotos((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Navigation handlers
+  const goToStep = (targetStep: 1 | 2 | 3 | 4 | 5 | 6) => {
+    soundFx.playPop();
+    setStep(targetStep);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Final payment & launch execution
   const handleExecutePayment = async () => {
     soundFx.playPop();
     setIsProcessingPay(true);
 
-    // Hash the passcode if enabled
     let pinHash: string | undefined = undefined;
     if (enablePin && secretPin) {
       pinHash = await hashPasscode(secretPin);
     }
 
-    setTimeout(() => {
-      setIsProcessingPay(false);
-      soundFx.playSuccessChime();
+    const secureSlug = generateSecureSlug(recipientName || "My Love", senderName || "Me");
 
-      // Save to secure persistent storage
-      const payload: LoveSurpriseData = {
-        id: "site_" + Date.now(),
-        slug: createdSlug,
-        occasion,
-        relation,
-        recipientName: sanitizeInput(recipientName),
-        senderName: sanitizeInput(senderName),
-        question:
-          occasion === "apology"
-            ? "Maan Jao Na Baby? 🥺"
-            : occasion === "birthday"
-            ? "Happy Birthday My Love! 🎂👑"
-            : `Will you be mine forever, ${recipientName}? 💖`,
-        reasons: reasons.map(sanitizeInput),
-        letterContent: sanitizeInput(letterText),
-        photos,
-        hasPasscode: enablePin,
+    setTimeout(() => {
+      const siteData: LoveSurpriseData = {
+        id: "love-" + Date.now(),
+        slug: secureSlug,
+        occasion: occasion,
+        relation: "Partner",
+        recipientName: sanitizeInput(recipientName.trim() || "My Love"),
+        senderName: sanitizeInput(senderName.trim() || "Me"),
+        question: sanitizeInput(question.trim() || "do you love me ??"),
+        subheading: "A special romantic surprise made just for you",
+        reasons: [
+          "Your beautiful laugh that brightens my day ✨",
+          "The way you always make me feel special ☕",
+          "Being my safest home in this entire world 🏡",
+        ],
+        letterContent: letterText,
+        photos: photos.length > 0 ? photos : SAMPLE_ROMANTIC_PHOTOS.slice(0, 2),
+        theme: theme,
+        anniversaryDate: enableAnniversary ? anniversaryDate : undefined,
         passcodeHash: pinHash,
-        dodgeIntensity,
-        bgMusic: "summer-guitar",
-        whatsappNumber: whatsapp,
+        hasPasscode: enablePin && !!secretPin,
+        dodgeIntensity: "savage",
+        bgMusic: bgMusic,
+        whatsappNumber: "+91 98765 43210",
         isPaid: true,
         createdAt: new Date().toISOString(),
         expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
       };
 
-      saveSurpriseData(payload);
+      saveSurpriseData(siteData);
+      setCreatedSlug(secureSlug);
+      setIsProcessingPay(false);
+      setIsCreated(true);
+      soundFx.playSuccessChime();
 
       confetti({
-        particleCount: 160,
-        spread: 90,
-        origin: { y: 0.55 },
-        colors: ["#E11D48", "#FB7185", "#FDA4AF", "#FFFFFF"],
+        particleCount: 120,
+        spread: 100,
+        origin: { y: 0.6 },
+        colors: ["#FF2E63", "#FF6B8B", "#FFD166", "#06D6A0"],
       });
-
-      setStep(5);
-      window.scrollTo({ top: 0, behavior: "smooth" });
     }, 1200);
   };
 
-  const liveUrl =
+  // Word count helper
+  const wordCount = letterText.trim() ? letterText.trim().split(/\s+/).length : 0;
+
+  // Live URL
+  const siteUrl =
     typeof window !== "undefined"
-      ? `${window.location.origin}/p/${createdSlug || "simran-aman-demo"}`
-      : `https://ourlove.in/p/${createdSlug || "simran-aman-demo"}`;
+      ? `${window.location.origin}/p/${createdSlug}`
+      : `https://ourlove.in/p/${createdSlug}`;
 
-  // Delivery Channel 1: WhatsApp
-  const handleShareWhatsApp = () => {
-    soundFx.playPop();
-    const msg = encodeURIComponent(
-      `Hey ${recipientName}, I made something very special for you ❤️ Open your surprise here: ${liveUrl}`
-    );
-    window.open(`https://wa.me/?text=${msg}`, "_blank");
-  };
-
-  // Delivery Channel 2: 1-Click Copy Link
-  const handleCopyLink = () => {
-    soundFx.playPop();
-    navigator.clipboard.writeText(liveUrl);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2400);
-  };
-
-  // Delivery Channel 3: Native Web Share API
-  const handleNativeShare = async () => {
-    soundFx.playPop();
-    if (typeof navigator !== "undefined" && navigator.share) {
-      try {
-        await navigator.share({
-          title: `A Secret Surprise For ${recipientName}`,
-          text: `Hey ${recipientName}, I made something very special for you ❤️`,
-          url: liveUrl,
-        });
-      } catch {
-        // User dismissed share sheet
-      }
-    } else {
-      handleCopyLink();
-    }
-  };
-
-  const filteredSparks =
-    sparkFilter === "All"
-      ? EMOTIONAL_SPARKS
-      : EMOTIONAL_SPARKS.filter((s) => s.category === sparkFilter);
+  const currentTheme = THEMES.find((t) => t.id === theme) || THEMES[0];
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-slate-800 flex flex-col justify-between font-sans selection:bg-rose-100 selection:text-rose-700 pb-12">
-      {/* Top Header */}
-      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-rose-100 px-4 py-3 flex items-center justify-between shadow-xs">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-rose-600 flex items-center justify-center text-white shadow-xs">
-            <Heart className="w-4 h-4 fill-white" />
+    <div className="min-h-screen bg-[#FDFBF7] text-slate-800 pb-20 selection:bg-pink-100 selection:text-pink-600">
+      {/* =================================================================== */}
+      {/* TOP PROGRESS NAVIGATION BAR (Matching reference screenshots) */}
+      {/* =================================================================== */}
+      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-pink-100 py-3 sm:py-4 px-4 shadow-sm">
+        <div className="max-w-2xl mx-auto space-y-3">
+          {/* Progress Track */}
+          <div className="w-full bg-pink-100/70 h-1.5 rounded-full overflow-hidden relative">
+            <motion.div
+              className="h-full bg-gradient-to-r from-[#FF2E63] to-[#FF537A] rounded-full"
+              initial={{ width: "16%" }}
+              animate={{ width: `${(step / 6) * 100}%` }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+            />
           </div>
-          <div>
-            <h1 className="font-extrabold text-sm text-slate-900 tracking-tight leading-none">
-              LoveLink <span className="text-rose-600">Studio</span>
-            </h1>
-            <p className="text-[10px] text-slate-400 font-semibold leading-tight">Interactive Moments</p>
-          </div>
-        </Link>
 
-        {/* Step Indicator Pill */}
-        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 border border-rose-200 text-[11px] font-bold text-rose-600">
-          <span>Step {step} of 5</span>
+          {/* 6 Step Indicators */}
+          <div className="flex items-center justify-between px-1">
+            {[
+              { num: 1, label: "Recipient", icon: Heart },
+              { num: 2, label: "Style", icon: Palette },
+              { num: 3, label: "Message", icon: PenLine },
+              { num: 4, label: "Photos", icon: Camera },
+              { num: 5, label: "Features", icon: Sparkles },
+              { num: 6, label: "Preview", icon: Eye },
+            ].map((s) => {
+              const isCurrent = step === s.num;
+              const isCompleted = step > s.num;
+              const isClickable = isCompleted || s.num === step;
+
+              return (
+                <button
+                  key={s.num}
+                  type="button"
+                  disabled={!isClickable}
+                  onClick={() => isClickable && goToStep(s.num as any)}
+                  className={`flex flex-col items-center gap-1 group transition-all ${
+                    isClickable ? "cursor-pointer" : "cursor-default opacity-50"
+                  }`}
+                >
+                  <div
+                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs transition-all ${
+                      isCompleted
+                        ? "bg-[#FF2E63] text-white shadow-sm"
+                        : isCurrent
+                        ? "bg-[#FF2E63] text-white ring-4 ring-pink-100 shadow-md scale-105"
+                        : "bg-pink-100 text-pink-500"
+                    }`}
+                  >
+                    {isCompleted ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : s.num}
+                  </div>
+                  <span
+                    className={`text-[10px] sm:text-xs font-semibold tracking-tight transition-colors ${
+                      isCurrent
+                        ? "text-[#FF2E63] font-bold"
+                        : isCompleted
+                        ? "text-slate-700"
+                        : "text-slate-400"
+                    }`}
+                  >
+                    {s.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Saved indicator */}
+          {step > 1 && (
+            <div className="text-center text-[11px] font-medium text-slate-400 flex items-center justify-center gap-1 pt-0.5">
+              <span>✓ Saved — you can safely close this page</span>
+            </div>
+          )}
         </div>
       </header>
 
-      {/* Segmented Progress Bar */}
-      <div className="w-full bg-rose-100/70 h-1">
-        <div
-          className="bg-rose-600 h-1 transition-all duration-300"
-          style={{ width: `${(step / 5) * 100}%` }}
-        />
-      </div>
-
-      {/* Main Wizard Container */}
-      <main className="flex-1 max-w-md w-full mx-auto px-4 py-6 flex flex-col justify-start">
-        <AnimatePresence mode="wait">
-          {/* ================================================================= */}
-          {/* STEP 1: MAKE IT YOURS */}
-          {/* ================================================================= */}
+      {/* =================================================================== */}
+      {/* MAIN CONTAINER */}
+      {/* =================================================================== */}
+      <main className="max-w-2xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12">
+        <AnimatePresence mode="wait" initial={false}>
+          {/* =============================================================== */}
+          {/* STAGE 1: RECIPIENT (Image 1: media_1791111523011.png) */}
+          {/* =============================================================== */}
           {step === 1 && (
             <motion.div
               key="step-1"
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 1, y: 0 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              className="space-y-5"
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.2 }}
+              className="space-y-8 text-center"
             >
-              <div className="text-center space-y-1.5">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-600 text-[11px] font-bold">
-                  <Sparkles className="w-3.5 h-3.5 text-rose-500" />
-                  Make It Yours
-                </span>
-                <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-                  Who is this surprise for?
-                </h2>
-                <p className="text-xs text-slate-500 font-medium">
-                  We will transform your feelings into an unforgettable interactive website.
+              {/* Floating Center Icon */}
+              <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#FF2E63] to-[#FF537A] text-white flex items-center justify-center shadow-lg shadow-pink-500/25 mx-auto">
+                <Heart className="w-7 h-7 fill-white text-white" />
+              </div>
+
+              {/* Title & Subtitle */}
+              <div className="space-y-1.5">
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
+                  Let&apos;s create something beautiful
+                </h1>
+                <p className="text-sm text-slate-500 font-medium">
+                  A personalized love letter just for them
                 </p>
               </div>
 
-              {/* Relationship Pills */}
-              <div className="bg-white rounded-2xl p-4 border border-rose-100 shadow-sm space-y-3">
-                <label className="block text-xs font-bold text-slate-700">Their Relation to You</label>
-                <div className="flex flex-wrap gap-2">
-                  {["Partner 💖", "Girlfriend 🌸", "Boyfriend 💫", "Best Friend 👯", "Crush 🙈", "Spouse 💍"].map(
-                    (rel) => {
-                      const clean = rel.split(" ")[0];
-                      const isSelected = relation === clean;
+              {/* Input Form Card */}
+              <div className="max-w-md mx-auto space-y-4 pt-2">
+                <label className="block text-xs sm:text-sm font-semibold text-slate-700 text-left">
+                  Who is this love letter for?
+                </label>
+
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={recipientName}
+                    onChange={(e) => setRecipientName(e.target.value)}
+                    placeholder="Their name..."
+                    className="w-full px-5 py-4 rounded-2xl border-2 border-pink-300 focus:border-[#FF2E63] focus:ring-4 focus:ring-pink-100 outline-none text-center font-bold text-lg text-slate-800 transition-all placeholder:text-slate-300 shadow-sm bg-white"
+                  />
+                </div>
+
+                {/* Quick Presets Pills */}
+                <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+                  {["My Love", "Babe", "Honey", "Sweetheart", "My Darling", "Love"].map(
+                    (preset) => {
+                      const isActive = recipientName === preset;
                       return (
                         <button
-                          key={rel}
+                          key={preset}
                           type="button"
                           onClick={() => {
                             soundFx.playPop();
-                            setRelation(clean);
+                            setRecipientName(preset);
                           }}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${
-                            isSelected
-                              ? "bg-rose-600 text-white border-rose-600 shadow-xs"
-                              : "bg-rose-50/50 text-slate-600 border-rose-100 hover:border-rose-200"
+                          className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
+                            isActive
+                              ? "bg-pink-500 text-white border-pink-500 shadow-sm"
+                              : "bg-white text-slate-600 border-slate-200 hover:border-pink-300 hover:bg-pink-50/50"
                           }`}
                         >
-                          {rel}
+                          {preset}
                         </button>
                       );
                     }
                   )}
                 </div>
-              </div>
 
-              {/* Names Input Box */}
-              <div className="bg-white rounded-2xl p-4 border border-rose-100 shadow-sm space-y-3.5">
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Their Name <span className="text-rose-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={recipientName}
-                    onChange={(e) => setRecipientName(e.target.value)}
-                    placeholder="e.g. Simran, Jaan, a nickname..."
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:border-rose-500 focus:ring-1 focus:ring-rose-500 text-sm font-semibold text-slate-800 outline-none transition-all"
-                  />
-                </div>
+                <p className="text-xs text-slate-400 font-medium text-center">
+                  This name will appear throughout their experience
+                </p>
 
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Your Name <span className="text-rose-500">*</span>
+                {/* Sender Name Option */}
+                <div className="pt-2 text-left">
+                  <label className="block text-xs font-semibold text-slate-500 mb-1">
+                    Your name (or nickname)
                   </label>
                   <input
                     type="text"
                     value={senderName}
                     onChange={(e) => setSenderName(e.target.value)}
-                    placeholder="e.g. Aman"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:border-rose-500 focus:ring-1 focus:ring-rose-500 text-sm font-semibold text-slate-800 outline-none transition-all"
+                    placeholder="From you..."
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-pink-400 outline-none text-sm text-slate-700 bg-white"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
-                    <span>WhatsApp Number (For YES Alert)</span>
-                    <span className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      Real-time Alert
-                    </span>
-                  </label>
-                  <input
-                    type="tel"
-                    value={whatsapp}
-                    onChange={(e) => setWhatsapp(e.target.value)}
-                    placeholder="+91 98765 43210"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:border-rose-500 focus:ring-1 focus:ring-rose-500 text-sm font-semibold text-slate-800 outline-none transition-all"
-                  />
-                  <p className="text-[10px] text-slate-400 mt-1">
-                    You will get an instant WhatsApp message the moment she opens and answers!
-                  </p>
+                {/* Primary Continue Button */}
+                <div className="pt-4">
+                  <button
+                    type="button"
+                    disabled={!recipientName.trim()}
+                    onClick={() => goToStep(2)}
+                    className={`w-full py-4 rounded-full font-bold text-sm sm:text-base transition-all flex items-center justify-center gap-2 shadow-md ${
+                      recipientName.trim()
+                        ? "bg-[#FF2E63] hover:bg-[#E02656] text-white shadow-pink-500/25 active:scale-98 cursor-pointer"
+                        : "bg-pink-200 text-white cursor-not-allowed"
+                    }`}
+                  >
+                    <span>Continue</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
 
-              {/* Occasion Selector */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-700 block">Choose Story Occasion</label>
-                <div className="grid grid-cols-2 gap-2.5">
-                  {[
-                    { id: "proposal" as OccasionType, title: "Romantic Proposal", emoji: "💖", desc: "Will You Be Mine?" },
-                    { id: "apology" as OccasionType, title: "Heartfelt Apology", emoji: "🥺", desc: "Maan Jao Na Baby" },
-                    { id: "birthday" as OccasionType, title: "Birthday Queen", emoji: "🎂", desc: "Blow Virtual Candles" },
-                    { id: "love-note" as OccasionType, title: "Sweet Love Note", emoji: "💌", desc: "Everyday Appreciation" },
-                  ].map((occ) => {
-                    const isSelected = occasion === occ.id;
-                    return (
-                      <button
-                        key={occ.id}
-                        type="button"
-                        onClick={() => {
-                          soundFx.playPop();
-                          setOccasion(occ.id);
-                        }}
-                        className={`text-left p-3 rounded-2xl border transition-all flex flex-col justify-between cursor-pointer ${
-                          isSelected
-                            ? "bg-rose-50/90 border-2 border-rose-600 shadow-xs"
-                            : "bg-white border-slate-200 hover:border-rose-200"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between w-full mb-1">
-                          <span className="text-xl">{occ.emoji}</span>
-                          {isSelected && (
-                            <span className="w-4 h-4 rounded-full bg-rose-600 text-white flex items-center justify-center text-[10px]">
-                              <Check className="w-2.5 h-2.5 stroke-[3]" />
-                            </span>
-                          )}
-                        </div>
-                        <div>
-                          <h4 className="text-xs font-bold text-slate-900 leading-tight">{occ.title}</h4>
-                          <span className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider block mt-0.5">
-                            {occ.desc}
-                          </span>
-                        </div>
-                      </button>
-                    );
-                  })}
+              {/* Bottom Mascot Pill */}
+              <div className="pt-8 flex flex-col items-center">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#FF2E63] to-[#FF537A] text-white flex items-center justify-center shadow-md mb-2">
+                  <Heart className="w-6 h-6 fill-white" />
+                </div>
+                <div className="px-4 py-1.5 rounded-full bg-white border border-pink-100 shadow-md text-xs font-bold text-slate-700">
+                  Who&apos;s the lucky person?
                 </div>
               </div>
-
-              <button
-                type="button"
-                onClick={handleNextToSparks}
-                className="w-full py-3.5 px-5 rounded-2xl bg-rose-600 hover:bg-rose-700 active:scale-[0.98] text-white font-bold text-sm shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
-              >
-                <span>Continue to Reasons &amp; Sparks</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
             </motion.div>
           )}
 
-          {/* ================================================================= */}
-          {/* STEP 2: THE REASONS & EMOTIONAL SPARKS */}
-          {/* ================================================================= */}
+          {/* =============================================================== */}
+          {/* STAGE 2: STYLE / THEME (Image 2: media_1791111560687.png) */}
+          {/* =============================================================== */}
           {step === 2 && (
             <motion.div
               key="step-2"
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              className="space-y-5"
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-8 text-center"
             >
-              <div className="text-center space-y-1">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-600 text-[11px] font-bold">
-                  Step 2 • Emotional Sparks
-                </span>
-                <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-                  What makes them special?
-                </h2>
-                <p className="text-xs text-slate-500 font-medium">
-                  Tap any spark below to autofill, or write your own heartfelt words.
+              {/* Floating Center Icon */}
+              <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#FF2E63] to-[#FF537A] text-white flex items-center justify-center shadow-lg shadow-pink-500/25 mx-auto">
+                <Palette className="w-7 h-7 text-white" />
+              </div>
+
+              {/* Title & Subtitle */}
+              <div className="space-y-1.5">
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
+                  Pick a style for {recipientName || "My Love"}
+                </h1>
+                <p className="text-sm text-slate-500 font-medium">
+                  Choose a beautiful theme for their letter
                 </p>
               </div>
 
-              {/* Sparks Selector */}
-              <div className="bg-white rounded-2xl p-4 border border-rose-100 shadow-sm space-y-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-rose-500" />
-                    <span>Emotional Sparks (Tap to Add)</span>
-                  </label>
-                  <div className="flex gap-1">
-                    {["All", "Romantic", "Hinglish", "Apology"].map((cat) => (
-                      <button
-                        key={cat}
-                        type="button"
-                        onClick={() => setSparkFilter(cat)}
-                        className={`px-2 py-0.5 rounded-lg text-[10px] font-bold transition-all ${
-                          sparkFilter === cat
-                            ? "bg-rose-600 text-white"
-                            : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                        }`}
-                      >
-                        {cat}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-2 max-h-52 overflow-y-auto pr-1">
-                  {filteredSparks.map((spark, idx) => (
+              {/* Theme Grid matching screenshot 2 */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-xl mx-auto pt-2">
+                {THEMES.map((t) => {
+                  const isSelected = theme === t.id;
+                  return (
                     <button
-                      key={idx}
-                      type="button"
-                      onClick={() => handleApplySpark(spark.text)}
-                      className="text-left p-2.5 rounded-xl border border-rose-100 hover:border-rose-400 bg-rose-50/40 hover:bg-rose-50 text-xs text-slate-800 font-medium transition-all flex items-center justify-between group cursor-pointer"
-                    >
-                      <span className="flex-1 pr-2">{spark.text}</span>
-                      <span className="text-[10px] text-rose-600 font-bold opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-                        + Add
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* 3 Reason Slots */}
-              <div className="bg-white rounded-2xl p-4 border border-rose-100 shadow-sm space-y-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-slate-700">3 Reasons Included in Scrapbook</label>
-                  <span className="text-[10px] text-rose-500 font-semibold">Editable</span>
-                </div>
-
-                {reasons.map((r, idx) => (
-                  <div key={idx} className="flex items-start gap-2">
-                    <span className="w-5 h-5 rounded-full bg-rose-100 text-rose-600 text-[10px] font-extrabold flex items-center justify-center shrink-0 mt-2">
-                      {idx + 1}
-                    </span>
-                    <textarea
-                      rows={2}
-                      value={r}
-                      onChange={(e) => {
-                        const copy = [...reasons];
-                        copy[idx] = e.target.value;
-                        setReasons(copy);
-                      }}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 outline-none focus:border-rose-500 resize-none"
-                    />
-                  </div>
-                ))}
-              </div>
-
-              {/* Runaway Button Intensity */}
-              <div className="bg-white rounded-2xl p-4 border border-rose-100 shadow-sm space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-slate-700">Runaway &quot;NO&quot; Button Difficulty</label>
-                  <span className="text-[10px] font-bold uppercase text-rose-600">{dodgeIntensity}</span>
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  {(["gentle", "savage", "impossible"] as const).map((diff) => (
-                    <button
-                      key={diff}
+                      key={t.id}
                       type="button"
                       onClick={() => {
                         soundFx.playPop();
-                        setDodgeIntensity(diff);
+                        setTheme(t.id);
                       }}
-                      className={`py-2 px-2 text-center rounded-xl border text-xs font-bold capitalize transition-all cursor-pointer ${
-                        dodgeIntensity === diff
-                          ? "bg-rose-600 text-white border-rose-600 shadow-xs"
-                          : "bg-slate-50 text-slate-600 border-slate-200"
+                      className={`relative rounded-3xl p-5 text-left transition-all duration-200 cursor-pointer overflow-hidden border-2 ${
+                        isSelected
+                          ? "border-[#FF2E63] shadow-lg shadow-pink-500/15 ring-2 ring-pink-200 scale-[1.02]"
+                          : "border-slate-200/80 hover:border-pink-300 hover:shadow-md bg-white"
                       }`}
                     >
-                      {diff}
+                      {/* Active Checkmark Pill */}
+                      {isSelected && (
+                        <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[#FF2E63] text-white flex items-center justify-center shadow-sm">
+                          <Check className="w-3 h-3 stroke-[3]" />
+                        </div>
+                      )}
+
+                      {/* Theme Preview Card Area */}
+                      <div
+                        className={`w-full h-28 rounded-2xl ${t.cardBg} flex flex-col items-center justify-center gap-2 mb-3.5 border ${t.cardBorder}`}
+                      >
+                        <div
+                          className={`w-10 h-10 rounded-full ${t.iconBg} text-white flex items-center justify-center shadow-sm`}
+                        >
+                          <Sparkles className="w-5 h-5 text-white" />
+                        </div>
+                        {/* Decorative pill bars mimicking mockup */}
+                        <div className="w-12 h-1.5 bg-slate-300/40 rounded-full" />
+                        <div className="w-8 h-1 bg-slate-300/30 rounded-full" />
+                      </div>
+
+                      {/* Theme Title */}
+                      <span className="text-xs sm:text-sm font-bold text-slate-800 block">
+                        {t.name}
+                      </span>
                     </button>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
 
-              <div className="flex items-center gap-2.5 pt-1">
+              {/* Bottom Buttons */}
+              <div className="flex items-center justify-between max-w-xl mx-auto pt-6">
                 <button
                   type="button"
-                  onClick={() => setStep(1)}
-                  className="py-3.5 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer"
+                  onClick={() => goToStep(1)}
+                  className="px-6 py-3.5 rounded-full border border-pink-200 text-pink-600 bg-white hover:bg-pink-50 font-bold text-sm transition-all flex items-center gap-2 cursor-pointer shadow-sm active:scale-95"
                 >
-                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <ArrowLeft className="w-4 h-4" />
                   <span>Back</span>
                 </button>
+
                 <button
                   type="button"
-                  onClick={handleNextToLetter}
-                  className="flex-1 py-3.5 px-5 rounded-2xl bg-rose-600 hover:bg-rose-700 active:scale-[0.98] text-white font-bold text-sm shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  onClick={() => goToStep(3)}
+                  className="px-8 py-3.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-bold text-sm shadow-md shadow-pink-500/25 transition-all flex items-center gap-2 cursor-pointer active:scale-95"
                 >
-                  <span>Continue to Letter &amp; Photos</span>
+                  <span>Continue</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </motion.div>
           )}
 
-          {/* ================================================================= */}
-          {/* STEP 3: THE HEARTFELT LETTER & PHOTOS */}
-          {/* ================================================================= */}
+          {/* =============================================================== */}
+          {/* STAGE 3: MESSAGE & BIG QUESTION (Images 3 & 4) */}
+          {/* =============================================================== */}
           {step === 3 && (
             <motion.div
               key="step-3"
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              className="space-y-5"
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-6"
             >
-              <div className="text-center space-y-1">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-600 text-[11px] font-bold">
-                  Step 3 • Heartfelt Letter
-                </span>
-                <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-                  Your Personal Note
-                </h2>
-                <p className="text-xs text-slate-500 font-medium">
-                  Placed inside the digital sealed envelope for {recipientName} to unseal.
+              {/* Floating Center Icon */}
+              <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#FF2E63] to-[#FF537A] text-white flex items-center justify-center shadow-lg shadow-pink-500/25 mx-auto">
+                <PenLine className="w-7 h-7 text-white" />
+              </div>
+
+              {/* Title & Subtitle */}
+              <div className="space-y-1.5 text-center">
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
+                  Write your letter to {recipientName || "My Love"}
+                </h1>
+                <p className="text-sm text-slate-500 font-medium">
+                  This is the heart of your love letter
                 </p>
               </div>
 
-              {/* Letter Sparks */}
-              <div className="bg-white rounded-2xl p-4 border border-rose-100 shadow-sm space-y-2.5">
-                <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                  <Mail className="w-3.5 h-3.5 text-rose-500" />
-                  <span>Letter Starters (Tap to Append)</span>
-                </label>
-                <div className="flex flex-col gap-1.5">
-                  {LETTER_SPARKS.map((spark, idx) => (
+              {/* Tip Box with Lightbulb */}
+              <div className="max-w-xl mx-auto p-3.5 sm:p-4 rounded-2xl border border-pink-200 bg-pink-50/40 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#FF2E63]">
+                  <Lightbulb className="w-4 h-4 shrink-0 text-[#FF2E63]" />
+                  <span>Tip: {WRITING_TIPS[tipIndex]}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundFx.playPop();
+                    setTipIndex((prev) => (prev + 1) % WRITING_TIPS.length);
+                  }}
+                  className="text-[11px] font-bold text-slate-500 hover:text-[#FF2E63] shrink-0 underline"
+                >
+                  Next tip →
+                </button>
+              </div>
+
+              {/* Quick Starters Pills */}
+              <div className="max-w-xl mx-auto space-y-2 text-center">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                  Quick starters - tap to use:
+                </span>
+                <div className="flex flex-wrap items-center justify-center gap-1.5">
+                  {QUICK_STARTERS.map((starter) => (
                     <button
-                      key={idx}
+                      key={starter}
                       type="button"
                       onClick={() => {
                         soundFx.playPop();
-                        setLetterText((prev) => `${prev}\n\n${spark}`);
+                        setLetterText((prev) =>
+                          prev.trim() ? `${prev}\n\n${starter}` : starter
+                        );
                       }}
-                      className="text-left p-2 rounded-lg bg-rose-50/50 hover:bg-rose-50 text-[11px] text-slate-700 font-medium border border-rose-100 hover:border-rose-300 transition-all cursor-pointer"
+                      className="px-3 py-1.5 rounded-full text-xs font-medium bg-white border border-slate-200 text-slate-700 hover:border-pink-300 hover:bg-pink-50/60 transition-all cursor-pointer shadow-2xs"
                     >
-                      {spark}
+                      {starter}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Letter Card */}
-              <div className="bg-[#FFFBF8] rounded-3xl p-5 border border-rose-200 shadow-sm space-y-3 relative overflow-hidden">
-                <div className="flex items-center justify-between border-b border-rose-100 pb-2">
-                  <span className="text-xs font-bold text-rose-600 uppercase tracking-wider">
-                    Wax Seal Letter
-                  </span>
-                  <span className="text-[10px] font-mono font-bold text-slate-400">
-                    {letterText.length} characters
-                  </span>
-                </div>
-
+              {/* Main Letter Editor Card */}
+              <div className="max-w-xl mx-auto rounded-3xl border border-slate-200 bg-white p-5 sm:p-6 shadow-sm space-y-2">
+                <span className="font-bold text-slate-800 text-sm block">
+                  Dear {recipientName || "My Love"},
+                </span>
                 <textarea
                   rows={6}
                   value={letterText}
                   onChange={(e) => setLetterText(e.target.value)}
-                  className="w-full bg-transparent text-sm leading-relaxed text-slate-800 outline-none font-serif resize-none"
-                  placeholder="Write whatever is in your heart..."
+                  placeholder="Start writing your love letter here..."
+                  className="w-full text-sm sm:text-base text-slate-700 leading-relaxed outline-none resize-none placeholder:text-slate-300"
                 />
-
-                <div className="flex items-center justify-between pt-2 border-t border-rose-100">
-                  <span className="text-xs italic text-slate-400">Forever Yours,</span>
-                  <span className="text-sm font-bold text-rose-600">{senderName} ❤️</span>
+                <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs text-slate-400">
+                  <span>Heartfelt & Permanent</span>
+                  <div className="flex items-center gap-1.5 font-semibold text-slate-500">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                    <span>{wordCount} words</span>
+                  </div>
                 </div>
               </div>
 
-              {/* Photo Reassurance */}
-              <div className="bg-white rounded-2xl p-4 border border-rose-100 shadow-sm space-y-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                    <Camera className="w-3.5 h-3.5 text-rose-500" />
-                    <span>Memory Photos (Optional)</span>
-                  </label>
-                  <span className="text-[10px] text-slate-400 font-medium">2 Photos Loaded</span>
+              {/* =========================================================== */}
+              {/* THE BIG QUESTION 💕 CARD (Matching screenshot 4) */}
+              {/* =========================================================== */}
+              <div className="max-w-xl mx-auto rounded-3xl border border-pink-200 bg-[#FFF5F7] p-5 sm:p-6 space-y-4">
+                {/* Header */}
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-full bg-[#FF2E63] text-white flex items-center justify-center">
+                    <Heart className="w-4 h-4 fill-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-extrabold text-sm sm:text-base text-slate-800">
+                      The Big Question 💕
+                    </h3>
+                    <p className="text-xs text-[#FF2E63] font-medium">
+                      This appears at the start - make it fun!
+                    </p>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
-                  {photos.map((p, idx) => (
-                    <div key={idx} className="aspect-square rounded-xl overflow-hidden bg-slate-100 border border-slate-200 relative">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={p} alt="Memory" className="w-full h-full object-cover" />
-                      <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-black/60 text-white text-[9px] font-bold">
-                        #{idx + 1}
-                      </span>
-                    </div>
+                {/* Editable Question Input */}
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={question}
+                    onChange={(e) => setQuestion(e.target.value)}
+                    placeholder="do you love me ??"
+                    className="w-full px-5 py-3 rounded-2xl border-2 border-pink-300 focus:border-[#FF2E63] focus:ring-4 focus:ring-pink-100 outline-none text-center font-bold text-base text-slate-800 bg-white shadow-sm"
+                  />
+                  <Sparkles className="w-4 h-4 text-pink-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                </div>
+
+                {/* Question Presets */}
+                <div className="flex flex-wrap items-center justify-center gap-1.5">
+                  {QUESTION_PRESETS.map((qp) => (
+                    <button
+                      key={qp}
+                      type="button"
+                      onClick={() => {
+                        soundFx.playPop();
+                        setQuestion(qp);
+                      }}
+                      className="px-3 py-1 rounded-full text-xs font-semibold bg-white border border-pink-200 text-slate-700 hover:border-pink-400 hover:bg-pink-50 transition-all cursor-pointer shadow-2xs"
+                    >
+                      {qp}
+                    </button>
                   ))}
                 </div>
 
-                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2 text-xs text-emerald-800 font-medium">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>
-                    <strong>Add photos after payment:</strong> You can also update or change photos anytime after unlocking your link!
-                  </span>
+                {/* LIVE PREVIEW BOX INSIDE CARD */}
+                <div className="rounded-2xl bg-white p-5 sm:p-6 border border-pink-100 shadow-sm text-center space-y-4 relative overflow-hidden">
+                  <div className="flex items-center justify-between text-[11px] font-bold">
+                    <span className="px-2.5 py-0.5 rounded-full bg-pink-100 text-[#FF2E63]">
+                      ▶ Live Preview
+                    </span>
+                    <span className="text-slate-400">How it looks</span>
+                  </div>
+
+                  <h4 className="font-extrabold text-lg sm:text-xl text-slate-800">
+                    {question || "do you love me ??"}
+                  </h4>
+
+                  {/* Two Buttons: Yes and Runaway No */}
+                  <div className="relative py-4 flex items-center justify-center gap-4 min-h-[90px]">
+                    <button
+                      type="button"
+                      onClick={handlePreviewYes}
+                      className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#FF2E63] to-[#FF4D79] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer"
+                    >
+                      {previewYesClicked ? "YAAAY! 💖🥰" : "YES! 💖"}
+                    </button>
+
+                    <motion.button
+                      type="button"
+                      onMouseEnter={handleDodgeHover}
+                      onClick={handleDodgeHover}
+                      animate={previewDodgePos ? { x: previewDodgePos.x, y: previewDodgePos.y } : {}}
+                      transition={{ type: "spring", stiffness: 450, damping: 25 }}
+                      className="px-5 py-2.5 rounded-full bg-slate-50 border border-slate-200 text-slate-700 font-bold text-xs shadow-sm hover:border-pink-300 transition-colors cursor-pointer select-none"
+                    >
+                      {getRunawayLabel()}
+                    </motion.button>
+                  </div>
+
+                  <p className="text-xs text-[#FF2E63] font-semibold">
+                    👆 The &quot;No&quot; button keeps running away!
+                  </p>
+                  <p className="text-[11px] text-slate-500 font-medium">
+                    {recipientName || "My Love"} will have to say &quot;Yes&quot; to continue! 😄
+                  </p>
                 </div>
               </div>
 
-              {/* Secret Passcode */}
-              <div className="bg-white rounded-2xl p-4 border border-rose-100 shadow-sm space-y-2">
+              {/* Bottom Mascot Pill */}
+              <div className="pt-2 flex flex-col items-center">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#FF2E63] to-[#FF537A] text-white flex items-center justify-center shadow-md mb-2">
+                  <Heart className="w-6 h-6 fill-white" />
+                </div>
+                <div className="px-4 py-1.5 rounded-full bg-white border border-pink-100 shadow-md text-xs font-bold text-slate-700">
+                  Pour your heart out...
+                </div>
+              </div>
+
+              {/* Bottom Actions */}
+              <div className="max-w-xl mx-auto space-y-3 pt-2">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Lock className="w-3.5 h-3.5 text-rose-500" />
-                    <span className="text-xs font-bold text-slate-700">Secret Date Lock (PIN)</span>
-                  </div>
-                  <input
-                    type="checkbox"
-                    checked={enablePin}
-                    onChange={(e) => setEnablePin(e.target.checked)}
-                    className="w-4 h-4 rounded text-rose-600 focus:ring-rose-500 cursor-pointer"
-                  />
+                  <button
+                    type="button"
+                    onClick={() => goToStep(2)}
+                    className="px-6 py-3.5 rounded-full border border-pink-200 text-pink-600 bg-white hover:bg-pink-50 font-bold text-sm transition-all flex items-center gap-2 cursor-pointer shadow-sm active:scale-95"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    <span>Back</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => goToStep(4)}
+                    className="px-8 py-3.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-bold text-sm shadow-md shadow-pink-500/25 transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+                  >
+                    <span>Continue</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
                 </div>
-                {enablePin && (
-                  <div className="pt-2">
-                    <input
-                      type="text"
-                      maxLength={6}
-                      value={secretPin}
-                      onChange={(e) => setSecretPin(e.target.value)}
-                      placeholder="e.g. 1402 (Anniversary Date)"
-                      className="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-mono font-bold text-slate-800 outline-none focus:border-rose-500"
-                    />
-                    <p className="text-[10px] text-slate-400 mt-1">
-                      They must enter this secret date to open the surprise!
-                    </p>
-                  </div>
-                )}
+                <p className="text-xs text-slate-400 font-medium text-center">
+                  You can always come back and edit this later
+                </p>
+              </div>
+            </motion.div>
+          )}
+
+          {/* =============================================================== */}
+          {/* STAGE 4: PHOTOS (Image 5: media_1791111636496.png) */}
+          {/* =============================================================== */}
+          {step === 4 && (
+            <motion.div
+              key="step-4"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-8 text-center"
+            >
+              {/* Floating Center Icon */}
+              <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#FF2E63] to-[#FF537A] text-white flex items-center justify-center shadow-lg shadow-pink-500/25 mx-auto">
+                <Camera className="w-7 h-7 text-white" />
               </div>
 
-              <div className="flex items-center gap-2.5 pt-1">
+              {/* Title & Subtitle */}
+              <div className="space-y-1.5">
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
+                  Add your favorite memories
+                </h1>
+                <p className="text-sm text-slate-500 font-medium">
+                  Photos that mean something to you and {recipientName || "My Love"}
+                </p>
+              </div>
+
+              {/* Hidden file input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={handleFileUpload}
+              />
+
+              {/* 3 Photo Upload Cards Grid matching Screenshot 5 */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-xl mx-auto pt-2">
+                {[0, 1, 2].map((idx) => {
+                  const hasPhoto = photos[idx];
+                  return (
+                    <div
+                      key={idx}
+                      className="relative rounded-3xl border-2 border-dashed border-pink-200 bg-[#FFFBFC] p-4 flex flex-col items-center justify-center min-h-[180px] sm:min-h-[210px] hover:border-pink-400 hover:bg-pink-50/40 transition-all overflow-hidden group shadow-2xs"
+                    >
+                      {hasPhoto ? (
+                        <>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={hasPhoto}
+                            alt={`Memory ${idx + 1}`}
+                            className="w-full h-full object-cover rounded-2xl absolute inset-0"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleRemovePhoto(idx)}
+                            className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 hover:bg-black text-white flex items-center justify-center shadow-md transition-colors z-10 cursor-pointer"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="flex flex-col items-center justify-center w-full h-full cursor-pointer"
+                        >
+                          <div className="w-12 h-12 rounded-2xl bg-pink-100/70 text-[#FF2E63] flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <ImagePlus className="w-6 h-6 stroke-[2.2]" />
+                          </div>
+                          <span className="text-xs font-bold text-[#FF2E63] mt-2.5">Add</span>
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-xs text-slate-400 font-medium">
+                  Drag & drop or click to upload photos
+                </p>
+
+                {/* Romantic Sample Photos Button */}
                 <button
                   type="button"
-                  onClick={() => setStep(2)}
-                  className="py-3.5 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer"
+                  onClick={handleAddSamplePhotos}
+                  className="text-xs font-bold text-[#FF2E63] hover:underline cursor-pointer inline-flex items-center gap-1.5"
                 >
-                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Or use sample romantic photos for testing</span>
+                </button>
+              </div>
+
+              {/* Bottom Mascot Pill */}
+              <div className="pt-4 flex flex-col items-center">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#FF2E63] to-[#FF537A] text-white flex items-center justify-center shadow-md mb-2">
+                  <Heart className="w-6 h-6 fill-white" />
+                </div>
+                <div className="px-4 py-1.5 rounded-full bg-white border border-pink-100 shadow-md text-xs font-bold text-slate-700">
+                  Add your favorite memories together!
+                </div>
+              </div>
+
+              {/* Bottom Actions */}
+              <div className="flex items-center justify-between max-w-xl mx-auto pt-6">
+                <button
+                  type="button"
+                  onClick={() => goToStep(3)}
+                  className="px-6 py-3.5 rounded-full border border-pink-200 text-pink-600 bg-white hover:bg-pink-50 font-bold text-sm transition-all flex items-center gap-2 cursor-pointer shadow-sm active:scale-95"
+                >
+                  <ArrowLeft className="w-4 h-4" />
                   <span>Back</span>
                 </button>
+
+                <div className="flex items-center gap-3">
+                  {photos.length === 0 && (
+                    <button
+                      type="button"
+                      onClick={() => goToStep(5)}
+                      className="text-xs font-bold text-[#FF2E63] hover:underline px-3 py-2 cursor-pointer"
+                    >
+                      Skip for now ▷|
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => goToStep(5)}
+                    className="px-8 py-3.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-bold text-sm shadow-md shadow-pink-500/25 transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+                  >
+                    <span>Continue</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* =============================================================== */}
+          {/* STAGE 5: FEATURES (Magical Touches) */}
+          {/* =============================================================== */}
+          {step === 5 && (
+            <motion.div
+              key="step-5"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-6"
+            >
+              {/* Floating Center Icon */}
+              <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#FF2E63] to-[#FF537A] text-white flex items-center justify-center shadow-lg shadow-pink-500/25 mx-auto">
+                <Sparkles className="w-7 h-7 text-white" />
+              </div>
+
+              {/* Title & Subtitle */}
+              <div className="space-y-1.5 text-center">
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
+                  Add magical features
+                </h1>
+                <p className="text-sm text-slate-500 font-medium">
+                  Extra interactive surprises for {recipientName || "My Love"}
+                </p>
+              </div>
+
+              <div className="max-w-xl mx-auto space-y-4 pt-2">
+                {/* 1. Background Music Toggle */}
+                <div className="p-5 rounded-3xl border border-pink-200 bg-white shadow-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-2xl bg-pink-100 text-[#FF2E63] flex items-center justify-center">
+                        <Music className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-extrabold text-slate-800">
+                          Background Soundtrack 🎵
+                        </h4>
+                        <p className="text-xs text-slate-500">
+                          Plays softly in the background when they open the letter
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={toggleAudioPreview}
+                      className="px-3.5 py-1.5 rounded-full border border-pink-200 text-xs font-bold text-[#FF2E63] hover:bg-pink-50 flex items-center gap-1.5 transition-colors cursor-pointer"
+                    >
+                      {isAudioPlaying ? (
+                        <>
+                          <Pause className="w-3.5 h-3.5 fill-current" />
+                          <span>Pause</span>
+                        </>
+                      ) : (
+                        <>
+                          <Play className="w-3.5 h-3.5 fill-current" />
+                          <span>Preview</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        soundFx.playPop();
+                        setBgMusic("romantic-lofi");
+                      }}
+                      className={`p-3 rounded-2xl border text-left text-xs font-bold transition-all cursor-pointer ${
+                        bgMusic === "romantic-lofi"
+                          ? "border-[#FF2E63] bg-pink-50 text-[#FF2E63]"
+                          : "border-slate-200 text-slate-700 bg-white hover:border-pink-200"
+                      }`}
+                    >
+                      <span>Soft Piano & Lo-Fi 🎹</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        soundFx.playPop();
+                        setBgMusic("summer-guitar");
+                      }}
+                      className={`p-3 rounded-2xl border text-left text-xs font-bold transition-all cursor-pointer ${
+                        bgMusic === "summer-guitar"
+                          ? "border-[#FF2E63] bg-pink-50 text-[#FF2E63]"
+                          : "border-slate-200 text-slate-700 bg-white hover:border-pink-200"
+                      }`}
+                    >
+                      <span>Acoustic Sunset Guitar 🎸</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* 2. Anniversary & Love Counter */}
+                <div className="p-5 rounded-3xl border border-pink-200 bg-white shadow-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center">
+                        <Calendar className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-extrabold text-slate-800">
+                          Love Journey Counter ⏳
+                        </h4>
+                        <p className="text-xs text-slate-500">
+                          Shows live days, hours & minutes together
+                        </p>
+                      </div>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={enableAnniversary}
+                      onChange={(e) => setEnableAnniversary(e.target.checked)}
+                      className="w-5 h-5 accent-[#FF2E63] cursor-pointer"
+                    />
+                  </div>
+
+                  {enableAnniversary && (
+                    <div className="pt-1">
+                      <label className="block text-xs font-semibold text-slate-600 mb-1">
+                        When did your story begin? (Anniversary or first date)
+                      </label>
+                      <input
+                        type="date"
+                        value={anniversaryDate}
+                        onChange={(e) => setAnniversaryDate(e.target.value)}
+                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-medium text-slate-700 outline-none focus:border-pink-400"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* 3. Secret PIN Lock */}
+                <div className="p-5 rounded-3xl border border-pink-200 bg-white shadow-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center">
+                        <Lock className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-extrabold text-slate-800">
+                          4-Digit Secret PIN Lock 🔒
+                        </h4>
+                        <p className="text-xs text-slate-500">
+                          100% private. Only they can unlock with the passcode
+                        </p>
+                      </div>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={enablePin}
+                      onChange={(e) => setEnablePin(e.target.checked)}
+                      className="w-5 h-5 accent-[#FF2E63] cursor-pointer"
+                    />
+                  </div>
+
+                  {enablePin && (
+                    <div className="pt-1">
+                      <label className="block text-xs font-semibold text-slate-600 mb-1">
+                        Set 4-Digit Passcode (e.g. your anniversary date or special number)
+                      </label>
+                      <input
+                        type="text"
+                        maxLength={4}
+                        value={secretPin}
+                        onChange={(e) => setSecretPin(e.target.value.replace(/\D/g, ""))}
+                        placeholder="1402"
+                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-slate-800 tracking-widest text-center outline-none focus:border-pink-400"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* 4. Wax Seal & Confetti Toggles */}
+                <div className="p-5 rounded-3xl border border-pink-200 bg-white shadow-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-800">
+                      ✉️ Interactive Wax Seal Opening
+                    </span>
+                    <input
+                      type="checkbox"
+                      checked={enableEnvelope}
+                      onChange={(e) => setEnableEnvelope(e.target.checked)}
+                      className="w-5 h-5 accent-[#FF2E63] cursor-pointer"
+                    />
+                  </div>
+                  <div className="flex items-center justify-between pt-1">
+                    <span className="text-xs font-bold text-slate-800">
+                      💖 Romantic Confetti & Heart Particles
+                    </span>
+                    <input
+                      type="checkbox"
+                      checked={enableConfetti}
+                      onChange={(e) => setEnableConfetti(e.target.checked)}
+                      className="w-5 h-5 accent-[#FF2E63] cursor-pointer"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Mascot Pill */}
+              <div className="pt-4 flex flex-col items-center">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#FF2E63] to-[#FF537A] text-white flex items-center justify-center shadow-md mb-2">
+                  <Heart className="w-6 h-6 fill-white" />
+                </div>
+                <div className="px-4 py-1.5 rounded-full bg-white border border-pink-100 shadow-md text-xs font-bold text-slate-700">
+                  Make it truly unforgettable!
+                </div>
+              </div>
+
+              {/* Bottom Actions */}
+              <div className="flex items-center justify-between max-w-xl mx-auto pt-6">
                 <button
                   type="button"
-                  onClick={handleNextToPreview}
-                  className="flex-1 py-3.5 px-5 rounded-2xl bg-rose-600 hover:bg-rose-700 active:scale-[0.98] text-white font-bold text-sm shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  onClick={() => goToStep(4)}
+                  className="px-6 py-3.5 rounded-full border border-pink-200 text-pink-600 bg-white hover:bg-pink-50 font-bold text-sm transition-all flex items-center gap-2 cursor-pointer shadow-sm active:scale-95"
                 >
-                  <span>Continue to Envelope Preview</span>
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Back</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => goToStep(6)}
+                  className="px-8 py-3.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-bold text-sm shadow-md shadow-pink-500/25 transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+                >
+                  <span>Continue to Preview</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </motion.div>
           )}
 
-          {/* ================================================================= */}
-          {/* STEP 4: ENVELOPE PREVIEW & PAYWALL */}
-          {/* ================================================================= */}
-          {step === 4 && (
+          {/* =============================================================== */}
+          {/* STAGE 6: PREVIEW & LAUNCH / DELIVERY */}
+          {/* =============================================================== */}
+          {step === 6 && (
             <motion.div
-              key="step-4"
-              initial={{ opacity: 0, y: 12 }}
+              key="step-6"
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              className="space-y-5"
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.3 }}
+              className="space-y-8 text-center"
             >
-              <div className="text-center space-y-1">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-600 text-[11px] font-bold">
-                  Step 4 • Interactive Preview &amp; Seal
-                </span>
-                <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-                  Unseal Your Surprise
-                </h2>
-                <p className="text-xs text-slate-500 font-medium">
-                  Tap the wax seal below to test how {recipientName} will experience your website.
+              {/* Floating Center Icon */}
+              <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#FF2E63] to-[#FF537A] text-white flex items-center justify-center shadow-lg shadow-pink-500/25 mx-auto">
+                <Eye className="w-7 h-7 text-white" />
+              </div>
+
+              {/* Title & Subtitle */}
+              <div className="space-y-1.5">
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
+                  {isCreated ? "Your LoveLink is ready!" : "Preview their surprise"}
+                </h1>
+                <p className="text-sm text-slate-500 font-medium">
+                  {isCreated
+                    ? "Share this link or print the QR gift card"
+                    : `See how ${recipientName || "My Love"} will experience their love letter`}
                 </p>
               </div>
 
-              {/* Envelope Preview */}
-              <div className="bg-white rounded-3xl p-5 border border-rose-200 shadow-sm space-y-4">
-                {!isEnvelopeUnsealed ? (
-                  <div className="py-6 flex flex-col items-center justify-center text-center">
-                    <div
-                      onClick={() => {
-                        soundFx.playSuccessChime();
-                        setIsEnvelopeUnsealed(true);
-                      }}
-                      className="cursor-pointer group flex flex-col items-center"
-                    >
-                      <div className="relative w-48 h-32 rounded-2xl bg-gradient-to-b from-rose-100 to-rose-200 border-2 border-rose-300 shadow-md flex items-center justify-center">
-                        <div className="w-14 h-14 rounded-full bg-rose-600 text-white flex items-center justify-center shadow-lg border-2 border-white ring-4 ring-rose-200 group-hover:scale-110 transition-transform">
-                          <Heart className="w-6 h-6 fill-white" />
-                        </div>
-                      </div>
+              {!isCreated ? (
+                /* Pre-launch Preview Card */
+                <div className="max-w-xl mx-auto space-y-6">
+                  {/* Interactive Phone Simulation Frame */}
+                  <div
+                    className={`rounded-[38px] p-6 sm:p-8 border-4 border-slate-800 shadow-2xl text-center space-y-5 relative overflow-hidden ${currentTheme.cardBg}`}
+                  >
+                    {/* Simulated Notch */}
+                    <div className="w-24 h-4 bg-slate-800 rounded-full mx-auto -mt-3 mb-2" />
 
-                      <div className="mt-4 flex items-center gap-2 px-4 py-2 rounded-full bg-rose-50 border border-rose-200 text-rose-600 font-extrabold text-xs shadow-xs animate-pulse">
-                        <Sparkles className="w-3.5 h-3.5" />
-                        <span>Unseal It 💌 (Tap to Open)</span>
-                      </div>
-                      <p className="text-[11px] text-slate-400 mt-1">
-                        Made with love for {recipientName}
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
-                    <div className="flex items-center justify-between pb-2 border-b border-rose-100 text-xs">
-                      <span className="font-bold text-rose-600 flex items-center gap-1">
-                        <Check className="w-3.5 h-3.5 text-emerald-500 stroke-[3]" />
-                        <span>Envelope Unsealed!</span>
+                    {/* Question Header */}
+                    <div className="space-y-1">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-pink-500">
+                        SURPRISE FOR {recipientName.toUpperCase()}
                       </span>
+                      <h3 className="font-extrabold text-xl sm:text-2xl text-slate-800">
+                        {question}
+                      </h3>
+                    </div>
+
+                    {/* Mini Runaway playground inside mockup */}
+                    <div className="py-2 flex items-center justify-center gap-3">
                       <button
                         type="button"
-                        onClick={() => setIsEnvelopeUnsealed(false)}
-                        className="text-[10px] text-slate-400 hover:text-rose-600 font-bold"
+                        onClick={handlePreviewYes}
+                        className="px-5 py-2 rounded-full bg-[#FF2E63] text-white font-extrabold text-xs shadow-sm"
                       >
-                        Reseal
+                        YES! 💖
+                      </button>
+                      <button
+                        type="button"
+                        className="px-4 py-2 rounded-full bg-white border border-slate-200 text-slate-600 text-xs font-bold"
+                      >
+                        Are you sure? 😅
                       </button>
                     </div>
 
-                    <div className="bg-[#FFFBF8] p-4 rounded-2xl border border-rose-100 text-xs space-y-2 font-serif text-slate-700 max-h-36 overflow-y-auto">
-                      <p className="font-bold text-rose-600">Dear {recipientName},</p>
-                      <p className="whitespace-pre-line leading-relaxed">{letterText}</p>
-                      <p className="text-right font-bold text-rose-600">— {senderName} ❤️</p>
+                    {/* Simulated Letter Paper */}
+                    <div className="rounded-2xl bg-white/95 p-5 text-left space-y-2 border border-pink-100 shadow-sm">
+                      <p className="font-bold text-xs text-slate-800">
+                        Dear {recipientName || "My Love"},
+                      </p>
+                      <p className="text-xs text-slate-600 line-clamp-4 leading-relaxed whitespace-pre-line">
+                        {letterText}
+                      </p>
+                      <p className="text-[11px] font-semibold text-[#FF2E63] pt-1">
+                        Always yours, {senderName || "Me"} ❤️
+                      </p>
                     </div>
 
-                    {/* Runaway Button Test */}
-                    <div className="p-3 bg-rose-50/70 border border-rose-100 rounded-2xl text-center space-y-2">
-                      <p className="text-xs font-extrabold text-slate-800">
-                        {occasion === "apology" ? "Maan Jao Na Baby? 🥺" : "Will you be mine forever? 💖"}
-                      </p>
-
-                      <div className="relative min-h-[65px] flex items-center justify-center gap-3">
-                        <button
-                          type="button"
-                          onClick={handlePreviewYes}
-                          className="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-xs active:scale-95 transition-all cursor-pointer"
-                        >
-                          {previewYesAccepted ? "Accepted! 💖" : "YES! 💖"}
-                        </button>
-
-                        <motion.button
-                          type="button"
-                          onMouseEnter={handleDodgeNo}
-                          onTouchStart={handleDodgeNo}
-                          onClick={handleDodgeNo}
-                          animate={previewDodgePos ? { x: previewDodgePos.x, y: previewDodgePos.y } : { x: 0, y: 0 }}
-                          transition={{ type: "spring", stiffness: 350, damping: 20 }}
-                          className="px-4 py-2 rounded-xl bg-white text-slate-500 font-bold text-xs border border-slate-200 cursor-pointer"
-                        >
-                          No 💔
-                        </motion.button>
+                    {/* Photos Preview inside mockup */}
+                    {photos.length > 0 && (
+                      <div className="flex gap-2 overflow-x-auto pb-1 pt-1 justify-center">
+                        {photos.slice(0, 3).map((p, i) => (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            key={i}
+                            src={p}
+                            alt=""
+                            className="w-16 h-16 rounded-xl object-cover border border-white shadow-sm"
+                          />
+                        ))}
                       </div>
+                    )}
 
-                      {previewDodgeCount > 0 && (
-                        <p className="text-[10px] font-bold text-rose-600 animate-pulse">
-                          {previewDodgeCount >= 3 ? "Pakad ke dikhao! 😜 Teleporting away!" : "Dodging! She can only click YES! 🎉"}
-                        </p>
-                      )}
+                    {/* Security or Music Pill */}
+                    <div className="text-[10px] font-bold text-slate-500 flex items-center justify-center gap-2">
+                      {enablePin && <span>🔒 Passcode Protected</span>}
+                      <span>🎵 Soundtrack Included</span>
                     </div>
-                  </motion.div>
-                )}
-              </div>
-
-              {/* Paywall Card */}
-              <div className="bg-white rounded-3xl p-5 border border-rose-200 shadow-sm space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                  <div>
-                    <h3 className="font-extrabold text-slate-900 text-sm">
-                      {recipientName} &amp; {senderName}
-                    </h3>
-                    <p className="text-xs text-rose-600 font-semibold capitalize">{occasion} Story</p>
                   </div>
-                  <div className="text-right">
-                    <span className="text-2xl font-black text-slate-900">₹99</span>
-                    <span className="block text-[10px] text-slate-400 line-through">₹499 (80% OFF)</span>
-                  </div>
-                </div>
 
-                <div className="space-y-2 text-xs text-slate-600">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span><strong>100% Watermark-Free</strong> clean experience</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span><strong>Instant WhatsApp Alert</strong> when she says YES 🎉</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span><strong>1 Year Unlimited Views</strong> on mobile &amp; desktop</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2.5 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => setStep(3)}
-                    className="py-3.5 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer"
-                  >
-                    <ArrowLeft className="w-3.5 h-3.5" />
-                    <span>Back</span>
-                  </button>
-                  <button
-                    type="button"
-                    disabled={isProcessingPay}
-                    onClick={handleExecutePayment}
-                    className="flex-1 py-3.5 px-5 rounded-2xl bg-rose-600 hover:bg-rose-700 active:scale-[0.98] text-white font-extrabold text-sm shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-60"
-                  >
-                    {isProcessingPay ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        <span>Verifying Payment...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>Pay ₹99 &amp; Unlock Live Link</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* ================================================================= */}
-          {/* STEP 5: MULTI-CHANNEL DELIVERY (WHATSAPP, QR, SHARE API, COPY) */}
-          {/* ================================================================= */}
-          {step === 5 && (
-            <motion.div
-              key="step-5"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="space-y-5"
-            >
-              <div className="text-center space-y-1.5 pt-2">
-                <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-2 shadow-sm">
-                  <Check className="w-8 h-8 stroke-[3]" />
-                </div>
-                <h2 className="text-2xl font-black text-slate-900 tracking-tight">
-                  Your Surprise Link is Ready! 🎉
-                </h2>
-                <p className="text-xs text-slate-500 font-medium">
-                  Deliver this secret website to <strong className="text-rose-600">{recipientName}</strong> using any method below:
-                </p>
-              </div>
-
-              {/* Link Container */}
-              <div className="bg-white rounded-3xl p-5 border border-rose-200 shadow-sm space-y-3.5">
-                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                  Official Cryptographic Live Link
-                </label>
-                <div className="flex items-center justify-between p-3 rounded-2xl bg-rose-50/70 border border-rose-100 text-xs font-mono font-bold text-slate-800 break-all select-all">
-                  <span>{liveUrl}</span>
-                </div>
-
-                {/* 4 MULTI-CHANNEL DELIVERY BUTTONS */}
-                <div className="space-y-2 pt-1">
-                  {/* Delivery 1: WhatsApp 1-Tap */}
-                  <button
-                    type="button"
-                    onClick={handleShareWhatsApp}
-                    className="w-full py-3.5 px-4 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
-                  >
-                    <Share2 className="w-4 h-4" />
-                    <span>Send on WhatsApp</span>
-                  </button>
-
-                  {/* Delivery 2: 1-Click Copy */}
-                  <button
-                    type="button"
-                    onClick={handleCopyLink}
-                    className="w-full py-3 px-4 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
-                  >
-                    {copiedLink ? (
-                      <>
-                        <Check className="w-4 h-4 stroke-[3]" />
-                        <span>Link Copied to Clipboard!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-4 h-4" />
-                        <span>Copy Secret Link</span>
-                      </>
-                    )}
-                  </button>
-
-                  {/* Delivery 3: QR Code Card Toggle */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      soundFx.playPop();
-                      setShowQrCard(!showQrCard);
-                    }}
-                    className="w-full py-3 px-4 rounded-2xl bg-white hover:bg-rose-50 text-slate-700 font-bold text-xs border border-slate-200 shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
-                  >
-                    <QrCode className="w-4 h-4 text-rose-600" />
-                    <span>{showQrCard ? "Hide QR Gift Card" : "Generate Printable QR Gift Card"}</span>
-                  </button>
-
-                  {/* Delivery 4: Native Mobile Share Sheet */}
-                  <button
-                    type="button"
-                    onClick={handleNativeShare}
-                    className="w-full py-2.5 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
-                  >
-                    <Smartphone className="w-4 h-4 text-slate-500" />
-                    <span>More Share Options (Instagram, AirDrop, etc.)</span>
-                  </button>
-                </div>
-
-                {/* Printable Aesthetic QR Card Preview */}
-                {showQrCard && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    className="pt-3 border-t border-slate-100 flex flex-col items-center text-center space-y-3"
-                  >
-                    <div className="p-4 rounded-3xl bg-[#FFFBF8] border border-rose-200 shadow-md max-w-xs w-full flex flex-col items-center">
-                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-rose-600 mb-1">
-                        Digital Gift Card
-                      </span>
-                      <h4 className="font-extrabold text-sm text-slate-900 mb-2">
-                        For {recipientName} ❤️
-                      </h4>
-                      <div className="p-2 rounded-2xl bg-white border border-slate-200 shadow-xs mb-2">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
-                            liveUrl
-                          )}`}
-                          alt="QR Code"
-                          className="w-36 h-36 object-contain"
-                        />
+                  {/* Launch / Checkout Banner */}
+                  <div className="p-6 rounded-3xl bg-white border border-pink-200 shadow-md space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="text-left">
+                        <span className="text-xs font-bold uppercase tracking-wider text-[#FF2E63]">
+                          ONE-TIME PAYMENT
+                        </span>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-3xl font-extrabold text-slate-900">₹99</span>
+                          <span className="text-sm text-slate-400 line-through">₹499</span>
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold">
+                            Save 80%
+                          </span>
+                        </div>
                       </div>
-                      <p className="text-[10px] text-slate-500 font-medium leading-tight">
-                        Scan with any phone camera to unseal your surprise.
-                      </p>
-                      <p className="text-[9px] font-serif italic text-slate-400 mt-1">
-                        From {senderName} with all my love
-                      </p>
+                      <div className="text-right text-xs text-slate-500 font-medium">
+                        <span className="block">✓ Lifetime access</span>
+                        <span className="block">✓ Ad-free & private</span>
+                      </div>
                     </div>
 
-                    <a
-                      href={`https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(
-                        liveUrl
-                      )}`}
-                      download={`LoveLink-${recipientName}-QR.png`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold shadow-xs transition-colors"
+                    <button
+                      type="button"
+                      disabled={isProcessingPay}
+                      onClick={handleExecutePayment}
+                      className="w-full py-4 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-base shadow-lg shadow-pink-500/25 transition-all cursor-pointer active:scale-98 flex items-center justify-center gap-2"
                     >
-                      <Download className="w-3.5 h-3.5" />
-                      <span>Download High-Res QR Image</span>
-                    </a>
-                  </motion.div>
-                )}
-              </div>
+                      {isProcessingPay ? (
+                        <>
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <span>Preparing your LoveLink...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Create Your LoveLink Website (₹99)</span>
+                          <ArrowRight className="w-4 h-4" />
+                        </>
+                      )}
+                    </button>
+                  </div>
 
-              {/* Real-Time WhatsApp Alert Guarantee */}
-              <div className="p-3.5 bg-white border border-rose-100 rounded-2xl text-center space-y-1">
-                <span className="text-[11px] font-bold text-emerald-600 flex items-center justify-center gap-1">
-                  <Zap className="w-3.5 h-3.5" /> Real-Time WhatsApp Alert Active
-                </span>
-                <p className="text-[11px] text-slate-400">
-                  You will receive an alert at <strong>{whatsapp}</strong> as soon as {recipientName} opens the link and presses YES!
-                </p>
-              </div>
+                  {/* Back button */}
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => goToStep(5)}
+                      className="px-6 py-3 rounded-full border border-pink-200 text-pink-600 bg-white hover:bg-pink-50 font-bold text-xs transition-all flex items-center gap-2 mx-auto cursor-pointer"
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5" />
+                      <span>Back to features</span>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* Post-Launch Multi-Channel Delivery Dashboard */
+                <div className="max-w-xl mx-auto space-y-6 text-center">
+                  <div className="p-6 rounded-3xl bg-white border border-pink-200 shadow-lg space-y-4">
+                    <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
+                      <Check className="w-7 h-7 stroke-[3]" />
+                    </div>
 
-              {/* View Live Surprise */}
-              <Link
-                href={`/p/${createdSlug || "simran-aman-demo"}`}
-                target="_blank"
-                className="w-full py-3 px-4 rounded-2xl bg-slate-900 hover:bg-black text-white font-bold text-xs flex items-center justify-center gap-2 transition-all"
-              >
-                <ExternalLink className="w-3.5 h-3.5" />
-                <span>Open Live Recipient Surprise Website</span>
-              </Link>
+                    <h2 className="text-xl sm:text-2xl font-extrabold text-slate-800">
+                      Your LoveLink is Live! 💖
+                    </h2>
+
+                    {/* URL Display with Copy */}
+                    <div className="p-3 rounded-2xl bg-pink-50/70 border border-pink-100 flex items-center justify-between gap-2">
+                      <span className="text-xs font-mono font-bold text-slate-700 truncate pl-2">
+                        {siteUrl}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText(siteUrl);
+                          setCopiedLink(true);
+                          soundFx.playPop();
+                          setTimeout(() => setCopiedLink(false), 2500);
+                        }}
+                        className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-pink-100/50 border border-pink-200 text-xs font-bold text-[#FF2E63] shrink-0 transition-colors cursor-pointer"
+                      >
+                        {copiedLink ? "Copied! ✓" : "Copy Link"}
+                      </button>
+                    </div>
+
+                    {/* 4 Multi-Channel Share Buttons */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                      {/* WhatsApp Share */}
+                      <a
+                        href={`https://wa.me/?text=${encodeURIComponent(
+                          `Hey ${recipientName}! ❤️ I made a special website just for you: ${siteUrl}`
+                        )}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="py-3 px-4 rounded-2xl bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all"
+                      >
+                        <MessageCircle className="w-4 h-4 fill-white" />
+                        <span>Send via WhatsApp</span>
+                      </a>
+
+                      {/* View Website */}
+                      <Link
+                        href={`/p/${createdSlug}`}
+                        target="_blank"
+                        className="py-3 px-4 rounded-2xl bg-[#FF2E63] hover:bg-[#E02656] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                        <span>Open Website Now</span>
+                      </Link>
+
+                      {/* Printable QR Card Modal */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          soundFx.playPop();
+                          setShowQrModal(true);
+                        }}
+                        className="py-3 px-4 rounded-2xl bg-white border border-pink-200 hover:bg-pink-50 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+                      >
+                        <Smartphone className="w-4 h-4 text-[#FF2E63]" />
+                        <span>Printable QR Polaroid</span>
+                      </button>
+
+                      {/* Native Web Share */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (navigator.share) {
+                            navigator.share({
+                              title: `A surprise for ${recipientName} ❤️`,
+                              url: siteUrl,
+                            });
+                          } else {
+                            navigator.clipboard.writeText(siteUrl);
+                            setCopiedLink(true);
+                          }
+                        }}
+                        className="py-3 px-4 rounded-2xl bg-white border border-pink-200 hover:bg-pink-50 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+                      >
+                        <Share2 className="w-4 h-4 text-[#FF2E63]" />
+                        <span>Share Sheet</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
       </main>
 
-      <footer className="text-center text-[10px] text-slate-400 font-semibold px-4">
-        © 2026 LoveLink Studio • 100% Confidential &amp; Secure
-      </footer>
+      {/* =================================================================== */}
+      {/* PRINTABLE QR POLAROID MODAL */}
+      {/* =================================================================== */}
+      {showQrModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full text-center space-y-4 shadow-2xl relative">
+            <button
+              type="button"
+              onClick={() => setShowQrModal(false)}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <h3 className="font-extrabold text-lg text-slate-900">
+              Printable Polaroid Gift Card
+            </h3>
+            <p className="text-xs text-slate-500">
+              Print this or save it to slip into a greeting card or gift box!
+            </p>
+
+            {/* Printable Polaroid Card */}
+            <div className="p-6 rounded-2xl bg-[#FFF5F7] border border-pink-200 shadow-md space-y-3">
+              <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#FF2E63] block">
+                FOR {recipientName.toUpperCase()} 💕
+              </span>
+
+              <div className="p-3 bg-white rounded-xl shadow-xs inline-block">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(
+                    siteUrl
+                  )}`}
+                  alt="LoveLink QR Code"
+                  className="w-36 h-36 object-contain mx-auto"
+                />
+              </div>
+
+              <p className="text-xs font-medium text-slate-600">Scan to read your love letter</p>
+              <span className="text-[10px] text-slate-400 font-mono block">{siteUrl}</span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="w-full py-3 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <Download className="w-4 h-4" />
+              <span>Print or Save as PDF</span>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

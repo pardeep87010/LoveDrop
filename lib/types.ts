@@ -21,6 +21,8 @@ export interface LoveSurpriseData {
   reasons: string[]; // 3 heartfelt reasons
   letterContent: string;
   photos: string[];
+  theme?: string; // e.g., "classic", "classic-romance", "first-love", "minimalist"
+  anniversaryDate?: string; // e.g. "2023-02-14"
   passcodeHash?: string; // Salted/hashed 4-digit PIN if enabled
   hasPasscode: boolean;
   dodgeIntensity: DodgeIntensity;
