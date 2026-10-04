@@ -193,59 +193,42 @@ export default function ExperienceTheMagicSection({
                   <LoveSurpriseTemplate
                     isEmbedded={true}
                     onClose={() => setIsPlaying(false)}
+                    onToggleFullscreen={handleToggleFullscreen}
+                    isFullscreen={isFullscreen}
                   />
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
 
-          {/* Player Bottom Control Bar (media_1791134490359.png) */}
-          <div className="bg-white border-t border-slate-100 px-5 sm:px-7 py-3.5 sm:py-4 flex items-center justify-between z-20">
-            {/* Left Info */}
-            <div className="text-left space-y-0.5">
-              <p className="font-extrabold text-slate-900 text-sm sm:text-base leading-tight">
-                Live Interactive Demo
-              </p>
-              <p className="text-xs text-slate-400 font-medium">
-                Tap through the full experience
-              </p>
-            </div>
+          {/* Player Bottom Control Bar (only shown on cover preview, matching media_1791134490359.png) */}
+          {!isPlaying && (
+            <div className="bg-white border-t border-slate-100 px-5 sm:px-7 py-3.5 sm:py-4 flex items-center justify-between z-20">
+              {/* Left Info */}
+              <div className="text-left space-y-0.5">
+                <p className="font-extrabold text-slate-900 text-sm sm:text-base leading-tight">
+                  Live Interactive Demo
+                </p>
+                <p className="text-xs text-slate-400 font-medium">
+                  Tap through the full experience
+                </p>
+              </div>
 
-            {/* Right Controls */}
-            <div className="flex items-center gap-2">
-              {isPlaying && (
+              {/* Right Controls */}
+              <div className="flex items-center gap-2">
                 <button
+                  id="fullscreen-demo-btn"
                   type="button"
-                  onClick={() => setIsPlaying(false)}
-                  className="px-3 py-1.5 rounded-lg border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 text-slate-600 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
-                  title="Return to preview cover"
+                  onClick={handleToggleFullscreen}
+                  className="px-3 sm:px-3.5 py-1.5 rounded-lg border border-pink-200 hover:border-pink-300 bg-white hover:bg-pink-50/60 text-[#FF2E63] text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs active:scale-95"
+                  title="View in Fullscreen"
                 >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Cover</span>
+                  <Maximize2 className="w-3.5 h-3.5 stroke-[2.5]" />
+                  <span>Fullscreen</span>
                 </button>
-              )}
-
-              <button
-                id="fullscreen-demo-btn"
-                type="button"
-                onClick={handleToggleFullscreen}
-                className="px-3 sm:px-3.5 py-1.5 rounded-lg border border-pink-200 hover:border-pink-300 bg-white hover:bg-pink-50/60 text-[#FF2E63] text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs active:scale-95"
-                title={isFullscreen ? "Exit Fullscreen" : "View in Fullscreen"}
-              >
-                {isFullscreen ? (
-                  <>
-                    <Minimize2 className="w-3.5 h-3.5 stroke-[2.5]" />
-                    <span>Exit Fullscreen</span>
-                  </>
-                ) : (
-                  <>
-                    <Maximize2 className="w-3.5 h-3.5 stroke-[2.5]" />
-                    <span>Fullscreen</span>
-                  </>
-                )}
-              </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </section>

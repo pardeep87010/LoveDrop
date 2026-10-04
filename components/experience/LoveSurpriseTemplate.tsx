@@ -12,6 +12,8 @@ import {
   ArrowRight,
   FastForward,
   Check,
+  Maximize2,
+  Minimize2,
 } from "lucide-react";
 import { soundFx } from "@/lib/soundFx";
 import { LoveSurpriseData } from "@/lib/types";
@@ -20,6 +22,8 @@ interface LoveSurpriseTemplateProps {
   data?: Partial<LoveSurpriseData>;
   isEmbedded?: boolean;
   onClose?: () => void;
+  onToggleFullscreen?: () => void;
+  isFullscreen?: boolean;
 }
 
 const DEFAULT_MEMORIES = [
@@ -56,6 +60,8 @@ export default function LoveSurpriseTemplate({
   data,
   isEmbedded = false,
   onClose,
+  onToggleFullscreen,
+  isFullscreen = false,
 }: LoveSurpriseTemplateProps) {
   const recipientName = data?.recipientName || "Sarah";
   const senderName = data?.senderName || "Your Love";
@@ -358,24 +364,38 @@ export default function LoveSurpriseTemplate({
           })}
         </div>
 
-        {/* Top Right Controls: Restart & Close */}
-        <div className="flex items-center gap-2">
+        {/* Top Right Controls: Restart, Fullscreen, Close (media_1791134834458.png) */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <button
             type="button"
             onClick={handleRestart}
             title="Restart experience"
-            className="w-8 h-8 rounded-full bg-white/90 hover:bg-white border border-pink-100 shadow-xs text-slate-500 hover:text-[#FF2E63] flex items-center justify-center transition-all cursor-pointer"
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white hover:bg-pink-50 border border-pink-100/90 shadow-sm text-slate-600 hover:text-[#FF2E63] flex items-center justify-center transition-all cursor-pointer hover:scale-105 active:scale-95"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
+            <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
+          {onToggleFullscreen && (
+            <button
+              type="button"
+              onClick={onToggleFullscreen}
+              title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white hover:bg-pink-50 border border-pink-100/90 shadow-sm text-slate-600 hover:text-[#FF2E63] flex items-center justify-center transition-all cursor-pointer hover:scale-105 active:scale-95"
+            >
+              {isFullscreen ? (
+                <Minimize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
+              ) : (
+                <Maximize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
+              )}
+            </button>
+          )}
           {onClose && (
             <button
               type="button"
               onClick={onClose}
               title="Close"
-              className="w-8 h-8 rounded-full bg-white/90 hover:bg-white border border-pink-100 shadow-xs text-slate-500 hover:text-slate-800 flex items-center justify-center transition-all cursor-pointer"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white hover:bg-pink-50 border border-pink-100/90 shadow-sm text-slate-600 hover:text-slate-800 flex items-center justify-center transition-all cursor-pointer hover:scale-105 active:scale-95"
             >
-              <X className="w-4 h-4" />
+              <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
           )}
         </div>
@@ -387,94 +407,107 @@ export default function LoveSurpriseTemplate({
       <div className="relative z-10 flex-1 flex items-center justify-center my-4 sm:my-6">
         <AnimatePresence mode="wait">
           {/* =========================================================== */}
-          {/* PAGE 1: WELCOME CARD & TYPING INTRO (media_1791131389953.png) */}
+          {/* PAGE 1: WELCOME CARD & TYPING INTRO (media_1791134834458.png) */}
           {/* =========================================================== */}
           {step === 1 && (
             <div key="step-1" className="w-full max-w-md mx-auto">
-              {introPhase !== "card-revealed" ? (
-                /* Full Screen Intro Typewriter */
-                <div className="flex flex-col items-center justify-center py-20 text-center space-y-6">
-                  <div className="min-h-[80px] flex items-center justify-center">
-                    <h1 className="text-4xl sm:text-5xl font-black text-[#FF2E63] tracking-tight">
-                      {typedIntroText}
-                      <span className="inline-block w-1 h-8 sm:h-10 bg-[#FF2E63] ml-1 animate-pulse" />
-                    </h1>
-                  </div>
-
-                  <button
-                    id="skip-intro-btn"
-                    type="button"
-                    onClick={skipIntro}
-                    className="text-xs font-semibold text-slate-400 hover:text-[#FF2E63] flex items-center gap-1.5 transition-colors cursor-pointer pt-4"
-                  >
-                    <span>Skip intro</span>
-                    <FastForward className="w-3.5 h-3.5" />
-                  </button>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+                className="relative bg-white rounded-[28px] sm:rounded-[32px] p-6 sm:p-9 shadow-xl shadow-pink-900/5 border border-pink-100/70 text-center space-y-4"
+              >
+                {/* Top Golden Badge: Special! */}
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-amber-400 to-yellow-400 text-slate-900 font-extrabold text-[11px] shadow-sm flex items-center gap-1.5 whitespace-nowrap">
+                  <span>🎉</span>
+                  <span>Special!</span>
+                  <span>🎉</span>
                 </div>
-              ) : (
-                /* Page 1 Revealed Card */
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.94, y: 16 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
-                  className="relative bg-white rounded-[32px] p-6 sm:p-9 shadow-xl shadow-pink-900/5 border border-pink-100/70 text-center space-y-5"
-                >
-                  {/* Top Golden Badge: Special! */}
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-amber-400 to-yellow-400 text-slate-900 font-extrabold text-[11px] shadow-sm flex items-center gap-1.5">
-                    <span>🎉</span>
-                    <span>Special!</span>
-                    <span>🎉</span>
-                  </div>
 
-                  {/* Sparkling Heart Mascot */}
-                  <div className="pt-2 flex items-center justify-center gap-2">
-                    <span className="text-amber-400 text-sm">✨</span>
-                    <div className="w-12 h-12 rounded-2xl bg-pink-100/70 text-[#FF2E63] flex items-center justify-center shadow-inner">
-                      <Heart className="w-7 h-7 fill-[#FF2E63] text-[#FF2E63]" />
+                {/* Sparkling Heart Mascot */}
+                <div className="pt-2 flex items-center justify-center gap-2">
+                  <span className="text-amber-400 text-base font-bold">✨</span>
+                  <div className="w-12 h-12 rounded-2xl bg-pink-100/80 text-[#FF2E63] flex items-center justify-center shadow-inner">
+                    <Heart className="w-7 h-7 fill-[#FF2E63] text-[#FF2E63]" />
+                  </div>
+                  <span className="text-amber-400 text-base font-bold">✨</span>
+                </div>
+
+                {introPhase !== "card-revealed" ? (
+                  /* ======================================================= */
+                  /* TYPEWRITER PHASE INSIDE WHITE CARD (media_1791134834458) */
+                  /* ======================================================= */
+                  <div className="py-4 space-y-3">
+                    <div className="min-h-[50px] flex items-center justify-center">
+                      <h1 className="text-3xl sm:text-4xl font-black text-[#FF2E63] tracking-tight">
+                        {typedIntroText}
+                        <span className="inline-block w-0.5 sm:w-1 h-7 sm:h-8 bg-[#FF2E63] ml-1 animate-pulse" />
+                      </h1>
                     </div>
-                    <span className="text-amber-400 text-sm">✨</span>
-                  </div>
 
-                  {/* Title & Mini Hearts */}
-                  <div className="space-y-1.5">
-                    <h1 className="text-2xl sm:text-3xl font-black text-[#FF2E63] tracking-tight">
-                      Hello, {recipientName}
-                    </h1>
-                    <div className="flex items-center justify-center gap-1.5 text-xs">
-                      <span>💕</span>
-                      <span>💖</span>
-                      <span>💗</span>
-                      <span>💖</span>
-                      <span>💕</span>
+                    <div>
+                      <button
+                        id="skip-intro-btn"
+                        type="button"
+                        onClick={skipIntro}
+                        className="text-xs font-semibold text-slate-400 hover:text-[#FF2E63] inline-flex items-center gap-1 transition-colors cursor-pointer pt-2"
+                      >
+                        <span>Skip intro</span>
+                        <FastForward className="w-3 h-3" />
+                      </button>
                     </div>
                   </div>
-
-                  {/* Body Paragraph */}
-                  <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed max-w-xs mx-auto">
-                    I&apos;ve been thinking about us a lot lately, and I wanted to create something
-                    special just for you. This is my way of showing you how much you mean to me.
-                  </p>
-
-                  {/* Subdued Prompt Pill Box */}
-                  <div className="py-2.5 px-4 rounded-xl bg-pink-50/50 border border-pink-100/60 text-xs font-medium text-slate-400 italic">
-                    Let&apos;s begin...
-                  </div>
-
-                  {/* Let's Go Button */}
-                  <button
-                    id="lets-go-btn"
-                    type="button"
-                    onClick={() => {
-                      soundFx.playPop();
-                      setStep(2);
-                    }}
-                    className="w-full sm:w-auto px-10 py-3.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2 mx-auto"
+                ) : (
+                  /* ======================================================= */
+                  /* REVEALED CARD DETAILS & LET'S GO BUTTON                 */
+                  /* ======================================================= */
+                  <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35 }}
+                    className="space-y-4 pt-1"
                   >
-                    <span>Let&apos;s Go</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </motion.div>
-              )}
+                    {/* Title & Mini Hearts */}
+                    <div className="space-y-1.5">
+                      <h1 className="text-2xl sm:text-3xl font-black text-[#FF2E63] tracking-tight">
+                        Hello, {recipientName}
+                      </h1>
+                      <div className="flex items-center justify-center gap-1.5 text-xs">
+                        <span>💕</span>
+                        <span>💖</span>
+                        <span>💗</span>
+                        <span>💖</span>
+                        <span>💕</span>
+                      </div>
+                    </div>
+
+                    {/* Body Paragraph */}
+                    <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed max-w-xs mx-auto">
+                      I&apos;ve been thinking about us a lot lately, and I wanted to create something
+                      special just for you. This is my way of showing you how much you mean to me.
+                    </p>
+
+                    {/* Subdued Prompt Pill Box */}
+                    <div className="py-2.5 px-4 rounded-xl bg-pink-50/50 border border-pink-100/60 text-xs font-medium text-slate-400 italic">
+                      Let&apos;s begin...
+                    </div>
+
+                    {/* Let's Go Button */}
+                    <button
+                      id="lets-go-btn"
+                      type="button"
+                      onClick={() => {
+                        soundFx.playPop();
+                        setStep(2);
+                      }}
+                      className="w-full sm:w-auto px-10 py-3.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2 mx-auto"
+                    >
+                      <span>Let&apos;s Go</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </motion.div>
+                )}
+              </motion.div>
             </div>
           )}
 
@@ -883,8 +916,8 @@ export default function LoveSurpriseTemplate({
       {/* =============================================================== */}
       {/* BOTTOM FOOTER: CURRENT STEP INDICATOR (e.g. "1 / 15") */}
       {/* =============================================================== */}
-      <div className="relative z-10 w-full flex items-center justify-end max-w-2xl mx-auto pt-2">
-        <span className="text-[11px] font-bold text-pink-400 bg-white/80 px-2.5 py-0.5 rounded-full border border-pink-100 shadow-2xs">
+      <div className="absolute bottom-3 sm:bottom-4 right-4 sm:right-6 z-10 pointer-events-none">
+        <span className="text-[11px] font-bold text-pink-400 bg-white/90 px-2.5 py-0.5 rounded-full border border-pink-100 shadow-2xs">
           {step} / 15
         </span>
       </div>
