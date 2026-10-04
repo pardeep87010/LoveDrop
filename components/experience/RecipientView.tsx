@@ -26,7 +26,48 @@ interface RecipientViewProps {
   data: LoveSurpriseData;
 }
 
+const THEME_STYLES: Record<string, { bg: string; btn: string; accent: string; badge: string }> = {
+  classic: {
+    bg: "bg-[#FFF0F3]",
+    btn: "bg-[#FF2E63] hover:bg-[#E02656]",
+    accent: "text-[#FF2E63]",
+    badge: "bg-pink-50 text-[#FF2E63] border-pink-200",
+  },
+  "classic-romance": {
+    bg: "bg-[#FDE2E6]",
+    btn: "bg-rose-600 hover:bg-rose-700",
+    accent: "text-rose-600",
+    badge: "bg-rose-50 text-rose-600 border-rose-200",
+  },
+  "first-love": {
+    bg: "bg-[#E8F8F5]",
+    btn: "bg-emerald-600 hover:bg-emerald-700",
+    accent: "text-emerald-600",
+    badge: "bg-emerald-50 text-emerald-600 border-emerald-200",
+  },
+  "minimalist-love": {
+    bg: "bg-[#F0F3FF]",
+    btn: "bg-indigo-600 hover:bg-indigo-700",
+    accent: "text-indigo-600",
+    badge: "bg-indigo-50 text-indigo-600 border-indigo-200",
+  },
+  "golden-hour": {
+    bg: "bg-[#FFF8E7]",
+    btn: "bg-amber-600 hover:bg-amber-700",
+    accent: "text-amber-600",
+    badge: "bg-amber-50 text-amber-600 border-amber-200",
+  },
+  "midnight-galaxy": {
+    bg: "bg-[#1A1D36]",
+    btn: "bg-purple-600 hover:bg-purple-700",
+    accent: "text-purple-400",
+    badge: "bg-purple-900/50 text-purple-300 border-purple-800",
+  },
+};
+
 export default function RecipientView({ data }: RecipientViewProps) {
+  const activeTheme = THEME_STYLES[data.theme || "classic"] || THEME_STYLES.classic;
+
   // Passcode Gate State
   const [isUnlocked, setIsUnlocked] = useState(!data.hasPasscode);
   const [enteredPin, setEnteredPin] = useState("");
@@ -99,7 +140,7 @@ export default function RecipientView({ data }: RecipientViewProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-slate-900 font-sans selection:bg-rose-100 selection:text-rose-700 flex flex-col justify-between items-center py-6 px-4 relative overflow-hidden">
+    <div className={`min-h-screen ${activeTheme.bg} text-slate-900 font-sans selection:bg-rose-100 selection:text-rose-700 flex flex-col justify-between items-center py-6 px-4 relative overflow-hidden transition-colors duration-500`}>
       {/* Background Floating Hearts */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <motion.div
