@@ -60,7 +60,7 @@ const NINE_REASONS = [
 ];
 
 // Page 6: Our Story Milestones (media_1791139908028.png)
-const OUR_STORY_MILESTONES = [
+const DEFAULT_STORY_MILESTONES = [
   {
     icon: "☕",
     date: "2023 • June",
@@ -88,7 +88,7 @@ const OUR_STORY_MILESTONES = [
 ];
 
 // Page 7: Love Quiz Questions (media_1791140007486.png & media_1791140043616.png)
-const QUIZ_QUESTIONS = [
+const DEFAULT_QUIZ_QUESTIONS = [
   {
     id: 1,
     question: "What's my favorite food?",
@@ -104,7 +104,7 @@ const QUIZ_QUESTIONS = [
 ];
 
 // Page 8: Fortune Cookie Quotes (media_1791140088198.png)
-const FORTUNE_QUOTES = [
+const DEFAULT_FORTUNE_QUOTES = [
   "A lifetime of happiness awaits you two",
   "Your love story is just beginning",
   "Every moment together is a treasure",
@@ -130,6 +130,45 @@ export default function LoveSurpriseTemplate({
 
   // Step state (1 to 9 complete experience)
   const [step, setStep] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9>(1);
+
+  // Dynamic Data & Enabled Pages from Creator
+  const enabledPages = data?.enabledPages || {
+    page2_question: true,
+    page3_letter: true,
+    page4_photos: true,
+    page5_reasons: true,
+    page6_story: true,
+    page7_quiz: true,
+    page8_fortunes: true,
+  };
+
+  const getNextStep = (current: number): 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 => {
+    const pageKeys: Record<number, string> = {
+      2: "page2_question",
+      3: "page3_letter",
+      4: "page4_photos",
+      5: "page5_reasons",
+      6: "page6_story",
+      7: "page7_quiz",
+      8: "page8_fortunes",
+    };
+
+    for (let s = current + 1; s <= 9; s++) {
+      if (s === 9) return 9;
+      const key = pageKeys[s];
+      if (!key || enabledPages[key] !== false) {
+        return s as any;
+      }
+    }
+    return 9;
+  };
+
+  const dynamicReasons = data?.nineReasons && data.nineReasons.length > 0 ? data.nineReasons : NINE_REASONS;
+  const dynamicMilestones = data?.storyMilestones && data.storyMilestones.length > 0 ? data.storyMilestones : DEFAULT_STORY_MILESTONES;
+  const dynamicQuiz = data?.quizList && data.quizList.length > 0 ? data.quizList : DEFAULT_QUIZ_QUESTIONS;
+  const dynamicFortunes = data?.fortuneQuotes && data.fortuneQuotes.length > 0 ? data.fortuneQuotes : DEFAULT_FORTUNE_QUOTES;
+  const customButtonLabel = data?.buttonText || "Let's Go";
+  const customYesLabel = data?.yesButtonText || "YES! ❤️";
 
   // Page 6: Our Story Milestone State
   const [storyMilestoneIdx, setStoryMilestoneIdx] = useState(0);
@@ -278,7 +317,7 @@ export default function LoveSurpriseTemplate({
       colors: ["#FF2E63", "#FF6B8B", "#FFD166", "#FF007A"],
     });
     setStep3SubStep("transition");
-    setStep(3);
+    setStep(getNextStep(2));
   };
 
   // -------------------------------------------------------------
@@ -324,12 +363,14 @@ export default function LoveSurpriseTemplate({
   // PAGE 4: PHOTO MEMORIES CAROUSEL
   // -------------------------------------------------------------
   const memoryPhotos =
-    data?.photos && data.photos.length > 0
-      ? data.photos.map((p, idx) => ({
-          image: p,
-          caption: DEFAULT_MEMORIES[idx % DEFAULT_MEMORIES.length].caption,
-        }))
-      : DEFAULT_MEMORIES;
+    data?.photoMemories && data.photoMemories.length > 0
+      ? data.photoMemories
+      : (data?.photos && data.photos.length > 0
+          ? data.photos.map((p, idx) => ({
+              image: p,
+              caption: DEFAULT_MEMORIES[idx % DEFAULT_MEMORIES.length].caption,
+            }))
+          : DEFAULT_MEMORIES);
 
   const [currentPhotoIdx, setCurrentPhotoIdx] = useState(0);
 
@@ -374,7 +415,7 @@ export default function LoveSurpriseTemplate({
     setQuizSelectedOption(opt);
     setQuizIsLocked(true);
 
-    const isCorrect = opt === QUIZ_QUESTIONS[quizQuestionIdx].correct;
+    const isCorrect = opt === dynamicQuiz[quizQuestionIdx].correct;
     if (isCorrect) {
       soundFx.playSuccessChime();
       setQuizScore((prev) => prev + 1);
@@ -383,7 +424,7 @@ export default function LoveSurpriseTemplate({
     }
 
     setTimeout(() => {
-      if (quizQuestionIdx < QUIZ_QUESTIONS.length - 1) {
+      if (quizQuestionIdx < dynamicQuiz.length - 1) {
         setQuizQuestionIdx((prev) => prev + 1);
         setQuizSelectedOption(null);
         setQuizIsLocked(false);
@@ -401,7 +442,7 @@ export default function LoveSurpriseTemplate({
     if (!openedCookies.includes(idx)) {
       setOpenedCookies((prev) => [...prev, idx]);
     }
-    setActiveCookieQuote(FORTUNE_QUOTES[idx]);
+    setActiveCookieQuote(dynamicFortunes[idx]);
     confetti({
       particleCount: 25,
       spread: 50,
@@ -646,7 +687,7 @@ export default function LoveSurpriseTemplate({
                       type="button"
                       onClick={() => {
                         soundFx.playPop();
-                        setStep(2);
+                        setStep(getNextStep(1));
                       }}
                       className="w-full sm:w-auto px-10 py-3.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2 mx-auto"
                     >
@@ -825,7 +866,7 @@ export default function LoveSurpriseTemplate({
                   type="button"
                   onClick={() => {
                     soundFx.playPop();
-                    setStep(4);
+                    setStep(getNextStep(3));
                   }}
                   className="px-10 py-3.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
                 >
@@ -919,7 +960,7 @@ export default function LoveSurpriseTemplate({
                   type="button"
                   onClick={() => {
                     soundFx.playPop();
-                    setStep(5);
+                    setStep(getNextStep(4));
                   }}
                   className="px-9 py-3.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
                 >
@@ -961,7 +1002,7 @@ export default function LoveSurpriseTemplate({
 
               {/* 3x3 Grid of 9 3D Flip Cards */}
               <div className="grid grid-cols-3 gap-2.5 sm:gap-3 max-w-md mx-auto pt-1">
-                {NINE_REASONS.map((item) => {
+                {dynamicReasons.map((item) => {
                   const isFlipped = revealedReasons.includes(item.id);
 
                   return (
@@ -1054,7 +1095,7 @@ export default function LoveSurpriseTemplate({
                         origin: { y: 0.7 },
                         colors: ["#FF2E63", "#FF6B8B"],
                       });
-                      setStep(6);
+                      setStep(getNextStep(5));
                     }}
                     className="px-9 py-3.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
                   >
@@ -1098,10 +1139,10 @@ export default function LoveSurpriseTemplate({
                 <div
                   className="absolute left-6 top-1/2 -translate-y-1/2 h-0.5 bg-[#FF2E63] transition-all duration-300"
                   style={{
-                    width: `${(storyMilestoneIdx / (OUR_STORY_MILESTONES.length - 1)) * 82}%`,
+                    width: `${(storyMilestoneIdx / (dynamicMilestones.length - 1)) * 82}%`,
                   }}
                 />
-                {OUR_STORY_MILESTONES.map((_, idx) => {
+                {dynamicMilestones.map((_: any, idx: number) => {
                   const isCurrent = idx === storyMilestoneIdx;
                   const isPast = idx < storyMilestoneIdx;
                   return (
@@ -1135,21 +1176,21 @@ export default function LoveSurpriseTemplate({
               >
                 {/* Milestone Icon */}
                 <div className="w-16 h-16 rounded-full bg-pink-50 border border-pink-100 flex items-center justify-center text-3xl shadow-inner">
-                  {OUR_STORY_MILESTONES[storyMilestoneIdx].icon}
+                  {dynamicMilestones[storyMilestoneIdx].icon}
                 </div>
 
                 {/* Date Badge */}
                 <span className="px-3.5 py-1 rounded-full bg-pink-100/70 text-[#FF2E63] text-xs font-bold tracking-wide">
-                  {OUR_STORY_MILESTONES[storyMilestoneIdx].date}
+                  {dynamicMilestones[storyMilestoneIdx].date}
                 </span>
 
                 {/* Title & Description */}
                 <div className="space-y-1.5 pt-1">
                   <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                    {OUR_STORY_MILESTONES[storyMilestoneIdx].title}
+                    {dynamicMilestones[storyMilestoneIdx].title}
                   </h3>
                   <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed max-w-xs">
-                    {OUR_STORY_MILESTONES[storyMilestoneIdx].description}
+                    {dynamicMilestones[storyMilestoneIdx].description}
                   </p>
                 </div>
               </motion.div>
@@ -1172,7 +1213,7 @@ export default function LoveSurpriseTemplate({
                   &lt; Previous
                 </button>
 
-                {storyMilestoneIdx < OUR_STORY_MILESTONES.length - 1 ? (
+                {storyMilestoneIdx < dynamicMilestones.length - 1 ? (
                   <button
                     id="story-next-btn"
                     type="button"
@@ -1196,7 +1237,7 @@ export default function LoveSurpriseTemplate({
                         origin: { y: 0.6 },
                         colors: ["#FF2E63", "#FF6B8B"],
                       });
-                      setStep(7);
+                      setStep(getNextStep(6));
                     }}
                     className="px-6 py-2.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white text-xs font-extrabold shadow-md shadow-pink-500/20 cursor-pointer active:scale-95 transition-all inline-flex items-center gap-1.5"
                   >
@@ -1224,18 +1265,18 @@ export default function LoveSurpriseTemplate({
                 <div className="w-full bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-xl shadow-pink-950/5 border border-pink-100/70 flex flex-col items-center text-center space-y-5">
                   {/* Question Counter */}
                   <span className="text-xs font-bold text-pink-500 tracking-wide uppercase">
-                    Question {quizQuestionIdx + 1} of {QUIZ_QUESTIONS.length}
+                    Question {quizQuestionIdx + 1} of {dynamicQuiz.length}
                   </span>
 
                   {/* Question Title */}
                   <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-snug">
-                    {QUIZ_QUESTIONS[quizQuestionIdx].question}
+                    {dynamicQuiz[quizQuestionIdx].question}
                   </h3>
 
                   {/* Options List */}
                   <div className="w-full space-y-2.5 pt-1">
-                    {QUIZ_QUESTIONS[quizQuestionIdx].options.map((opt) => {
-                      const currentQ = QUIZ_QUESTIONS[quizQuestionIdx];
+                    {dynamicQuiz[quizQuestionIdx].options.map((opt: string) => {
+                      const currentQ = dynamicQuiz[quizQuestionIdx];
                       const isSelected = quizSelectedOption === opt;
                       const isCorrect = opt === currentQ.correct;
 
@@ -1301,13 +1342,13 @@ export default function LoveSurpriseTemplate({
 
                   {/* Big Score */}
                   <div className="text-4xl font-black text-[#FF2E63] tracking-tight">
-                    {quizScore}/{QUIZ_QUESTIONS.length}
+                    {quizScore}/{dynamicQuiz.length}
                   </div>
 
                   {/* Subtitle */}
                   <p className="text-sm font-medium text-slate-600 flex items-center justify-center gap-1.5">
                     <span>
-                      {quizScore === QUIZ_QUESTIONS.length
+                      {quizScore === dynamicQuiz.length
                         ? "You know me so well!"
                         : quizScore === 1
                         ? "Let's spend more time together!"
@@ -1329,7 +1370,7 @@ export default function LoveSurpriseTemplate({
                           origin: { y: 0.6 },
                           colors: ["#FF2E63", "#FF6B8B"],
                         });
-                        setStep(8);
+                        setStep(getNextStep(7));
                       }}
                       className="px-8 py-3 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
                     >
@@ -1493,7 +1534,7 @@ export default function LoveSurpriseTemplate({
                         origin: { y: 0.6 },
                         colors: ["#FF2E63", "#FFD166"],
                       });
-                      setStep(9);
+                      setStep(getNextStep(8));
                     }}
                     className="px-8 py-3 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
                   >
@@ -1539,7 +1580,7 @@ export default function LoveSurpriseTemplate({
 
               {/* 9 Reason Tags Cloud (3 Rows) */}
               <div className="flex flex-wrap items-center justify-center gap-1.5 max-w-sm mx-auto pt-0.5">
-                {NINE_REASONS.map((reason) => (
+                {dynamicReasons.map((reason) => (
                   <span
                     key={reason.id}
                     className="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-white/90 border border-pink-200/80 text-[10px] sm:text-xs font-semibold text-slate-700 shadow-2xs inline-flex items-center gap-1"

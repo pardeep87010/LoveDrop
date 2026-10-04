@@ -35,6 +35,20 @@ export interface LoveSurpriseData {
   scratchCards?: string[];
   wheelItems?: string[];
   bucketList?: string[];
+  // Page-by-Page Template Fields (Pages 1 to 8)
+  enabledPages?: Record<string, boolean>;
+  typingIntroWords?: string[];
+  buttonText?: string;
+  yesButtonText?: string;
+  dodgePhrases?: string[];
+  letterTitle?: string;
+  waxSealEmoji?: string;
+  photoMemories?: { image: string; caption: string }[];
+  nineReasons?: { id: number; emoji: string; title: string }[];
+  storyMilestones?: { icon: string; date: string; title: string; description: string }[];
+  quizList?: { id: number; question: string; options: string[]; correct: string }[];
+  fortuneQuotes?: string[];
+  pricingPlan?: "month" | "year" | "lifetime";
   passcodeHash?: string; // Salted/hashed 4-digit PIN if enabled
   hasPasscode: boolean;
   dodgeIntensity: DodgeIntensity;
