@@ -364,7 +364,7 @@ export default function LoveSurpriseTemplate({
           })}
         </div>
 
-        {/* Top Right Controls: Restart, Fullscreen, Close (media_1791134834458.png) */}
+        {/* Top Right Controls: Restart & Close (only 2 buttons, exactly matching media_1791135826504.png) */}
         <div className="flex items-center gap-1.5 sm:gap-2">
           <button
             type="button"
@@ -374,20 +374,6 @@ export default function LoveSurpriseTemplate({
           >
             <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
-          {onToggleFullscreen && (
-            <button
-              type="button"
-              onClick={onToggleFullscreen}
-              title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white hover:bg-pink-50 border border-pink-100/90 shadow-sm text-slate-600 hover:text-[#FF2E63] flex items-center justify-center transition-all cursor-pointer hover:scale-105 active:scale-95"
-            >
-              {isFullscreen ? (
-                <Minimize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
-              ) : (
-                <Maximize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
-              )}
-            </button>
-          )}
           {onClose && (
             <button
               type="button"
