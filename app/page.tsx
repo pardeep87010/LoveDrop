@@ -257,7 +257,11 @@ export default function HomePage() {
         {/* =================================================================== */}
         {/* 1. HIGH-CONVERSION HERO SECTION (IN EYE-CATCHING 2-COLUMN GRID) */}
         {/* =================================================================== */}
-        <section className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 pt-10 sm:pt-14 pb-16 sm:pb-20">
+        <div className="w-full relative overflow-hidden bg-gradient-to-b from-[#FDE2E6] via-[#FFF0F3] to-[#FDFBF7]">
+          {/* Ambient romantic radial glow matching reference image */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[350px] bg-gradient-to-b from-[#FEC6CF]/60 via-[#FEDAE0]/30 to-transparent blur-3xl pointer-events-none -z-0" />
+
+          <section className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 pt-10 sm:pt-14 pb-16 sm:pb-20 z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
             {/* --------------------------------------------------------------- */}
             {/* LEFT COLUMN: PUNCHY COPY & HIGH-IMPACT CTAS */}
@@ -334,6 +338,7 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+        </div>
 
         {/* =================================================================== */}
         {/* 2. PROOF BAR / METRIC HIGHLIGHTS */}
@@ -1070,31 +1075,12 @@ export default function HomePage() {
         {/* 9. GRAND FINALE HIGH-CONVERSION CTA (VIBRANT CORAL-ROSE BANNER) */}
         {/* =================================================================== */}
         <section className="w-full py-16 sm:py-24 px-4 sm:px-6 bg-[#FDFBF7]">
-          <div className="max-w-4xl mx-auto p-8 sm:p-14 rounded-[38px] bg-[#FF5369] text-white text-center space-y-6 shadow-2xl shadow-rose-500/25 relative overflow-hidden">
-            {/* Background subtle decorative hearts */}
-            <div className="absolute top-8 left-10 text-white/20 text-2xl select-none pointer-events-none">❤️</div>
-            <div className="absolute top-20 right-14 text-white/20 text-3xl select-none pointer-events-none">💖</div>
-            <div className="absolute bottom-10 left-16 text-white/20 text-xl select-none pointer-events-none">✨</div>
-            <div className="absolute bottom-8 right-20 text-white/20 text-2xl select-none pointer-events-none">❤️</div>
-
-            {/* 3D Glossy Floating Heart Balloon with Concentric Circles */}
-            <div className="relative mx-auto w-24 h-24 flex items-center justify-center">
-              <div className="absolute -inset-4 rounded-full border border-white/20 bg-white/5" />
-              <div className="absolute -inset-8 rounded-full border border-white/10" />
-              <motion.div
-                animate={{ y: [0, -6, 0] }}
-                transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-                className="relative z-10 w-16 h-16 rounded-full bg-white/20 backdrop-blur-md border border-white/40 shadow-xl flex items-center justify-center"
-              >
-                <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-rose-600 via-rose-500 to-pink-300 flex items-center justify-center shadow-lg relative">
-                  <div className="absolute top-1.5 left-2 w-3 h-1.5 rounded-full bg-white/70 blur-[0.4px] -rotate-45" />
-                  <Heart className="w-6 h-6 fill-white text-white drop-shadow-sm" />
-                </div>
-                {/* Knot and string */}
-                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-rose-700 rounded-full" />
-                <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-0.5 h-2 bg-white/50" />
-              </motion.div>
-            </div>
+          <div
+            className="max-w-4xl mx-auto p-8 sm:p-14 rounded-[38px] text-white text-center space-y-6 shadow-2xl shadow-rose-500/25 relative overflow-hidden bg-cover bg-top bg-[#FF5369]"
+            style={{ backgroundImage: "url('/images/grand-cta-bg.jpg')" }}
+          >
+            {/* Top spacing to display the 3D heart balloon baked into the background image */}
+            <div className="h-20 sm:h-28 pointer-events-none" />
 
             {/* Headline matching image */}
             <h2 className="font-extrabold text-3xl sm:text-5xl text-white tracking-tight leading-[1.15] max-w-2xl mx-auto">

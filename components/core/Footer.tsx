@@ -4,8 +4,11 @@ import { Heart, ShieldCheck, Zap, Lock } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-white border-t border-rose-100/80 pt-14 pb-10 text-slate-600 font-sans">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+    <footer className="w-full bg-gradient-to-b from-[#FDFBF7] via-[#FFF0F3] to-[#FDE2E6] border-t border-rose-200/80 pt-14 pb-10 text-slate-600 font-sans relative overflow-hidden">
+      {/* Ambient romantic blush glow matching Hero section */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[900px] h-[250px] bg-gradient-to-t from-[#FEC6CF]/50 via-[#FEDAE0]/20 to-transparent blur-3xl pointer-events-none -z-0" />
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-10 border-b border-rose-100/60">
           {/* Col 1: Brand */}
           <div className="md:col-span-1 space-y-3">
