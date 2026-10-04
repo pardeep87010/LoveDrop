@@ -41,6 +41,7 @@ import { soundFx } from "@/lib/soundFx";
 import { LoveSurpriseData, OccasionType, DodgeIntensity, AudioTrackId } from "@/lib/types";
 import { generateSecureSlug, hashPasscode, sanitizeInput } from "@/lib/security";
 import { saveSurpriseData } from "@/lib/storage";
+import { usePricing } from "@/lib/pricing";
 
 interface CreatorWizardProps {
   initialOccasion?: OccasionType;
@@ -262,6 +263,10 @@ export default function CreatorWizard({
   initialOccasion = "proposal",
   initialTheme = "classic",
 }: CreatorWizardProps) {
+  const { region, setRegion, plans } = usePricing();
+  const [selectedPlanId, setSelectedPlanId] = useState<"month" | "year" | "lifetime">("year");
+  const currentPlan = plans.find((p) => p.id === selectedPlanId) || plans[1] || plans[0];
+
   // Step 1 to 6
   const [step, setStep] = useState<1 | 2 | 3 | 4 | 5 | 6>(1);
 
@@ -583,6 +588,31 @@ export default function CreatorWizard({
       {/* TOP PROGRESS NAVIGATION BAR (Matching media_1791116072759.png) */}
       {/* =================================================================== */}
       <header className="w-full pt-4 sm:pt-6 pb-2 px-4">
+        {/* Navigation Bar: Back & Close Buttons */}
+        <div className="max-w-xl mx-auto mb-3 flex items-center justify-between">
+          <Link
+            href="/"
+            onClick={() => soundFx.playPop()}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/90 hover:bg-white text-slate-700 hover:text-slate-900 border border-pink-200 text-xs font-bold transition-all shadow-xs hover:shadow-sm active:scale-95 cursor-pointer"
+          >
+            <ArrowLeft className="w-3.5 h-3.5 text-[#FF2E63]" />
+            <span>Back</span>
+          </Link>
+
+          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            Step {step} of 6
+          </span>
+
+          <Link
+            href="/"
+            onClick={() => soundFx.playPop()}
+            title="Close and return to landing page"
+            className="w-8 h-8 rounded-full bg-white/90 hover:bg-white text-slate-400 hover:text-slate-700 border border-pink-200 flex items-center justify-center transition-all shadow-xs hover:shadow-sm active:scale-95 cursor-pointer"
+          >
+            <X className="w-4 h-4" />
+          </Link>
+        </div>
+
         <div className="max-w-xl mx-auto space-y-2.5">
           {/* Progress Track */}
           <div className="w-full bg-[#FCE9F4] h-1.5 rounded-full overflow-hidden relative">
@@ -1691,7 +1721,79 @@ export default function CreatorWizard({
 
               {!isCreated ? (
                 <div className="max-w-xl mx-auto space-y-6">
-                  {/* HERO PRICING CARD MATCHING SCREENSHOT 3 */}
+                  {/* Region switcher & Plan selector */}
+                  <div className="flex items-center justify-between pb-1">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                      Select Access Duration:
+                    </span>
+                    <div className="inline-flex items-center p-0.5 rounded-full bg-pink-100/70 border border-pink-200 text-[11px] font-bold">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          soundFx.playPop();
+                          setRegion("IN");
+                        }}
+                        className={`px-2.5 py-1 rounded-full transition-all cursor-pointer ${
+                          region === "IN"
+                            ? "bg-white text-pink-600 shadow-2xs font-extrabold"
+                            : "text-slate-500 hover:text-slate-800"
+                        }`}
+                      >
+                        🇮🇳 INR (₹)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          soundFx.playPop();
+                          setRegion("GLOBAL");
+                        }}
+                        className={`px-2.5 py-1 rounded-full transition-all cursor-pointer ${
+                          region === "GLOBAL"
+                            ? "bg-white text-pink-600 shadow-2xs font-extrabold"
+                            : "text-slate-500 hover:text-slate-800"
+                        }`}
+                      >
+                        🌐 USD ($)
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 3 Tier Selector Buttons */}
+                  <div className="grid grid-cols-3 gap-2.5">
+                    {plans.map((p) => {
+                      const isSelected = selectedPlanId === p.id;
+                      return (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => {
+                            soundFx.playPop();
+                            setSelectedPlanId(p.id);
+                          }}
+                          className={`p-3 rounded-2xl border text-center transition-all cursor-pointer relative flex flex-col justify-between ${
+                            isSelected
+                              ? "bg-white border-[#FF2E63] shadow-md ring-2 ring-[#FF2E63]/30 scale-[1.02]"
+                              : "bg-white/70 border-pink-100 hover:border-pink-300 hover:bg-white"
+                          }`}
+                        >
+                          {p.badge && (
+                            <span className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full bg-[#FF2E63] text-white text-[9px] font-black tracking-wider uppercase shadow-xs whitespace-nowrap">
+                              {p.badge}
+                            </span>
+                          )}
+                          <div className="pt-1">
+                            <p className="text-xs font-bold text-slate-800">{p.name}</p>
+                            <p className="text-[10px] text-slate-400 font-medium">{p.duration}</p>
+                          </div>
+                          <div className="mt-2">
+                            <span className="text-lg font-black text-slate-900">{p.priceFormatted}</span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* HERO PRICING CARD */}
                   <div className="rounded-[32px] overflow-hidden shadow-xl border border-pink-100 bg-white">
                     {/* Top vibrant pink gradient header */}
                     <div className="bg-gradient-to-r from-[#FF007A] via-[#FF2E63] to-[#FF4D79] text-white p-7 sm:p-9 text-center space-y-1 shadow-inner">
@@ -1699,43 +1801,28 @@ export default function CreatorWizard({
                         Imagine {recipientName || "My Love"}&apos;s face when they open this
                       </p>
                       <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white py-1">
-                        $2.85
+                        {currentPlan.priceFormatted}
                       </h2>
+                      <p className="text-xs text-white/80 font-medium">
+                        {currentPlan.periodText} • One-time payment
+                      </p>
                     </div>
 
                     {/* Card Body */}
                     <div className="p-6 sm:p-8 space-y-6 text-left">
                       <div>
                         <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block mb-3">
-                          EVERYTHING INCLUDED:
+                          EVERYTHING INCLUDED IN {currentPlan.name.toUpperCase()}:
                         </span>
 
                         {/* 2-Column Checklist */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs sm:text-sm font-semibold text-slate-700">
-                          <div className="flex items-center gap-2">
-                            <Check className="w-4 h-4 text-emerald-500 stroke-[3] shrink-0" />
-                            <span>{recipientName || "My Love"}&apos;s letter forever</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Check className="w-4 h-4 text-emerald-500 stroke-[3] shrink-0" />
-                            <span>All your features</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Check className="w-4 h-4 text-emerald-500 stroke-[3] shrink-0" />
-                            <span>All 3 photos</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Check className="w-4 h-4 text-emerald-500 stroke-[3] shrink-0" />
-                            <span>Printable QR code</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Check className="w-4 h-4 text-emerald-500 stroke-[3] shrink-0" />
-                            <span>No watermark</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Check className="w-4 h-4 text-emerald-500 stroke-[3] shrink-0" />
-                            <span>Unlimited revisits</span>
-                          </div>
+                          {currentPlan.features.map((feat, idx) => (
+                            <div key={idx} className="flex items-center gap-2">
+                              <Check className="w-4 h-4 text-emerald-500 stroke-[3] shrink-0" />
+                              <span>{feat}</span>
+                            </div>
+                          ))}
                         </div>
                       </div>
 
@@ -1754,7 +1841,7 @@ export default function CreatorWizard({
                         ) : (
                           <>
                             <Heart className="w-5 h-5 fill-white text-white shrink-0" />
-                            <span>Send My Love Letter — $2.85</span>
+                            <span>Send My Love Letter — {currentPlan.priceFormatted}</span>
                           </>
                         )}
                       </button>

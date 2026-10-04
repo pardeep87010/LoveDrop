@@ -70,7 +70,7 @@ export default function Navbar() {
             className="px-4 py-2 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-extrabold text-xs rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
           >
             <Zap className="w-3.5 h-3.5 fill-white text-white" />
-            <span>Create Website (₹99)</span>
+            <span>Create Website</span>
           </Link>
         </div>
       </div>

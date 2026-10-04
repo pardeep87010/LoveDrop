@@ -5,6 +5,12 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Heart,
+  MessageCircleHeart,
+  ListOrdered,
+  Disc,
+  Cookie,
+  Clock,
+  X,
   Sparkles,
   ArrowRight,
   ShieldCheck,
@@ -39,6 +45,7 @@ import Footer from "@/components/core/Footer";
 import HeroInteractivePhone from "@/components/experience/HeroInteractivePhone";
 import ExperienceTheMagicSection from "@/components/experience/ExperienceTheMagicSection";
 import { soundFx } from "@/lib/soundFx";
+import { usePricing } from "@/lib/pricing";
 
 export default function HomePage() {
   // FAQ accordion state
@@ -49,6 +56,8 @@ export default function HomePage() {
 
   // Selected style for Choose Your Style
   const [selectedStyle, setSelectedStyle] = useState<string>("classic-romance");
+  const [modalTheme, setModalTheme] = useState<any | null>(null);
+  const { region, setRegion, plans } = usePricing();
 
   // Every Special Occasion (Image 2)
   const occasions = [
@@ -115,65 +124,113 @@ export default function HomePage() {
     { id: 15, title: "Declaration", emoji: "🎉", desc: "Celebration confetti blast and instant real-time WhatsApp alert ping to your phone" },
   ];
 
-  // Choose Your Style (Image 5)
+  // Choose Your Style (Matching reference images)
   const styles = [
     {
       id: "classic-romance",
       title: "Classic Romance",
+      subtitle: "A timeless romantic experience with all the classic elements",
       bgColor: "bg-[#FFF0F3]",
       borderColor: "border-rose-200",
       badgeColor: "bg-[#FF3366]",
       textColor: "text-[#FF3366]",
+      palette: {
+        primaryHex: "#E91E63",
+        secondaryHex: "#FF2E63",
+        bgHex: "#FFF0F4",
+      },
+      fontStyle: "Georgia",
+      fontFamily: "Georgia, serif",
       tag: "Romantic & Elegant",
       previewText: "Will you be mine forever? 💖",
     },
     {
       id: "first-love",
       title: "First Love",
+      subtitle: "Sweet, gentle, and blooming with youthful romance",
       bgColor: "bg-[#F0FAF7]",
       borderColor: "border-emerald-200",
       badgeColor: "bg-[#00B894]",
       textColor: "text-[#00B894]",
+      palette: {
+        primaryHex: "#00B894",
+        secondaryHex: "#059669",
+        bgHex: "#E8F8F5",
+      },
+      fontStyle: "Outfit",
+      fontFamily: "var(--font-geist-sans), sans-serif",
       tag: "Fresh & Sweet",
       previewText: "Remember our first late-night chai? ☕",
     },
     {
       id: "minimalist-love",
       title: "Minimalist Love",
+      subtitle: "Clean lines, thoughtful typography, and pure emotion",
       bgColor: "bg-[#F3F0FF]",
       borderColor: "border-purple-200",
       badgeColor: "bg-[#6C5CE7]",
       textColor: "text-[#6C5CE7]",
+      palette: {
+        primaryHex: "#6C5CE7",
+        secondaryHex: "#4F46E5",
+        bgHex: "#F0F3FF",
+      },
+      fontStyle: "Inter",
+      fontFamily: "sans-serif",
       tag: "Modern & Clean",
       previewText: "Simple. Pure. Forever. ✨",
     },
     {
       id: "eternal-vows",
       title: "Eternal Vows",
+      subtitle: "Deep ruby tones and passionate devotion",
       bgColor: "bg-[#FFF0F6]",
       borderColor: "border-pink-200",
       badgeColor: "bg-[#D63031]",
       textColor: "text-[#D63031]",
+      palette: {
+        primaryHex: "#D63031",
+        secondaryHex: "#BE123C",
+        bgHex: "#FDE2E6",
+      },
+      fontStyle: "Playfair Display",
+      fontFamily: "Georgia, serif",
       tag: "Deep & Passionate",
       previewText: "In every lifetime, I'd choose you. 💍",
     },
     {
       id: "garden-of-love",
       title: "Garden of Love",
+      subtitle: "Fresh botanicals and blooming springtime affection",
       bgColor: "bg-[#F0FFF4]",
       borderColor: "border-green-200",
       badgeColor: "bg-[#00A86B]",
       textColor: "text-[#00A86B]",
+      palette: {
+        primaryHex: "#00A86B",
+        secondaryHex: "#047857",
+        bgHex: "#F0FFF4",
+      },
+      fontStyle: "Cinzel",
+      fontFamily: "serif",
       tag: "Serene & Blooming",
       previewText: "You make my whole world bloom. 🌸",
     },
     {
       id: "long-distance-love",
       title: "Long Distance Love",
+      subtitle: "Across every timezone, two hearts beating as one",
       bgColor: "bg-[#F0F7FF]",
       borderColor: "border-blue-200",
       badgeColor: "bg-[#0984E3]",
       textColor: "text-[#0984E3]",
+      palette: {
+        primaryHex: "#0984E3",
+        secondaryHex: "#1D4ED8",
+        bgHex: "#F0F7FF",
+      },
+      fontStyle: "Merriweather",
+      fontFamily: "serif",
       tag: "Connected Hearts",
       previewText: "Miles apart, never in heart. 🌍",
     },
@@ -301,7 +358,7 @@ export default function HomePage() {
                   onClick={() => soundFx.playPop()}
                   className="px-7 py-3.5 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-extrabold text-sm sm:text-base rounded-full shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 group cursor-pointer"
                 >
-                  <span>Create Your Surprise (₹99)</span>
+                  <span>Create Your Surprise</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
 
@@ -656,6 +713,7 @@ export default function HomePage() {
                     onClick={() => {
                       soundFx.playPop();
                       setSelectedStyle(stl.id);
+                      setModalTheme(stl);
                     }}
                     className={`h-72 rounded-3xl ${stl.bgColor} border transition-all flex flex-col justify-between p-4 cursor-pointer relative group overflow-hidden ${
                       isSelected
@@ -902,7 +960,7 @@ export default function HomePage() {
                   <span className="text-center text-slate-400">₹1,500+ for flowers that die</span>
                   <span className="text-center font-black text-slate-900 flex items-center justify-center gap-1">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                    Only ₹99 (1 full year access)
+                    From ₹199 / $3.49 (full access)
                   </span>
                 </div>
               </div>
@@ -969,62 +1027,142 @@ export default function HomePage() {
         </section>
 
         {/* =================================================================== */}
-        {/* 7. TRANSPARENT PRICING CARD (SOLID ROBUST STYLING) */}
+        {/* 7. TRANSPARENT PRICING SECTION (MATCHING GEO-LOCATION USER REQUIREMENTS) */}
         {/* =================================================================== */}
-        <section id="pricing" className="w-full py-16 sm:py-20 px-4 sm:px-6">
-          <div className="max-w-md mx-auto">
-            <div className="bg-white rounded-3xl p-6 sm:p-8 border-2 border-rose-500 shadow-md space-y-6 text-center">
-              <span className="px-3 py-1 rounded-full bg-rose-600 text-white font-bold text-xs uppercase tracking-wider">
-                Limited Time Special • 80% Off
+        <section id="pricing" className="w-full py-16 sm:py-24 px-4 sm:px-6 bg-[#FEFAFC] border-y border-rose-100/70">
+          <div className="max-w-6xl mx-auto space-y-10">
+            {/* Header */}
+            <div className="text-center space-y-3 max-w-2xl mx-auto">
+              <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-rose-50 border border-rose-200/80 text-rose-600 text-xs font-extrabold uppercase tracking-wider">
+                TRANSPARENT PRICING
               </span>
+              <h2 className="font-extrabold text-3xl sm:text-4xl text-slate-900 tracking-tight">
+                Simple, Honest Pricing
+              </h2>
+              <p className="text-sm text-slate-500 font-medium">
+                Choose the perfect plan to celebrate your special moments together
+              </p>
 
-              <div>
-                <div className="flex items-center justify-center gap-2">
-                  <span className="text-gray-400 line-through text-lg font-bold">₹499</span>
-                  <span className="text-5xl font-black text-slate-900">₹99</span>
+              {/* Geo-Location Currency Switcher Pill */}
+              <div className="flex justify-center pt-2">
+                <div className="inline-flex items-center p-1 rounded-full bg-white border border-rose-200/90 shadow-xs text-xs font-bold">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundFx.playPop();
+                      setRegion("IN");
+                    }}
+                    className={"px-4 py-1.5 rounded-full transition-all cursor-pointer " + (
+                      region === "IN"
+                        ? "bg-rose-600 text-white shadow-xs font-extrabold"
+                        : "text-slate-600 hover:text-slate-900"
+                    )}
+                  >
+                    🇮🇳 India (₹)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      soundFx.playPop();
+                      setRegion("GLOBAL");
+                    }}
+                    className={"px-4 py-1.5 rounded-full transition-all cursor-pointer " + (
+                      region === "GLOBAL"
+                        ? "bg-rose-600 text-white shadow-xs font-extrabold"
+                        : "text-slate-600 hover:text-slate-900"
+                    )}
+                  >
+                    🌐 Global ($)
+                  </button>
                 </div>
-                <p className="text-xs font-semibold text-slate-400 mt-1">
-                  One-time payment • No recurring charges
-                </p>
               </div>
+            </div>
 
-              {/* Feature Checklist */}
-              <div className="space-y-3 text-left text-xs font-semibold text-slate-700 py-3 border-y border-slate-100">
-                <div className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span><strong>100% Watermark-Free</strong> clean experience</span>
-                </div>
-                <div className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span><strong>Real-Time WhatsApp Alert</strong> when she says YES</span>
-                </div>
-                <div className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span><strong>1 Full Year Active Link</strong> on mobile &amp; desktop</span>
-                </div>
-                <div className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>Background romantic ambient audio included</span>
-                </div>
-                <div className="flex items-center gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>Add or edit photos anytime after unlocking</span>
-                </div>
-              </div>
+            {/* 3 Pricing Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto items-stretch pt-2">
+              {plans.map((p) => {
+                const isPopular = p.popular;
+                return (
+                  <div
+                    key={p.id}
+                    className={"rounded-3xl p-6 sm:p-8 flex flex-col justify-between transition-all relative " + (
+                      isPopular
+                        ? "bg-white border-2 border-rose-500 shadow-xl ring-4 ring-rose-500/10 md:-translate-y-2 z-10"
+                        : "bg-white border border-rose-100 shadow-sm hover:border-rose-300 hover:shadow-md"
+                    )}
+                  >
+                    {p.badge && (
+                      <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3.5 py-1 rounded-full bg-rose-600 text-white font-extrabold text-[10px] tracking-wider uppercase shadow-xs">
+                        {p.badge}
+                      </span>
+                    )}
 
-              <Link
-                href="/create"
-                onClick={() => soundFx.playPop()}
-                className="w-full py-4 rounded-2xl bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-extrabold text-sm shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <Zap className="w-4 h-4 fill-white text-white" />
-                <span>Create Website Now (₹99)</span>
-              </Link>
+                    <div className="space-y-5">
+                      <div className="text-center space-y-1">
+                        <h3 className="font-extrabold text-xl text-slate-900">{p.name}</h3>
+                        <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">
+                          {p.duration}
+                        </p>
+                      </div>
 
-              <div className="flex items-center justify-center gap-2 text-[11px] font-semibold text-slate-400">
+                      <div className="text-center py-2 border-y border-slate-100/80">
+                        <div className="flex items-center justify-center gap-2">
+                          <span className="text-slate-400 line-through text-base font-bold">
+                            {p.originalPriceFormatted}
+                          </span>
+                          <span className="text-4xl sm:text-5xl font-black text-slate-900">
+                            {p.priceFormatted}
+                          </span>
+                        </div>
+                        <p className="text-[11px] font-semibold text-slate-400 mt-1">
+                          One-time payment • {p.periodText}
+                        </p>
+                      </div>
+
+                      <p className="text-xs text-slate-600 font-medium text-center">
+                        {p.description}
+                      </p>
+
+                      {/* Feature Checklist */}
+                      <div className="space-y-2.5 text-xs font-semibold text-slate-700 pt-2">
+                        {p.features.map((feat, idx) => (
+                          <div key={idx} className="flex items-start gap-2.5">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                            <span>{feat}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="pt-6">
+                      <Link
+                        href={"/create?plan=" + p.id}
+                        onClick={() => soundFx.playPop()}
+                        className={"w-full py-3.5 rounded-2xl font-extrabold text-sm shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 " + (
+                          isPopular
+                            ? "bg-rose-600 hover:bg-rose-700 text-white shadow-rose-500/25"
+                            : "bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200"
+                        )}
+                      >
+                        <Zap className="w-4 h-4 fill-current" />
+                        <span>Choose {p.name}</span>
+                      </Link>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Trust Footer */}
+            <div className="flex items-center justify-center gap-6 text-xs font-semibold text-slate-400 text-center">
+              <span className="flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                <span>Instant delivery via UPI (GPay, PhonePe, Paytm, QR)</span>
-              </div>
+                <span>Instant delivery via UPI / Stripe</span>
+              </span>
+              <span>•</span>
+              <span>🔒 256-bit Bank Grade Security</span>
+              <span>•</span>
+              <span>💯 100% Satisfaction Guarantee</span>
             </div>
           </div>
         </section>
@@ -1113,6 +1251,205 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+      
+      {/* =================================================================== */}
+      {/* THEME DETAIL MODAL (Matching media_1791140901200.png)              */}
+      {/* =================================================================== */}
+      {modalTheme && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-[32px] p-6 sm:p-8 max-w-3xl w-full shadow-2xl relative max-h-[92vh] overflow-y-auto space-y-6 border border-slate-100">
+            {/* Modal Header */}
+            <div className="flex items-start justify-between pr-8">
+              <div className="space-y-1">
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                  {modalTheme.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium">
+                  {modalTheme.subtitle}
+                </p>
+              </div>
+
+              {/* Close Button */}
+              <button
+                type="button"
+                onClick={() => setModalTheme(null)}
+                className="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors cursor-pointer shadow-2xs"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* 2-Column Layout */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+              {/* Left Column: Themed Phone Mockup */}
+              <div className="md:col-span-5 flex justify-center">
+                <div className="relative w-[240px] sm:w-[260px] h-[480px] sm:h-[500px] bg-[#141B26] rounded-[42px] p-2.5 shadow-2xl border-4 border-[#1E2738] ring-1 ring-slate-900/40 flex flex-col justify-between overflow-hidden">
+                  {/* Dynamic Island Notch Pill */}
+                  <div className="absolute top-3.5 inset-x-0 z-40 flex justify-center pointer-events-none">
+                    <div className="w-20 h-4 rounded-full bg-black flex items-center justify-end px-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-slate-900" />
+                    </div>
+                  </div>
+
+                  {/* Themed Phone Screen */}
+                  <div
+                    className="relative w-full h-full rounded-[34px] overflow-hidden flex flex-col justify-between p-4 pt-10 pb-5 text-center shadow-inner"
+                    style={{ backgroundColor: modalTheme.palette.bgHex }}
+                  >
+                    {/* Ambient Floating Hearts */}
+                    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                      <span className="absolute top-6 left-5 text-pink-500 text-base opacity-90">
+                        💕
+                      </span>
+                      <span className="absolute top-10 right-5 text-rose-500 text-sm opacity-90">
+                        💖✨
+                      </span>
+                    </div>
+
+                    {/* Centered White Greeting Card */}
+                    <div className="relative z-10 w-full max-w-[210px] mx-auto bg-white rounded-3xl p-4 shadow-xl text-center border border-pink-100/70 my-auto space-y-2">
+                      <h4 className="text-lg font-black text-slate-900 tracking-tight flex items-center justify-center gap-1">
+                        <span>Hello, Sarah</span>
+                        <span style={{ color: modalTheme.palette.primaryHex }}>💕</span>
+                      </h4>
+
+                      <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
+                        I made something special for you...
+                      </p>
+
+                      <p
+                        className="text-[11px] font-semibold pt-0.5"
+                        style={{ color: modalTheme.palette.secondaryHex }}
+                      >
+                        Let&apos;s begin...
+                      </p>
+
+                      <div className="pt-1">
+                        <span
+                          className="px-6 py-2 rounded-full text-white font-extrabold text-xs shadow-md inline-block"
+                          style={{ backgroundColor: modalTheme.palette.primaryHex }}
+                        >
+                          Let&apos;s Go
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* 9 Pagination Dots Preview */}
+                    <div className="relative z-10 flex items-center justify-center gap-1.5 pt-1">
+                      <span
+                        className="w-2 h-2 rounded-full shadow-xs"
+                        style={{ backgroundColor: modalTheme.palette.primaryHex }}
+                      />
+                      {[...Array(8)].map((_, i) => (
+                        <span key={i} className="w-1.5 h-1.5 rounded-full bg-slate-300/60" />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Palette, 15 Stages, Font & CTA */}
+              <div className="md:col-span-7 space-y-6 text-left">
+                {/* 1. Color Palette */}
+                <div className="space-y-2.5">
+                  <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                    Color Palette
+                  </h4>
+                  <div className="flex items-center gap-3">
+                    <div className="text-center space-y-1">
+                      <div
+                        className="w-12 h-12 rounded-2xl shadow-sm border border-black/5"
+                        style={{ backgroundColor: modalTheme.palette.primaryHex }}
+                      />
+                      <span className="text-[10px] font-bold text-slate-500 block">Primary</span>
+                    </div>
+
+                    <div className="text-center space-y-1">
+                      <div
+                        className="w-12 h-12 rounded-2xl shadow-sm border border-black/5"
+                        style={{ backgroundColor: modalTheme.palette.secondaryHex }}
+                      />
+                      <span className="text-[10px] font-bold text-slate-500 block">Secondary</span>
+                    </div>
+
+                    <div className="text-center space-y-1">
+                      <div
+                        className="w-12 h-12 rounded-2xl shadow-sm border border-slate-200"
+                        style={{ backgroundColor: modalTheme.palette.bgHex }}
+                      />
+                      <span className="text-[10px] font-bold text-slate-500 block">Background</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. Included Stages (15) */}
+                <div className="space-y-2.5">
+                  <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                    Included Stages (15)
+                  </h4>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    {[
+                      { title: "Welcome", icon: Heart },
+                      { title: "Love Question", icon: MessageCircleHeart },
+                      { title: "Love Letter", icon: Gift },
+                      { title: "Photo Memories", icon: Camera },
+                      { title: "Reasons I Love You", icon: ListOrdered },
+                      { title: "Timeline", icon: Clock },
+                      { title: "Love Quiz", icon: Sparkles },
+                      { title: "Compliments", icon: Smile },
+                      { title: "Fortune Cookies", icon: Cookie },
+                      { title: "Scratch Cards", icon: Ticket },
+                      { title: "Promise Wall", icon: ShieldCheck },
+                      { title: "Love Catcher", icon: Gamepad2 },
+                      { title: "Future Adventures", icon: Compass },
+                      { title: "Wheel of Love", icon: Disc },
+                      { title: "Declaration", icon: PartyPopper },
+                    ].map((stg, i) => {
+                      const IconComp = stg.icon;
+                      return (
+                        <div
+                          key={i}
+                          className="py-1.5 px-3 rounded-full bg-[#E8F8F5] text-[#0F766E] border border-[#D1F2EB] font-bold text-[11px] flex items-center gap-1.5 truncate"
+                        >
+                          <IconComp className="w-3.5 h-3.5 shrink-0 text-[#0F766E]" />
+                          <span className="truncate">{stg.title}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 3. Font Style */}
+                <div className="space-y-1">
+                  <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                    Font Style
+                  </h4>
+                  <p
+                    className="text-lg text-slate-800 font-semibold"
+                    style={{ fontFamily: modalTheme.fontFamily }}
+                  >
+                    {modalTheme.fontStyle}
+                  </p>
+                </div>
+
+                {/* 4. CTA Button */}
+                <div className="pt-2">
+                  <Link
+                    href={"/create?theme=" + modalTheme.id}
+                    onClick={() => soundFx.playPop()}
+                    className="w-full py-4 rounded-full text-white font-extrabold text-sm sm:text-base shadow-lg transition-all flex items-center justify-center gap-2 hover:brightness-105 active:scale-98 cursor-pointer"
+                    style={{ backgroundColor: modalTheme.palette.primaryHex }}
+                  >
+                    <span>Use This Style</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       </main>
 
       {/* Global Footer */}
