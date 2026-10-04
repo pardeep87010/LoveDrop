@@ -27,6 +27,15 @@ import {
   MessageCircle,
   ExternalLink,
   Share2,
+  Clock,
+  HelpCircle,
+  Cookie,
+  Ticket,
+  Disc,
+  Gift,
+  Compass,
+  Plus,
+  Trash2,
 } from "lucide-react";
 import { soundFx } from "@/lib/soundFx";
 import { LoveSurpriseData, OccasionType, DodgeIntensity, AudioTrackId } from "@/lib/types";
@@ -38,7 +47,7 @@ interface CreatorWizardProps {
   initialTheme?: string;
 }
 
-// 6 Beautiful Themes matching reference image 2
+// 6 Themes matching screenshot 2
 const THEMES = [
   {
     id: "classic",
@@ -47,7 +56,6 @@ const THEMES = [
     cardBorder: "border-pink-200",
     accent: "#FF2E63",
     iconBg: "bg-[#FF2E63]",
-    badgeColor: "text-[#FF2E63]",
   },
   {
     id: "classic-romance",
@@ -56,7 +64,6 @@ const THEMES = [
     cardBorder: "border-rose-200",
     accent: "#E0245E",
     iconBg: "bg-[#E0245E]",
-    badgeColor: "text-[#E0245E]",
   },
   {
     id: "first-love",
@@ -65,7 +72,6 @@ const THEMES = [
     cardBorder: "border-emerald-200",
     accent: "#10B981",
     iconBg: "bg-[#10B981]",
-    badgeColor: "text-[#10B981]",
   },
   {
     id: "minimalist-love",
@@ -74,7 +80,6 @@ const THEMES = [
     cardBorder: "border-indigo-200",
     accent: "#6366F1",
     iconBg: "bg-[#6366F1]",
-    badgeColor: "text-[#6366F1]",
   },
   {
     id: "golden-hour",
@@ -83,7 +88,6 @@ const THEMES = [
     cardBorder: "border-amber-200",
     accent: "#F59E0B",
     iconBg: "bg-[#F59E0B]",
-    badgeColor: "text-[#F59E0B]",
   },
   {
     id: "midnight-galaxy",
@@ -92,11 +96,11 @@ const THEMES = [
     cardBorder: "border-purple-900",
     accent: "#8B5CF6",
     iconBg: "bg-[#8B5CF6]",
-    badgeColor: "text-[#8B5CF6]",
     dark: true,
   },
 ];
 
+// Writing tips for Stage 3
 const WRITING_TIPS = [
   "What made you fall in love with them?",
   "Mention your favorite little habit of theirs that always makes you smile.",
@@ -104,6 +108,7 @@ const WRITING_TIPS = [
   "Tell them what your ordinary days feel like since they entered your life.",
 ];
 
+// Quick letter starters for Stage 3
 const QUICK_STARTERS = [
   "Every moment with you feels like magic.",
   "You make my heart skip a beat.",
@@ -113,6 +118,7 @@ const QUICK_STARTERS = [
   "I can't imagine my life without you.",
 ];
 
+// Question presets for Stage 3
 const QUESTION_PRESETS = [
   "Do you love me?",
   "Will you be mine forever?",
@@ -121,10 +127,135 @@ const QUESTION_PRESETS = [
   "Will you always love me?",
 ];
 
+// Sample photos for Stage 4
 const SAMPLE_ROMANTIC_PHOTOS = [
   "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600&auto=format&fit=crop&q=80",
   "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=600&auto=format&fit=crop&q=80",
   "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=600&auto=format&fit=crop&q=80",
+];
+
+// 9 Interactive Feature Items for Stage 5 matching reference screenshots
+interface FeatureDef {
+  id: string;
+  name: string;
+  icon: React.ComponentType<{ className?: string }>;
+  maxCount: number;
+  inputPlaceholder: string;
+  quickAdd: string[];
+}
+
+const FEATURE_DEFINITIONS: FeatureDef[] = [
+  {
+    id: "reasons",
+    name: "Reasons I Love You",
+    icon: Heart,
+    maxCount: 10,
+    inputPlaceholder: "A reason why I love you...",
+    quickAdd: [
+      "The way your eyes crinkle when you laugh ✨",
+      "How safe I feel whenever I hold your hand 🤍",
+      "You always know how to cheer me up ☕",
+      "Your endless kindness and pure heart 🌸",
+    ],
+  },
+  {
+    id: "timeline",
+    name: "Our Timeline",
+    icon: Clock,
+    maxCount: 10,
+    inputPlaceholder: "What happened on this date?",
+    quickAdd: [
+      "The day we first met",
+      "Our first date",
+      "Our first kiss",
+      "The day we made it official",
+    ],
+  },
+  {
+    id: "quiz",
+    name: "Love Quiz",
+    icon: HelpCircle,
+    maxCount: 5,
+    inputPlaceholder: "Ask a cute quiz question about us...",
+    quickAdd: [
+      "Who said 'I love you' first?",
+      "Where was our first vacation?",
+      "What is my favorite nickname for you?",
+    ],
+  },
+  {
+    id: "compliments",
+    name: "Compliment Spinner",
+    icon: MessageCircle,
+    maxCount: 8,
+    inputPlaceholder: "Add a sweet compliment...",
+    quickAdd: [
+      "You have the most contagious, warm smile 😊",
+      "You are the smartest and most thoughtful person 🌟",
+      "You look breathtaking in everything you wear 💕",
+    ],
+  },
+  {
+    id: "fortune",
+    name: "Fortune Cookies",
+    icon: Cookie,
+    maxCount: 6,
+    inputPlaceholder: "A sweet romantic fortune...",
+    quickAdd: [
+      "Endless cuddles and warm hugs in your near future 🥠",
+      "Someone loves you more than words can express ❤️",
+      "A surprise sweet treat awaits you soon 🍫",
+    ],
+  },
+  {
+    id: "scratch",
+    name: "Scratch Cards",
+    icon: Ticket,
+    maxCount: 5,
+    inputPlaceholder: "Coupon / reward revealed on scratch...",
+    quickAdd: [
+      "Free 30-minute massage coupon 💆",
+      "Late-night ice cream & movie date 🍦",
+      "100 endless hugs anytime anywhere 🤗",
+    ],
+  },
+  {
+    id: "wheel",
+    name: "Spin the Wheel",
+    icon: Disc,
+    maxCount: 8,
+    inputPlaceholder: "Wheel action / dare / romantic prize...",
+    quickAdd: [
+      "10-second passionate kiss 💋",
+      "Sing our favorite love song together 🎶",
+      "Tell me 3 things you love about me 💖",
+    ],
+  },
+  {
+    id: "promise",
+    name: "Promise Wall",
+    icon: Gift,
+    maxCount: 10,
+    inputPlaceholder: "I promise to...",
+    quickAdd: [
+      "I promise to always make you laugh when you're sad",
+      "I promise to be your biggest cheerleader in life",
+      "I promise to cook your favorite meal anytime",
+      "I promise to always hold your hand through everything",
+    ],
+  },
+  {
+    id: "bucket",
+    name: "Bucket List",
+    icon: Compass,
+    maxCount: 10,
+    inputPlaceholder: "A dream adventure together...",
+    quickAdd: [
+      "Watch the Northern Lights together in Norway 🌌",
+      "Road trip with no GPS or destination 🚗",
+      "Cozy mountain cabin stay during snowfall ❄️",
+    ],
+  },
 ];
 
 export default function CreatorWizard({
@@ -158,26 +289,70 @@ export default function CreatorWizard({
   const [photos, setPhotos] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Stage 5: Features
+  // Stage 5: 9 Interactive Features State
+  const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
+
+  // Feature specific data
+  const [timelineEvents, setTimelineEvents] = useState<{ date: string; event: string }[]>([]);
+  const [tempTimelineDate, setTempTimelineDate] = useState("");
+  const [tempTimelineText, setTempTimelineText] = useState("");
+
+  const [promises, setPromises] = useState<string[]>([]);
+  const [tempPromiseText, setTempPromiseText] = useState("");
+
+  const [reasonsList, setReasonsList] = useState<string[]>([
+    "The way your eyes crinkle when you laugh ✨",
+    "How safe I feel whenever I hold your hand 🤍",
+  ]);
+  const [tempReasonText, setTempReasonText] = useState("");
+
+  const [quizList, setQuizList] = useState<{ question: string; answer: string }[]>([
+    { question: "Who said 'I love you' first?", answer: "Me ❤️" },
+  ]);
+  const [tempQuizQ, setTempQuizQ] = useState("");
+
+  const [complimentsList, setComplimentsList] = useState<string[]>([
+    "You have the most contagious, warm smile 😊",
+  ]);
+  const [tempComplimentText, setTempComplimentText] = useState("");
+
+  const [fortunesList, setFortunesList] = useState<string[]>([
+    "Endless cuddles and warm hugs in your near future 🥠",
+  ]);
+  const [tempFortuneText, setTempFortuneText] = useState("");
+
+  const [scratchList, setScratchList] = useState<string[]>([
+    "Free 30-minute massage coupon 💆",
+    "Late-night ice cream & movie date 🍦",
+  ]);
+  const [tempScratchText, setTempScratchText] = useState("");
+
+  const [wheelList, setWheelList] = useState<string[]>([
+    "10-second passionate kiss 💋",
+    "Sing our favorite love song together 🎶",
+  ]);
+  const [tempWheelText, setTempWheelText] = useState("");
+
+  const [bucketList, setBucketList] = useState<string[]>([
+    "Watch the Northern Lights together in Norway 🌌",
+  ]);
+  const [tempBucketText, setTempBucketText] = useState("");
+
+  // Stage 5 Ambient options: Music & PIN
   const [bgMusic, setBgMusic] = useState<AudioTrackId>("romantic-lofi");
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const audioPreviewRef = useRef<HTMLAudioElement | null>(null);
 
-  const [enableAnniversary, setEnableAnniversary] = useState(true);
-  const [anniversaryDate, setAnniversaryDate] = useState("2023-02-14");
-
   const [enablePin, setEnablePin] = useState(false);
   const [secretPin, setSecretPin] = useState("1402");
 
-  const [enableEnvelope, setEnableEnvelope] = useState(true);
-  const [enableConfetti, setEnableConfetti] = useState(true);
-
-  // Stage 6: Launch & Sharing
+  // Stage 6: Publish / Checkout & Preview Modal
   const [isProcessingPay, setIsProcessingPay] = useState(false);
   const [isCreated, setIsCreated] = useState(false);
   const [createdSlug, setCreatedSlug] = useState("");
   const [copiedLink, setCopiedLink] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
 
   // Auto-save draft to localStorage
   useEffect(() => {
@@ -189,8 +364,10 @@ export default function CreatorWizard({
         letterText,
         question,
         photos,
+        selectedFeatures,
+        timelineEvents,
+        promises,
         bgMusic,
-        anniversaryDate,
         enablePin,
         secretPin,
       };
@@ -203,8 +380,10 @@ export default function CreatorWizard({
     letterText,
     question,
     photos,
+    selectedFeatures,
+    timelineEvents,
+    promises,
     bgMusic,
-    anniversaryDate,
     enablePin,
     secretPin,
   ]);
@@ -277,6 +456,14 @@ export default function CreatorWizard({
     return labels[previewDodgeCount % labels.length];
   };
 
+  // Toggle features in Stage 5
+  const toggleFeature = (featId: string) => {
+    soundFx.playPop();
+    setSelectedFeatures((prev) =>
+      prev.includes(featId) ? prev.filter((id) => id !== featId) : [...prev, featId]
+    );
+  };
+
   // Add sample photos
   const handleAddSamplePhotos = () => {
     soundFx.playPop();
@@ -333,15 +520,27 @@ export default function CreatorWizard({
         senderName: sanitizeInput(senderName.trim() || "Me"),
         question: sanitizeInput(question.trim() || "do you love me ??"),
         subheading: "A special romantic surprise made just for you",
-        reasons: [
-          "Your beautiful laugh that brightens my day ✨",
-          "The way you always make me feel special ☕",
-          "Being my safest home in this entire world 🏡",
-        ],
+        reasons:
+          reasonsList.length > 0
+            ? reasonsList
+            : [
+                "Your beautiful laugh that brightens my day ✨",
+                "The way you always make me feel special ☕",
+                "Being my safest home in this entire world 🏡",
+              ],
         letterContent: letterText,
         photos: photos.length > 0 ? photos : SAMPLE_ROMANTIC_PHOTOS.slice(0, 2),
         theme: theme,
-        anniversaryDate: enableAnniversary ? anniversaryDate : undefined,
+        selectedFeatures: selectedFeatures,
+        timeline: timelineEvents,
+        promises: promises,
+        loveReasons: reasonsList,
+        quizQuestions: quizList,
+        compliments: complimentsList,
+        fortuneCookies: fortunesList,
+        scratchCards: scratchList,
+        wheelItems: wheelList,
+        bucketList: bucketList,
         passcodeHash: pinHash,
         hasPasscode: enablePin && !!secretPin,
         dodgeIntensity: "savage",
@@ -359,8 +558,8 @@ export default function CreatorWizard({
       soundFx.playSuccessChime();
 
       confetti({
-        particleCount: 120,
-        spread: 100,
+        particleCount: 140,
+        spread: 110,
         origin: { y: 0.6 },
         colors: ["#FF2E63", "#FF6B8B", "#FFD166", "#06D6A0"],
       });
@@ -461,7 +660,7 @@ export default function CreatorWizard({
       <main className="max-w-2xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12">
         <AnimatePresence mode="wait" initial={false}>
           {/* =============================================================== */}
-          {/* STAGE 1: RECIPIENT (Image 1: media_1791111523011.png) */}
+          {/* STAGE 1: RECIPIENT */}
           {/* =============================================================== */}
           {step === 1 && (
             <motion.div
@@ -472,12 +671,10 @@ export default function CreatorWizard({
               transition={{ duration: 0.2 }}
               className="space-y-8 text-center"
             >
-              {/* Floating Center Icon */}
               <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#FF2E63] to-[#FF537A] text-white flex items-center justify-center shadow-lg shadow-pink-500/25 mx-auto">
                 <Heart className="w-7 h-7 fill-white text-white" />
               </div>
 
-              {/* Title & Subtitle */}
               <div className="space-y-1.5">
                 <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
                   Let&apos;s create something beautiful
@@ -487,7 +684,6 @@ export default function CreatorWizard({
                 </p>
               </div>
 
-              {/* Input Form Card */}
               <div className="max-w-md mx-auto space-y-4 pt-2">
                 <label className="block text-xs sm:text-sm font-semibold text-slate-700 text-left">
                   Who is this love letter for?
@@ -503,7 +699,6 @@ export default function CreatorWizard({
                   />
                 </div>
 
-                {/* Quick Presets Pills */}
                 <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
                   {["My Love", "Babe", "Honey", "Sweetheart", "My Darling", "Love"].map(
                     (preset) => {
@@ -533,7 +728,6 @@ export default function CreatorWizard({
                   This name will appear throughout their experience
                 </p>
 
-                {/* Sender Name Option */}
                 <div className="pt-2 text-left">
                   <label className="block text-xs font-semibold text-slate-500 mb-1">
                     Your name (or nickname)
@@ -547,7 +741,6 @@ export default function CreatorWizard({
                   />
                 </div>
 
-                {/* Primary Continue Button */}
                 <div className="pt-4">
                   <button
                     type="button"
@@ -565,7 +758,6 @@ export default function CreatorWizard({
                 </div>
               </div>
 
-              {/* Bottom Mascot Pill */}
               <div className="pt-8 flex flex-col items-center">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#FF2E63] to-[#FF537A] text-white flex items-center justify-center shadow-md mb-2">
                   <Heart className="w-6 h-6 fill-white" />
@@ -578,7 +770,7 @@ export default function CreatorWizard({
           )}
 
           {/* =============================================================== */}
-          {/* STAGE 2: STYLE / THEME (Image 2: media_1791111560687.png) */}
+          {/* STAGE 2: STYLE / THEME */}
           {/* =============================================================== */}
           {step === 2 && (
             <motion.div
@@ -589,12 +781,10 @@ export default function CreatorWizard({
               transition={{ duration: 0.3 }}
               className="space-y-8 text-center"
             >
-              {/* Floating Center Icon */}
               <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#FF2E63] to-[#FF537A] text-white flex items-center justify-center shadow-lg shadow-pink-500/25 mx-auto">
                 <Palette className="w-7 h-7 text-white" />
               </div>
 
-              {/* Title & Subtitle */}
               <div className="space-y-1.5">
                 <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
                   Pick a style for {recipientName || "My Love"}
@@ -604,7 +794,6 @@ export default function CreatorWizard({
                 </p>
               </div>
 
-              {/* Theme Grid matching screenshot 2 */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-xl mx-auto pt-2">
                 {THEMES.map((t) => {
                   const isSelected = theme === t.id;
@@ -622,14 +811,12 @@ export default function CreatorWizard({
                           : "border-slate-200/80 hover:border-pink-300 hover:shadow-md bg-white"
                       }`}
                     >
-                      {/* Active Checkmark Pill */}
                       {isSelected && (
                         <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[#FF2E63] text-white flex items-center justify-center shadow-sm">
                           <Check className="w-3 h-3 stroke-[3]" />
                         </div>
                       )}
 
-                      {/* Theme Preview Card Area */}
                       <div
                         className={`w-full h-28 rounded-2xl ${t.cardBg} flex flex-col items-center justify-center gap-2 mb-3.5 border ${t.cardBorder}`}
                       >
@@ -638,12 +825,10 @@ export default function CreatorWizard({
                         >
                           <Sparkles className="w-5 h-5 text-white" />
                         </div>
-                        {/* Decorative pill bars mimicking mockup */}
                         <div className="w-12 h-1.5 bg-slate-300/40 rounded-full" />
                         <div className="w-8 h-1 bg-slate-300/30 rounded-full" />
                       </div>
 
-                      {/* Theme Title */}
                       <span className="text-xs sm:text-sm font-bold text-slate-800 block">
                         {t.name}
                       </span>
@@ -652,7 +837,6 @@ export default function CreatorWizard({
                 })}
               </div>
 
-              {/* Bottom Buttons */}
               <div className="flex items-center justify-between max-w-xl mx-auto pt-6">
                 <button
                   type="button"
@@ -676,7 +860,7 @@ export default function CreatorWizard({
           )}
 
           {/* =============================================================== */}
-          {/* STAGE 3: MESSAGE & BIG QUESTION (Images 3 & 4) */}
+          {/* STAGE 3: MESSAGE & BIG QUESTION */}
           {/* =============================================================== */}
           {step === 3 && (
             <motion.div
@@ -687,12 +871,10 @@ export default function CreatorWizard({
               transition={{ duration: 0.3 }}
               className="space-y-6"
             >
-              {/* Floating Center Icon */}
               <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#FF2E63] to-[#FF537A] text-white flex items-center justify-center shadow-lg shadow-pink-500/25 mx-auto">
                 <PenLine className="w-7 h-7 text-white" />
               </div>
 
-              {/* Title & Subtitle */}
               <div className="space-y-1.5 text-center">
                 <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
                   Write your letter to {recipientName || "My Love"}
@@ -702,7 +884,6 @@ export default function CreatorWizard({
                 </p>
               </div>
 
-              {/* Tip Box with Lightbulb */}
               <div className="max-w-xl mx-auto p-3.5 sm:p-4 rounded-2xl border border-pink-200 bg-pink-50/40 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#FF2E63]">
                   <Lightbulb className="w-4 h-4 shrink-0 text-[#FF2E63]" />
@@ -714,13 +895,12 @@ export default function CreatorWizard({
                     soundFx.playPop();
                     setTipIndex((prev) => (prev + 1) % WRITING_TIPS.length);
                   }}
-                  className="text-[11px] font-bold text-slate-500 hover:text-[#FF2E63] shrink-0 underline"
+                  className="text-[11px] font-bold text-slate-500 hover:text-[#FF2E63] shrink-0 underline cursor-pointer"
                 >
                   Next tip →
                 </button>
               </div>
 
-              {/* Quick Starters Pills */}
               <div className="max-w-xl mx-auto space-y-2 text-center">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                   Quick starters - tap to use:
@@ -744,7 +924,6 @@ export default function CreatorWizard({
                 </div>
               </div>
 
-              {/* Main Letter Editor Card */}
               <div className="max-w-xl mx-auto rounded-3xl border border-slate-200 bg-white p-5 sm:p-6 shadow-sm space-y-2">
                 <span className="font-bold text-slate-800 text-sm block">
                   Dear {recipientName || "My Love"},
@@ -765,11 +944,8 @@ export default function CreatorWizard({
                 </div>
               </div>
 
-              {/* =========================================================== */}
-              {/* THE BIG QUESTION 💕 CARD (Matching screenshot 4) */}
-              {/* =========================================================== */}
+              {/* The Big Question Card */}
               <div className="max-w-xl mx-auto rounded-3xl border border-pink-200 bg-[#FFF5F7] p-5 sm:p-6 space-y-4">
-                {/* Header */}
                 <div className="flex items-center gap-2">
                   <div className="w-7 h-7 rounded-full bg-[#FF2E63] text-white flex items-center justify-center">
                     <Heart className="w-4 h-4 fill-white" />
@@ -784,7 +960,6 @@ export default function CreatorWizard({
                   </div>
                 </div>
 
-                {/* Editable Question Input */}
                 <div className="relative">
                   <input
                     type="text"
@@ -796,7 +971,6 @@ export default function CreatorWizard({
                   <Sparkles className="w-4 h-4 text-pink-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
 
-                {/* Question Presets */}
                 <div className="flex flex-wrap items-center justify-center gap-1.5">
                   {QUESTION_PRESETS.map((qp) => (
                     <button
@@ -813,7 +987,6 @@ export default function CreatorWizard({
                   ))}
                 </div>
 
-                {/* LIVE PREVIEW BOX INSIDE CARD */}
                 <div className="rounded-2xl bg-white p-5 sm:p-6 border border-pink-100 shadow-sm text-center space-y-4 relative overflow-hidden">
                   <div className="flex items-center justify-between text-[11px] font-bold">
                     <span className="px-2.5 py-0.5 rounded-full bg-pink-100 text-[#FF2E63]">
@@ -826,7 +999,6 @@ export default function CreatorWizard({
                     {question || "do you love me ??"}
                   </h4>
 
-                  {/* Two Buttons: Yes and Runaway No */}
                   <div className="relative py-4 flex items-center justify-center gap-4 min-h-[90px]">
                     <button
                       type="button"
@@ -857,7 +1029,6 @@ export default function CreatorWizard({
                 </div>
               </div>
 
-              {/* Bottom Mascot Pill */}
               <div className="pt-2 flex flex-col items-center">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#FF2E63] to-[#FF537A] text-white flex items-center justify-center shadow-md mb-2">
                   <Heart className="w-6 h-6 fill-white" />
@@ -867,7 +1038,6 @@ export default function CreatorWizard({
                 </div>
               </div>
 
-              {/* Bottom Actions */}
               <div className="max-w-xl mx-auto space-y-3 pt-2">
                 <div className="flex items-center justify-between">
                   <button
@@ -896,7 +1066,7 @@ export default function CreatorWizard({
           )}
 
           {/* =============================================================== */}
-          {/* STAGE 4: PHOTOS (Image 5: media_1791111636496.png) */}
+          {/* STAGE 4: PHOTOS */}
           {/* =============================================================== */}
           {step === 4 && (
             <motion.div
@@ -907,12 +1077,10 @@ export default function CreatorWizard({
               transition={{ duration: 0.3 }}
               className="space-y-8 text-center"
             >
-              {/* Floating Center Icon */}
               <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#FF2E63] to-[#FF537A] text-white flex items-center justify-center shadow-lg shadow-pink-500/25 mx-auto">
                 <Camera className="w-7 h-7 text-white" />
               </div>
 
-              {/* Title & Subtitle */}
               <div className="space-y-1.5">
                 <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
                   Add your favorite memories
@@ -922,7 +1090,6 @@ export default function CreatorWizard({
                 </p>
               </div>
 
-              {/* Hidden file input */}
               <input
                 ref={fileInputRef}
                 type="file"
@@ -932,7 +1099,6 @@ export default function CreatorWizard({
                 onChange={handleFileUpload}
               />
 
-              {/* 3 Photo Upload Cards Grid matching Screenshot 5 */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-xl mx-auto pt-2">
                 {[0, 1, 2].map((idx) => {
                   const hasPhoto = photos[idx];
@@ -979,7 +1145,6 @@ export default function CreatorWizard({
                   Drag & drop or click to upload photos
                 </p>
 
-                {/* Romantic Sample Photos Button */}
                 <button
                   type="button"
                   onClick={handleAddSamplePhotos}
@@ -990,7 +1155,6 @@ export default function CreatorWizard({
                 </button>
               </div>
 
-              {/* Bottom Mascot Pill */}
               <div className="pt-4 flex flex-col items-center">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#FF2E63] to-[#FF537A] text-white flex items-center justify-center shadow-md mb-2">
                   <Heart className="w-6 h-6 fill-white" />
@@ -1000,7 +1164,6 @@ export default function CreatorWizard({
                 </div>
               </div>
 
-              {/* Bottom Actions */}
               <div className="flex items-center justify-between max-w-xl mx-auto pt-6">
                 <button
                   type="button"
@@ -1036,7 +1199,8 @@ export default function CreatorWizard({
           )}
 
           {/* =============================================================== */}
-          {/* STAGE 5: FEATURES (Magical Touches) */}
+          {/* STAGE 5: FEATURES ("Make it extra special" - 9 Features) */}
+          {/* Matches media_1791115656816.png & media_1791115678588.png */}
           {/* =============================================================== */}
           {step === 5 && (
             <motion.div
@@ -1055,197 +1219,408 @@ export default function CreatorWizard({
               {/* Title & Subtitle */}
               <div className="space-y-1.5 text-center">
                 <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
-                  Add magical features
+                  Make it extra special
                 </h1>
                 <p className="text-sm text-slate-500 font-medium">
-                  Extra interactive surprises for {recipientName || "My Love"}
+                  Select features and add your content
                 </p>
               </div>
 
-              <div className="max-w-xl mx-auto space-y-4 pt-2">
-                {/* 1. Background Music Toggle */}
-                <div className="p-5 rounded-3xl border border-pink-200 bg-white shadow-xs space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-2xl bg-pink-100 text-[#FF2E63] flex items-center justify-center">
-                        <Music className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-extrabold text-slate-800">
-                          Background Soundtrack 🎵
-                        </h4>
-                        <p className="text-xs text-slate-500">
-                          Plays softly in the background when they open the letter
-                        </p>
-                      </div>
-                    </div>
+              {/* 9 Feature Pills 3x3 Grid matching Screenshot 1 & 2 */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-xl mx-auto pt-2">
+                {FEATURE_DEFINITIONS.map((feat) => {
+                  const isSelected = selectedFeatures.includes(feat.id);
+                  const Icon = feat.icon;
 
+                  return (
                     <button
+                      key={feat.id}
                       type="button"
-                      onClick={toggleAudioPreview}
-                      className="px-3.5 py-1.5 rounded-full border border-pink-200 text-xs font-bold text-[#FF2E63] hover:bg-pink-50 flex items-center gap-1.5 transition-colors cursor-pointer"
+                      onClick={() => toggleFeature(feat.id)}
+                      className={`relative p-3.5 sm:p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer flex items-center gap-2.5 ${
+                        isSelected
+                          ? "border-[#FF2E63] bg-[#FFF5F7] text-slate-900 shadow-sm"
+                          : "border-slate-200 bg-white text-slate-700 hover:border-pink-300 hover:bg-pink-50/40"
+                      }`}
                     >
-                      {isAudioPlaying ? (
-                        <>
-                          <Pause className="w-3.5 h-3.5 fill-current" />
-                          <span>Pause</span>
-                        </>
-                      ) : (
-                        <>
-                          <Play className="w-3.5 h-3.5 fill-current" />
-                          <span>Preview</span>
-                        </>
+                      {/* Checkmark badge when selected */}
+                      {isSelected && (
+                        <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-[#FF2E63] text-white flex items-center justify-center shadow-2xs">
+                          <Check className="w-2.5 h-2.5 stroke-[3]" />
+                        </div>
                       )}
+
+                      <div
+                        className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 ${
+                          isSelected
+                            ? "bg-[#FF2E63] text-white"
+                            : "bg-pink-50 text-[#FF2E63]"
+                        }`}
+                      >
+                        <Icon className="w-4 h-4" />
+                      </div>
+
+                      <span className="text-xs font-bold leading-tight truncate">
+                        {feat.name}
+                      </span>
                     </button>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2 pt-1">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        soundFx.playPop();
-                        setBgMusic("romantic-lofi");
-                      }}
-                      className={`p-3 rounded-2xl border text-left text-xs font-bold transition-all cursor-pointer ${
-                        bgMusic === "romantic-lofi"
-                          ? "border-[#FF2E63] bg-pink-50 text-[#FF2E63]"
-                          : "border-slate-200 text-slate-700 bg-white hover:border-pink-200"
-                      }`}
-                    >
-                      <span>Soft Piano & Lo-Fi 🎹</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        soundFx.playPop();
-                        setBgMusic("summer-guitar");
-                      }}
-                      className={`p-3 rounded-2xl border text-left text-xs font-bold transition-all cursor-pointer ${
-                        bgMusic === "summer-guitar"
-                          ? "border-[#FF2E63] bg-pink-50 text-[#FF2E63]"
-                          : "border-slate-200 text-slate-700 bg-white hover:border-pink-200"
-                      }`}
-                    >
-                      <span>Acoustic Sunset Guitar 🎸</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* 2. Anniversary & Love Counter */}
-                <div className="p-5 rounded-3xl border border-pink-200 bg-white shadow-xs space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center">
-                        <Calendar className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-extrabold text-slate-800">
-                          Love Journey Counter ⏳
-                        </h4>
-                        <p className="text-xs text-slate-500">
-                          Shows live days, hours & minutes together
-                        </p>
-                      </div>
-                    </div>
-                    <input
-                      type="checkbox"
-                      checked={enableAnniversary}
-                      onChange={(e) => setEnableAnniversary(e.target.checked)}
-                      className="w-5 h-5 accent-[#FF2E63] cursor-pointer"
-                    />
-                  </div>
-
-                  {enableAnniversary && (
-                    <div className="pt-1">
-                      <label className="block text-xs font-semibold text-slate-600 mb-1">
-                        When did your story begin? (Anniversary or first date)
-                      </label>
-                      <input
-                        type="date"
-                        value={anniversaryDate}
-                        onChange={(e) => setAnniversaryDate(e.target.value)}
-                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-medium text-slate-700 outline-none focus:border-pink-400"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                {/* 3. Secret PIN Lock */}
-                <div className="p-5 rounded-3xl border border-pink-200 bg-white shadow-xs space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center">
-                        <Lock className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-extrabold text-slate-800">
-                          4-Digit Secret PIN Lock 🔒
-                        </h4>
-                        <p className="text-xs text-slate-500">
-                          100% private. Only they can unlock with the passcode
-                        </p>
-                      </div>
-                    </div>
-                    <input
-                      type="checkbox"
-                      checked={enablePin}
-                      onChange={(e) => setEnablePin(e.target.checked)}
-                      className="w-5 h-5 accent-[#FF2E63] cursor-pointer"
-                    />
-                  </div>
-
-                  {enablePin && (
-                    <div className="pt-1">
-                      <label className="block text-xs font-semibold text-slate-600 mb-1">
-                        Set 4-Digit Passcode (e.g. your anniversary date or special number)
-                      </label>
-                      <input
-                        type="text"
-                        maxLength={4}
-                        value={secretPin}
-                        onChange={(e) => setSecretPin(e.target.value.replace(/\D/g, ""))}
-                        placeholder="1402"
-                        className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-slate-800 tracking-widest text-center outline-none focus:border-pink-400"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                {/* 4. Wax Seal & Confetti Toggles */}
-                <div className="p-5 rounded-3xl border border-pink-200 bg-white shadow-xs space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-800">
-                      ✉️ Interactive Wax Seal Opening
-                    </span>
-                    <input
-                      type="checkbox"
-                      checked={enableEnvelope}
-                      onChange={(e) => setEnableEnvelope(e.target.checked)}
-                      className="w-5 h-5 accent-[#FF2E63] cursor-pointer"
-                    />
-                  </div>
-                  <div className="flex items-center justify-between pt-1">
-                    <span className="text-xs font-bold text-slate-800">
-                      💖 Romantic Confetti & Heart Particles
-                    </span>
-                    <input
-                      type="checkbox"
-                      checked={enableConfetti}
-                      onChange={(e) => setEnableConfetti(e.target.checked)}
-                      className="w-5 h-5 accent-[#FF2E63] cursor-pointer"
-                    />
-                  </div>
-                </div>
+                  );
+                })}
               </div>
 
-              {/* Bottom Mascot Pill */}
-              <div className="pt-4 flex flex-col items-center">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#FF2E63] to-[#FF537A] text-white flex items-center justify-center shadow-md mb-2">
-                  <Heart className="w-6 h-6 fill-white" />
-                </div>
-                <div className="px-4 py-1.5 rounded-full bg-white border border-pink-100 shadow-md text-xs font-bold text-slate-700">
-                  Make it truly unforgettable!
+              {/* Helper text if none selected */}
+              {selectedFeatures.length === 0 && (
+                <p className="text-xs text-slate-400 font-medium text-center pt-2">
+                  Select features above to add your content
+                </p>
+              )}
+
+              {/* =========================================================== */}
+              {/* EXPANDABLE CONFIGURATION CARDS FOR SELECTED FEATURES */}
+              {/* Matches media_1791115678588.png */}
+              {/* =========================================================== */}
+              <div className="max-w-xl mx-auto space-y-4 pt-2">
+                {/* 1. OUR TIMELINE */}
+                {selectedFeatures.includes("timeline") && (
+                  <div className="p-5 rounded-3xl border border-pink-200 bg-white shadow-xs space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-xl bg-pink-100 text-[#FF2E63] flex items-center justify-center">
+                          <Clock className="w-4 h-4" />
+                        </div>
+                        <h4 className="text-sm font-extrabold text-slate-800">Our Timeline</h4>
+                      </div>
+                      <span className="text-xs font-bold text-slate-400">
+                        {timelineEvents.length}/10
+                      </span>
+                    </div>
+
+                    {/* Input Row */}
+                    <div className="flex flex-col sm:flex-row items-center gap-2">
+                      <div className="relative w-full sm:w-44 shrink-0">
+                        <Calendar className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <input
+                          type="text"
+                          placeholder="Pick a date"
+                          value={tempTimelineDate}
+                          onFocus={(e) => {
+                            e.target.type = "date";
+                          }}
+                          onBlur={(e) => {
+                            if (!e.target.value) e.target.type = "text";
+                          }}
+                          onChange={(e) => setTempTimelineDate(e.target.value)}
+                          className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-700 outline-none focus:border-pink-400 bg-white"
+                        />
+                      </div>
+                      <input
+                        type="text"
+                        value={tempTimelineText}
+                        onChange={(e) => setTempTimelineText(e.target.value)}
+                        placeholder="What happened?"
+                        className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-700 outline-none focus:border-pink-400 bg-white"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (tempTimelineText.trim()) {
+                            soundFx.playPop();
+                            setTimelineEvents((prev) => [
+                              ...prev,
+                              {
+                                date: tempTimelineDate || "2023-02-14",
+                                event: tempTimelineText.trim(),
+                              },
+                            ]);
+                            setTempTimelineText("");
+                          }
+                        }}
+                        className="w-full sm:w-auto p-2.5 rounded-xl bg-[#FF2E63] hover:bg-[#E02656] text-white flex items-center justify-center cursor-pointer shadow-sm shrink-0"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {/* Quick Add Chips */}
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                        Quick add:
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {[
+                          "The day we first met",
+                          "Our first date",
+                          "Our first kiss",
+                          "When we made it official",
+                        ].map((chip) => (
+                          <button
+                            key={chip}
+                            type="button"
+                            onClick={() => {
+                              soundFx.playPop();
+                              setTimelineEvents((prev) => [
+                                ...prev,
+                                { date: "2023-02-14", event: chip },
+                              ]);
+                            }}
+                            className="px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-50 border border-slate-200 text-slate-600 hover:border-pink-300 hover:bg-pink-50 transition-all cursor-pointer"
+                          >
+                            + {chip}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Added Events List */}
+                    {timelineEvents.length > 0 && (
+                      <div className="space-y-1.5 pt-1">
+                        {timelineEvents.map((item, idx) => (
+                          <div
+                            key={idx}
+                            className="flex items-center justify-between p-2 rounded-xl bg-pink-50/50 border border-pink-100 text-xs text-slate-700"
+                          >
+                            <span className="font-mono text-[11px] font-bold text-[#FF2E63]">
+                              {item.date}:
+                            </span>
+                            <span className="truncate flex-1 px-2 font-medium">{item.event}</span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                soundFx.playPop();
+                                setTimelineEvents((prev) => prev.filter((_, i) => i !== idx));
+                              }}
+                              className="text-slate-400 hover:text-red-500 cursor-pointer"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* 2. PROMISE WALL */}
+                {selectedFeatures.includes("promise") && (
+                  <div className="p-5 rounded-3xl border border-pink-200 bg-white shadow-xs space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-xl bg-pink-100 text-[#FF2E63] flex items-center justify-center">
+                          <Gift className="w-4 h-4" />
+                        </div>
+                        <h4 className="text-sm font-extrabold text-slate-800">Promise Wall</h4>
+                      </div>
+                      <span className="text-xs font-bold text-slate-400">
+                        {promises.length}/10
+                      </span>
+                    </div>
+
+                    {/* Input Row */}
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={tempPromiseText}
+                        onChange={(e) => setTempPromiseText(e.target.value)}
+                        placeholder="I promise to..."
+                        className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-700 outline-none focus:border-pink-400 bg-white"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (tempPromiseText.trim()) {
+                            soundFx.playPop();
+                            setPromises((prev) => [...prev, tempPromiseText.trim()]);
+                            setTempPromiseText("");
+                          }
+                        }}
+                        className="p-2.5 rounded-xl bg-[#FF2E63] hover:bg-[#E02656] text-white flex items-center justify-center cursor-pointer shadow-sm shrink-0"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {/* Quick Add Chips */}
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                        Quick add:
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {[
+                          "I promise to always make you laugh",
+                          "I promise to be your biggest cheerleader",
+                          "I promise to cook your favorite meal",
+                          "I promise to always hold your hand",
+                        ].map((chip) => (
+                          <button
+                            key={chip}
+                            type="button"
+                            onClick={() => {
+                              soundFx.playPop();
+                              setPromises((prev) => [...prev, chip]);
+                            }}
+                            className="px-2.5 py-1 rounded-full text-[11px] font-medium bg-slate-50 border border-slate-200 text-slate-600 hover:border-pink-300 hover:bg-pink-50 transition-all cursor-pointer"
+                          >
+                            + {chip.length > 25 ? chip.substring(0, 25) + "..." : chip}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Added Promises List */}
+                    {promises.length > 0 && (
+                      <div className="space-y-1.5 pt-1">
+                        {promises.map((p, idx) => (
+                          <div
+                            key={idx}
+                            className="flex items-center justify-between p-2 rounded-xl bg-pink-50/50 border border-pink-100 text-xs text-slate-700"
+                          >
+                            <span className="truncate flex-1 font-medium">💍 {p}</span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                soundFx.playPop();
+                                setPromises((prev) => prev.filter((_, i) => i !== idx));
+                              }}
+                              className="text-slate-400 hover:text-red-500 cursor-pointer"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* 3. REASONS I LOVE YOU */}
+                {selectedFeatures.includes("reasons") && (
+                  <div className="p-5 rounded-3xl border border-pink-200 bg-white shadow-xs space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-xl bg-pink-100 text-[#FF2E63] flex items-center justify-center">
+                          <Heart className="w-4 h-4" />
+                        </div>
+                        <h4 className="text-sm font-extrabold text-slate-800">
+                          Reasons I Love You
+                        </h4>
+                      </div>
+                      <span className="text-xs font-bold text-slate-400">
+                        {reasonsList.length}/10
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={tempReasonText}
+                        onChange={(e) => setTempReasonText(e.target.value)}
+                        placeholder="A reason why I love you..."
+                        className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-700 outline-none focus:border-pink-400 bg-white"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (tempReasonText.trim()) {
+                            soundFx.playPop();
+                            setReasonsList((prev) => [...prev, tempReasonText.trim()]);
+                            setTempReasonText("");
+                          }
+                        }}
+                        className="p-2.5 rounded-xl bg-[#FF2E63] hover:bg-[#E02656] text-white flex items-center justify-center cursor-pointer shrink-0"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {reasonsList.length > 0 && (
+                      <div className="space-y-1.5 pt-1">
+                        {reasonsList.map((r, idx) => (
+                          <div
+                            key={idx}
+                            className="flex items-center justify-between p-2 rounded-xl bg-pink-50/50 border border-pink-100 text-xs text-slate-700"
+                          >
+                            <span className="truncate flex-1 font-medium">💖 {r}</span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                soundFx.playPop();
+                                setReasonsList((prev) => prev.filter((_, i) => i !== idx));
+                              }}
+                              className="text-slate-400 hover:text-red-500 cursor-pointer"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* 4. OTHER FEATURES (QUIZ, COMPLIMENTS, FORTUNE, SCRATCH, WHEEL, BUCKET) */}
+                {selectedFeatures.filter(
+                  (f) => !["timeline", "promise", "reasons"].includes(f)
+                ).map((featId) => {
+                  const feat = FEATURE_DEFINITIONS.find((f) => f.id === featId);
+                  if (!feat) return null;
+                  const Icon = feat.icon;
+
+                  return (
+                    <div
+                      key={feat.id}
+                      className="p-5 rounded-3xl border border-pink-200 bg-white shadow-xs space-y-3"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-xl bg-pink-100 text-[#FF2E63] flex items-center justify-center">
+                            <Icon className="w-4 h-4" />
+                          </div>
+                          <h4 className="text-sm font-extrabold text-slate-800">{feat.name}</h4>
+                        </div>
+                        <span className="text-xs font-bold text-slate-400">Ready</span>
+                      </div>
+
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {feat.quickAdd.map((item, i) => (
+                          <div
+                            key={i}
+                            className="px-3 py-1.5 rounded-full text-xs font-medium bg-pink-50/60 border border-pink-100 text-slate-700"
+                          >
+                            ✓ {item}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* Ambient Options: Soundtrack & PIN Lock */}
+                <div className="p-4 rounded-2xl bg-[#FFF9FA] border border-pink-100 flex items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-2 text-slate-700">
+                    <Music className="w-4 h-4 text-[#FF2E63]" />
+                    <span className="font-bold">Soundtrack:</span>
+                    <span>
+                      {bgMusic === "romantic-lofi" ? "Soft Piano 🎹" : "Sunset Guitar 🎸"}
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={toggleAudioPreview}
+                    className="px-3 py-1 rounded-full border border-pink-200 text-[#FF2E63] font-bold text-[11px] hover:bg-pink-50 flex items-center gap-1 cursor-pointer"
+                  >
+                    {isAudioPlaying ? (
+                      <>
+                        <Pause className="w-3 h-3 fill-current" />
+                        <span>Pause</span>
+                      </>
+                    ) : (
+                      <>
+                        <Play className="w-3 h-3 fill-current" />
+                        <span>Preview Music</span>
+                      </>
+                    )}
+                  </button>
                 </div>
               </div>
 
@@ -1260,20 +1635,33 @@ export default function CreatorWizard({
                   <span>Back</span>
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => goToStep(6)}
-                  className="px-8 py-3.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-bold text-sm shadow-md shadow-pink-500/25 transition-all flex items-center gap-2 cursor-pointer active:scale-95"
-                >
-                  <span>Continue to Preview</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-3">
+                  {selectedFeatures.length === 0 ? (
+                    <button
+                      type="button"
+                      onClick={() => goToStep(6)}
+                      className="text-xs font-bold text-[#FF2E63] hover:underline px-3 py-2 cursor-pointer"
+                    >
+                      Skip for now ▷|
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => goToStep(6)}
+                      className="px-8 py-3.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-bold text-sm shadow-md shadow-pink-500/25 transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+                    >
+                      <span>Continue</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
               </div>
             </motion.div>
           )}
 
           {/* =============================================================== */}
-          {/* STAGE 6: PREVIEW & LAUNCH / DELIVERY */}
+          {/* STAGE 6: PUBLISH / CHECKOUT */}
+          {/* Matches media_1791115745309.png */}
           {/* =============================================================== */}
           {step === 6 && (
             <motion.div
@@ -1292,154 +1680,162 @@ export default function CreatorWizard({
               {/* Title & Subtitle */}
               <div className="space-y-1.5">
                 <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
-                  {isCreated ? "Your LoveLink is ready!" : "Preview their surprise"}
+                  {isCreated ? "Your LoveLink is Live! 💖" : "Ready to publish?"}
                 </h1>
                 <p className="text-sm text-slate-500 font-medium">
                   {isCreated
                     ? "Share this link or print the QR gift card"
-                    : `See how ${recipientName || "My Love"} will experience their love letter`}
+                    : `Let's get this letter to ${recipientName || "My Love"}`}
                 </p>
               </div>
 
               {!isCreated ? (
-                /* Pre-launch Preview Card */
                 <div className="max-w-xl mx-auto space-y-6">
-                  {/* Interactive Phone Simulation Frame */}
-                  <div
-                    className={`rounded-[38px] p-6 sm:p-8 border-4 border-slate-800 shadow-2xl text-center space-y-5 relative overflow-hidden ${currentTheme.cardBg}`}
-                  >
-                    {/* Simulated Notch */}
-                    <div className="w-24 h-4 bg-slate-800 rounded-full mx-auto -mt-3 mb-2" />
-
-                    {/* Question Header */}
-                    <div className="space-y-1">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-pink-500">
-                        SURPRISE FOR {recipientName.toUpperCase()}
-                      </span>
-                      <h3 className="font-extrabold text-xl sm:text-2xl text-slate-800">
-                        {question}
-                      </h3>
-                    </div>
-
-                    {/* Mini Runaway playground inside mockup */}
-                    <div className="py-2 flex items-center justify-center gap-3">
-                      <button
-                        type="button"
-                        onClick={handlePreviewYes}
-                        className="px-5 py-2 rounded-full bg-[#FF2E63] text-white font-extrabold text-xs shadow-sm"
-                      >
-                        YES! 💖
-                      </button>
-                      <button
-                        type="button"
-                        className="px-4 py-2 rounded-full bg-white border border-slate-200 text-slate-600 text-xs font-bold"
-                      >
-                        Are you sure? 😅
-                      </button>
-                    </div>
-
-                    {/* Simulated Letter Paper */}
-                    <div className="rounded-2xl bg-white/95 p-5 text-left space-y-2 border border-pink-100 shadow-sm">
-                      <p className="font-bold text-xs text-slate-800">
-                        Dear {recipientName || "My Love"},
+                  {/* HERO PRICING CARD MATCHING SCREENSHOT 3 */}
+                  <div className="rounded-[32px] overflow-hidden shadow-xl border border-pink-100 bg-white">
+                    {/* Top vibrant pink gradient header */}
+                    <div className="bg-gradient-to-r from-[#FF007A] via-[#FF2E63] to-[#FF4D79] text-white p-7 sm:p-9 text-center space-y-1 shadow-inner">
+                      <p className="text-xs sm:text-sm font-semibold tracking-wide text-white/95">
+                        Imagine {recipientName || "My Love"}&apos;s face when they open this
                       </p>
-                      <p className="text-xs text-slate-600 line-clamp-4 leading-relaxed whitespace-pre-line">
-                        {letterText}
-                      </p>
-                      <p className="text-[11px] font-semibold text-[#FF2E63] pt-1">
-                        Always yours, {senderName || "Me"} ❤️
-                      </p>
+                      <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white py-1">
+                        $2.85
+                      </h2>
                     </div>
 
-                    {/* Photos Preview inside mockup */}
-                    {photos.length > 0 && (
-                      <div className="flex gap-2 overflow-x-auto pb-1 pt-1 justify-center">
-                        {photos.slice(0, 3).map((p, i) => (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            key={i}
-                            src={p}
-                            alt=""
-                            className="w-16 h-16 rounded-xl object-cover border border-white shadow-sm"
-                          />
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Security or Music Pill */}
-                    <div className="text-[10px] font-bold text-slate-500 flex items-center justify-center gap-2">
-                      {enablePin && <span>🔒 Passcode Protected</span>}
-                      <span>🎵 Soundtrack Included</span>
-                    </div>
-                  </div>
-
-                  {/* Launch / Checkout Banner */}
-                  <div className="p-6 rounded-3xl bg-white border border-pink-200 shadow-md space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="text-left">
-                        <span className="text-xs font-bold uppercase tracking-wider text-[#FF2E63]">
-                          ONE-TIME PAYMENT
+                    {/* Card Body */}
+                    <div className="p-6 sm:p-8 space-y-6 text-left">
+                      <div>
+                        <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 block mb-3">
+                          EVERYTHING INCLUDED:
                         </span>
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-3xl font-extrabold text-slate-900">₹99</span>
-                          <span className="text-sm text-slate-400 line-through">₹499</span>
-                          <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold">
-                            Save 80%
-                          </span>
+
+                        {/* 2-Column Checklist */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs sm:text-sm font-semibold text-slate-700">
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-emerald-500 stroke-[3] shrink-0" />
+                            <span>{recipientName || "My Love"}&apos;s letter forever</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-emerald-500 stroke-[3] shrink-0" />
+                            <span>All your features</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-emerald-500 stroke-[3] shrink-0" />
+                            <span>All 3 photos</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-emerald-500 stroke-[3] shrink-0" />
+                            <span>Printable QR code</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-emerald-500 stroke-[3] shrink-0" />
+                            <span>No watermark</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-emerald-500 stroke-[3] shrink-0" />
+                            <span>Unlimited revisits</span>
+                          </div>
                         </div>
                       </div>
-                      <div className="text-right text-xs text-slate-500 font-medium">
-                        <span className="block">✓ Lifetime access</span>
-                        <span className="block">✓ Ad-free & private</span>
-                      </div>
-                    </div>
 
+                      {/* Primary Send Button with solid single-color styling */}
+                      <button
+                        type="button"
+                        disabled={isProcessingPay}
+                        onClick={handleExecutePayment}
+                        className="w-full py-4 rounded-2xl bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-base shadow-lg shadow-pink-500/25 flex items-center justify-center gap-2 cursor-pointer active:scale-98 transition-all"
+                      >
+                        {isProcessingPay ? (
+                          <>
+                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            <span>Publishing your LoveLink...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Heart className="w-5 h-5 fill-white text-white shrink-0" />
+                            <span>Send My Love Letter — $2.85</span>
+                          </>
+                        )}
+                      </button>
+
+                      {/* Trust badges row */}
+                      <div className="flex items-center justify-center gap-6 text-[11px] font-semibold text-slate-400">
+                        <span className="flex items-center gap-1">🔒 Secure checkout</span>
+                        <span className="flex items-center gap-1">🔄 Money-back guarantee</span>
+                      </div>
+
+                      <p className="text-xs text-slate-400 font-medium text-center italic">
+                        Less than a milk tea — but {recipientName || "My Love"} will remember it forever
+                      </p>
+
+                      <p className="text-[10px] text-slate-300 font-medium text-center">
+                        Made in Norway by HoltenSys Holding AS
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Value props below card matching Screenshot 3 */}
+                  <div className="space-y-2 text-left max-w-lg mx-auto text-xs sm:text-sm text-slate-600 font-medium">
+                    <div className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-emerald-500 stroke-[3] shrink-0 mt-0.5" />
+                      <span>
+                        Stored with no expiry date — {recipientName || "My Love"} can reopen the letter whenever
+                        they like.
+                      </span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-emerald-500 stroke-[3] shrink-0 mt-0.5" />
+                      <span>
+                        Opens straight in their browser from a link or QR code — there is nothing
+                        for them to install.
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Preview Letter Again Trigger */}
+                  <div className="pt-2">
                     <button
                       type="button"
-                      disabled={isProcessingPay}
-                      onClick={handleExecutePayment}
-                      className="w-full py-4 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-base shadow-lg shadow-pink-500/25 transition-all cursor-pointer active:scale-98 flex items-center justify-center gap-2"
+                      onClick={() => {
+                        soundFx.playPop();
+                        setShowPreviewModal(true);
+                      }}
+                      className="text-xs sm:text-sm font-bold text-[#FF2E63] hover:underline cursor-pointer inline-flex items-center gap-1.5"
                     >
-                      {isProcessingPay ? (
-                        <>
-                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          <span>Preparing your LoveLink...</span>
-                        </>
-                      ) : (
-                        <>
-                          <span>Create Your LoveLink Website (₹99)</span>
-                          <ArrowRight className="w-4 h-4" />
-                        </>
-                      )}
+                      <Play className="w-3.5 h-3.5 fill-current" />
+                      <span>Preview your letter again</span>
                     </button>
                   </div>
 
-                  {/* Back button */}
-                  <div>
-                    <button
-                      type="button"
-                      onClick={() => goToStep(5)}
-                      className="px-6 py-3 rounded-full border border-pink-200 text-pink-600 bg-white hover:bg-pink-50 font-bold text-xs transition-all flex items-center gap-2 mx-auto cursor-pointer"
-                    >
-                      <ArrowLeft className="w-3.5 h-3.5" />
-                      <span>Back to features</span>
-                    </button>
+                  {/* Trust Footer matching screenshot */}
+                  <div className="text-[11px] text-slate-400 space-y-1 pt-6 border-t border-slate-200/60">
+                    <p>
+                      Secure payments powered by Stripe. Your payment details are never
+                      stored on our servers.
+                    </p>
+                    <p>Made with love by HoltenSys Holding AS, Norway</p>
+                    <p className="text-slate-400">✉️ ole@holtensys.no</p>
                   </div>
                 </div>
               ) : (
-                /* Post-Launch Multi-Channel Delivery Dashboard */
+                /* Post-Launch Celebration & Multi-Channel Delivery */
                 <div className="max-w-xl mx-auto space-y-6 text-center">
-                  <div className="p-6 rounded-3xl bg-white border border-pink-200 shadow-lg space-y-4">
-                    <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
-                      <Check className="w-7 h-7 stroke-[3]" />
+                  <div className="p-6 sm:p-8 rounded-3xl bg-white border border-pink-200 shadow-xl space-y-4">
+                    <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
+                      <Check className="w-8 h-8 stroke-[3]" />
                     </div>
 
-                    <h2 className="text-xl sm:text-2xl font-extrabold text-slate-800">
-                      Your LoveLink is Live! 💖
+                    <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900">
+                      Your LoveLink is Ready to Send! 💖
                     </h2>
+                    <p className="text-xs sm:text-sm text-slate-500">
+                      Send the link directly to {recipientName} or surprise them with a printable QR
+                      gift card.
+                    </p>
 
                     {/* URL Display with Copy */}
-                    <div className="p-3 rounded-2xl bg-pink-50/70 border border-pink-100 flex items-center justify-between gap-2">
+                    <div className="p-3.5 rounded-2xl bg-pink-50/70 border border-pink-100 flex items-center justify-between gap-2">
                       <span className="text-xs font-mono font-bold text-slate-700 truncate pl-2">
                         {siteUrl}
                       </span>
@@ -1451,51 +1847,47 @@ export default function CreatorWizard({
                           soundFx.playPop();
                           setTimeout(() => setCopiedLink(false), 2500);
                         }}
-                        className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-pink-100/50 border border-pink-200 text-xs font-bold text-[#FF2E63] shrink-0 transition-colors cursor-pointer"
+                        className="px-4 py-2 rounded-xl bg-white hover:bg-pink-100/50 border border-pink-200 text-xs font-bold text-[#FF2E63] shrink-0 transition-colors cursor-pointer"
                       >
                         {copiedLink ? "Copied! ✓" : "Copy Link"}
                       </button>
                     </div>
 
-                    {/* 4 Multi-Channel Share Buttons */}
+                    {/* 4 Share Options */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                      {/* WhatsApp Share */}
                       <a
                         href={`https://wa.me/?text=${encodeURIComponent(
                           `Hey ${recipientName}! ❤️ I made a special website just for you: ${siteUrl}`
                         )}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="py-3 px-4 rounded-2xl bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all"
+                        className="py-3.5 px-4 rounded-2xl bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all"
                       >
                         <MessageCircle className="w-4 h-4 fill-white" />
                         <span>Send via WhatsApp</span>
                       </a>
 
-                      {/* View Website */}
                       <Link
                         href={`/p/${createdSlug}`}
                         target="_blank"
-                        className="py-3 px-4 rounded-2xl bg-[#FF2E63] hover:bg-[#E02656] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all"
+                        className="py-3.5 px-4 rounded-2xl bg-[#FF2E63] hover:bg-[#E02656] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all"
                       >
                         <ExternalLink className="w-4 h-4" />
                         <span>Open Website Now</span>
                       </Link>
 
-                      {/* Printable QR Card Modal */}
                       <button
                         type="button"
                         onClick={() => {
                           soundFx.playPop();
                           setShowQrModal(true);
                         }}
-                        className="py-3 px-4 rounded-2xl bg-white border border-pink-200 hover:bg-pink-50 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+                        className="py-3.5 px-4 rounded-2xl bg-white border border-pink-200 hover:bg-pink-50 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
                       >
                         <Smartphone className="w-4 h-4 text-[#FF2E63]" />
                         <span>Printable QR Polaroid</span>
                       </button>
 
-                      {/* Native Web Share */}
                       <button
                         type="button"
                         onClick={() => {
@@ -1509,7 +1901,7 @@ export default function CreatorWizard({
                             setCopiedLink(true);
                           }
                         }}
-                        className="py-3 px-4 rounded-2xl bg-white border border-pink-200 hover:bg-pink-50 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+                        className="py-3.5 px-4 rounded-2xl bg-white border border-pink-200 hover:bg-pink-50 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
                       >
                         <Share2 className="w-4 h-4 text-[#FF2E63]" />
                         <span>Share Sheet</span>
@@ -1522,6 +1914,99 @@ export default function CreatorWizard({
           )}
         </AnimatePresence>
       </main>
+
+      {/* =================================================================== */}
+      {/* FULL DEVICE PREVIEW MODAL ("Preview your letter again") */}
+      {/* =================================================================== */}
+      {showPreviewModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full text-center space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button
+              type="button"
+              onClick={() => setShowPreviewModal(false)}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <h3 className="font-extrabold text-lg text-slate-900">
+              Surprise Preview for {recipientName}
+            </h3>
+
+            {/* Interactive Phone Simulation Frame */}
+            <div
+              className={`rounded-[32px] p-6 border-4 border-slate-800 shadow-xl text-center space-y-4 relative overflow-hidden ${currentTheme.cardBg}`}
+            >
+              <div className="w-20 h-3 bg-slate-800 rounded-full mx-auto -mt-2 mb-2" />
+
+              <div className="space-y-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-pink-500">
+                  SURPRISE FOR {recipientName.toUpperCase()}
+                </span>
+                <h4 className="font-extrabold text-lg text-slate-800">{question}</h4>
+              </div>
+
+              {/* Runaway button preview */}
+              <div className="py-2 flex items-center justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={handlePreviewYes}
+                  className="px-4 py-2 rounded-full bg-[#FF2E63] text-white font-extrabold text-xs shadow-sm"
+                >
+                  YES! 💖
+                </button>
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded-full bg-white border border-slate-200 text-slate-600 text-xs font-bold"
+                >
+                  Are you sure? 😅
+                </button>
+              </div>
+
+              {/* Letter Preview */}
+              <div className="rounded-2xl bg-white/95 p-4 text-left space-y-2 border border-pink-100 shadow-xs">
+                <p className="font-bold text-xs text-slate-800">
+                  Dear {recipientName || "My Love"},
+                </p>
+                <p className="text-xs text-slate-600 line-clamp-4 leading-relaxed whitespace-pre-line">
+                  {letterText}
+                </p>
+                <p className="text-[11px] font-semibold text-[#FF2E63] pt-1">
+                  Always yours, {senderName || "Me"} ❤️
+                </p>
+              </div>
+
+              {/* Photos Carousel */}
+              {photos.length > 0 && (
+                <div className="flex gap-2 overflow-x-auto pb-1 pt-1 justify-center">
+                  {photos.slice(0, 3).map((p, i) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      key={i}
+                      src={p}
+                      alt=""
+                      className="w-14 h-14 rounded-xl object-cover border border-white shadow-xs"
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Selected Features Count */}
+              <div className="text-[10px] font-bold text-slate-500">
+                ✨ {selectedFeatures.length} interactive magical features included
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowPreviewModal(false)}
+              className="w-full py-3 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-bold text-xs shadow-md cursor-pointer"
+            >
+              Close Preview
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* =================================================================== */}
       {/* PRINTABLE QR POLAROID MODAL */}
@@ -1544,7 +2029,6 @@ export default function CreatorWizard({
               Print this or save it to slip into a greeting card or gift box!
             </p>
 
-            {/* Printable Polaroid Card */}
             <div className="p-6 rounded-2xl bg-[#FFF5F7] border border-pink-200 shadow-md space-y-3">
               <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#FF2E63] block">
                 FOR {recipientName.toUpperCase()} 💕

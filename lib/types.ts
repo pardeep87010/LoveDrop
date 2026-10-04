@@ -23,6 +23,17 @@ export interface LoveSurpriseData {
   photos: string[];
   theme?: string; // e.g., "classic", "classic-romance", "first-love", "minimalist"
   anniversaryDate?: string; // e.g. "2023-02-14"
+  // 9 Interactive Feature Fields matching Stage 5
+  selectedFeatures?: string[];
+  timeline?: { date: string; event: string }[];
+  promises?: string[];
+  loveReasons?: string[];
+  quizQuestions?: { question: string; answer: string }[];
+  compliments?: string[];
+  fortuneCookies?: string[];
+  scratchCards?: string[];
+  wheelItems?: string[];
+  bucketList?: string[];
   passcodeHash?: string; // Salted/hashed 4-digit PIN if enabled
   hasPasscode: boolean;
   dodgeIntensity: DodgeIntensity;
