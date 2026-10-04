@@ -578,18 +578,20 @@ export default function CreatorWizard({
   const currentTheme = THEMES.find((t) => t.id === theme) || THEMES[0];
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-slate-800 pb-20 selection:bg-pink-100 selection:text-pink-600">
+    <div className="min-h-screen bg-gradient-to-b from-[#FDF3F8] via-[#FEFAFC] to-[#FFFDFE] text-slate-800 pb-20 selection:bg-pink-100 selection:text-pink-600">
       {/* =================================================================== */}
-      {/* TOP PROGRESS NAVIGATION BAR (Matching reference screenshots) */}
+      {/* TOP PROGRESS NAVIGATION BAR (Matching media_1791116072759.png) */}
       {/* =================================================================== */}
-      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-pink-100 py-3 sm:py-4 px-4 shadow-sm">
-        <div className="max-w-2xl mx-auto space-y-3">
+      <header className="w-full pt-4 sm:pt-6 pb-2 px-4">
+        <div className="max-w-xl mx-auto space-y-2.5">
           {/* Progress Track */}
-          <div className="w-full bg-pink-100/70 h-1.5 rounded-full overflow-hidden relative">
+          <div className="w-full bg-[#FCE9F4] h-1.5 rounded-full overflow-hidden relative">
             <motion.div
-              className="h-full bg-gradient-to-r from-[#FF2E63] to-[#FF537A] rounded-full"
+              className="h-full bg-[#F6339A] rounded-full"
               initial={{ width: "16%" }}
-              animate={{ width: `${(step / 6) * 100}%` }}
+              animate={{
+                width: `${Math.min(100, Math.max(16, (step / 6) * 100))}%`,
+              }}
               transition={{ duration: 0.35, ease: "easeOut" }}
             />
           </div>
@@ -597,12 +599,12 @@ export default function CreatorWizard({
           {/* 6 Step Indicators */}
           <div className="flex items-center justify-between px-1">
             {[
-              { num: 1, label: "Recipient", icon: Heart },
-              { num: 2, label: "Style", icon: Palette },
-              { num: 3, label: "Message", icon: PenLine },
-              { num: 4, label: "Photos", icon: Camera },
-              { num: 5, label: "Features", icon: Sparkles },
-              { num: 6, label: "Preview", icon: Eye },
+              { num: 1, label: "Recipient" },
+              { num: 2, label: "Style" },
+              { num: 3, label: "Message" },
+              { num: 4, label: "Photos" },
+              { num: 5, label: "Features" },
+              { num: 6, label: "Preview" },
             ].map((s) => {
               const isCurrent = step === s.num;
               const isCompleted = step > s.num;
@@ -615,26 +617,26 @@ export default function CreatorWizard({
                   disabled={!isClickable}
                   onClick={() => isClickable && goToStep(s.num as any)}
                   className={`flex flex-col items-center gap-1 group transition-all ${
-                    isClickable ? "cursor-pointer" : "cursor-default opacity-50"
+                    isClickable ? "cursor-pointer" : "cursor-default opacity-60"
                   }`}
                 >
                   <div
-                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs transition-all ${
+                    className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center font-bold text-[11px] sm:text-xs transition-all ${
                       isCompleted
-                        ? "bg-[#FF2E63] text-white shadow-sm"
+                        ? "bg-[#F6339A] text-white"
                         : isCurrent
-                        ? "bg-[#FF2E63] text-white ring-4 ring-pink-100 shadow-md scale-105"
-                        : "bg-pink-100 text-pink-500"
+                        ? "bg-[#F6339A] text-white shadow-xs ring-4 ring-[#FCE9F4] scale-105"
+                        : "bg-[#FCE9F4] text-[#F6339A]"
                     }`}
                   >
-                    {isCompleted ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : s.num}
+                    {isCompleted ? <Check className="w-3 h-3 stroke-[3]" /> : s.num}
                   </div>
                   <span
-                    className={`text-[10px] sm:text-xs font-semibold tracking-tight transition-colors ${
+                    className={`text-[10px] sm:text-[11px] font-medium tracking-tight transition-colors ${
                       isCurrent
-                        ? "text-[#FF2E63] font-bold"
+                        ? "text-[#F6339A] font-bold"
                         : isCompleted
-                        ? "text-slate-700"
+                        ? "text-slate-500"
                         : "text-slate-400"
                     }`}
                   >
@@ -646,11 +648,9 @@ export default function CreatorWizard({
           </div>
 
           {/* Saved indicator */}
-          {step > 1 && (
-            <div className="text-center text-[11px] font-medium text-slate-400 flex items-center justify-center gap-1 pt-0.5">
-              <span>✓ Saved — you can safely close this page</span>
-            </div>
-          )}
+          <div className="text-center text-[11px] font-normal text-slate-400 flex items-center justify-center gap-1 pt-0.5">
+            <span>✓ Saved — you can safely close this page</span>
+          </div>
         </div>
       </header>
 

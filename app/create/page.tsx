@@ -17,7 +17,7 @@ export default function CreatePage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-[#FDFBF7]">
+        <div className="min-h-screen flex items-center justify-center bg-[#FDF3F8]">
           <div className="w-8 h-8 border-4 border-rose-500 border-t-transparent rounded-full animate-spin" />
         </div>
       }
