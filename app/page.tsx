@@ -37,7 +37,7 @@ import {
 import Navbar from "@/components/core/Navbar";
 import Footer from "@/components/core/Footer";
 import HeroInteractivePhone from "@/components/experience/HeroInteractivePhone";
-import LoveSurpriseTemplate from "@/components/experience/LoveSurpriseTemplate";
+import ExperienceTheMagicSection from "@/components/experience/ExperienceTheMagicSection";
 import { soundFx } from "@/lib/soundFx";
 
 export default function HomePage() {
@@ -342,44 +342,9 @@ export default function HomePage() {
         </div>
 
         {/* =================================================================== */}
-        {/* 2. LIVE INTERACTIVE SURPRISE TEMPLATE DEMO */}
+        {/* 2. EXPERIENCE THE MAGIC DEMO (matching media_1791134490359.png)    */}
         {/* =================================================================== */}
-        <section id="demo-experience" className="w-full py-16 sm:py-20 bg-gradient-to-b from-[#FDFBF7] via-[#FDF3F8]/70 to-[#FDFBF7] border-b border-pink-100/60 relative">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-6">
-            {/* Tag */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-pink-100/80 border border-pink-200 text-[#FF2E63] text-xs font-bold shadow-xs">
-              <Sparkles className="w-3.5 h-3.5 fill-[#FF2E63]" />
-              <span>Live Interactive Experience Demo</span>
-            </div>
-
-            {/* Heading */}
-            <div className="space-y-2">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
-                See What Sarah Experiences When She Opens Your Link
-              </h2>
-              <p className="text-xs sm:text-sm md:text-base text-slate-500 font-medium max-w-xl mx-auto">
-                Test the viral runaway &ldquo;No&rdquo; button, vintage love letter typewriter, polaroid memories carousel, and the 9 interactive reasons flip cards.
-              </p>
-            </div>
-
-            {/* Embedded Live 5-Page Template Container */}
-            <div className="pt-2 text-left">
-              <LoveSurpriseTemplate isEmbedded={true} />
-            </div>
-
-            {/* Call to action below demo */}
-            <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link
-                href="/create"
-                onClick={() => soundFx.playPop()}
-                className="px-8 py-4 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm sm:text-base shadow-lg shadow-pink-500/25 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
-              >
-                <span>Create Your Own Surprise (₹99)</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-        </section>
+        <ExperienceTheMagicSection recipientName="Sarah" />
 
         {/* =================================================================== */}
         {/* 2. PROOF BAR / METRIC HIGHLIGHTS */}
