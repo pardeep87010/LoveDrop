@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, ArrowRight } from "lucide-react";
 import LoveSurpriseTemplate from "./LoveSurpriseTemplate";
@@ -14,6 +14,38 @@ export default function ExperienceTheMagicSection({
   recipientName = "Sarah",
 }: ExperienceTheMagicSectionProps) {
   const [isPlaying, setIsPlaying] = useState(false);
+
+  // Lock body scroll and prevent background scroll chaining when full-viewport overlay is open
+  useEffect(() => {
+    if (isPlaying) {
+      const originalBodyOverflow = document.body.style.overflow;
+      const originalHtmlOverflow = document.documentElement.style.overflow;
+      const originalBodyPadding = document.body.style.paddingRight;
+
+      // Prevent layout shift when scrollbar disappears
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+      if (scrollbarWidth > 0) {
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+      }
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          setIsPlaying(false);
+        }
+      };
+      window.addEventListener("keydown", handleKeyDown);
+
+      return () => {
+        document.body.style.overflow = originalBodyOverflow;
+        document.documentElement.style.overflow = originalHtmlOverflow;
+        document.body.style.paddingRight = originalBodyPadding;
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    }
+  }, [isPlaying]);
 
   const handleStartPlay = () => {
     soundFx.playPop();
@@ -174,7 +206,7 @@ export default function ExperienceTheMagicSection({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[9999] w-screen h-screen bg-[#FFF5F8] overflow-hidden flex flex-col justify-between"
+            className="fixed inset-0 z-[9999] w-full h-full bg-[#FFF5F8] overflow-y-auto overscroll-contain"
           >
             <LoveSurpriseTemplate
               isEmbedded={false}

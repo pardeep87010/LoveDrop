@@ -314,8 +314,8 @@ export default function LoveSurpriseTemplate({
       className={`relative w-full ${
         isEmbedded
           ? "min-h-[640px] sm:min-h-[700px] rounded-3xl overflow-hidden border border-pink-100 shadow-xl"
-          : "min-h-screen"
-      } bg-gradient-to-b from-[#FDF3F8] via-[#FEFAFC] to-[#FFFDFE] flex flex-col justify-between p-4 sm:p-6 selection:bg-pink-100 select-none font-sans`}
+          : "min-h-full min-h-screen"
+      } bg-gradient-to-b from-[#FDF3F8] via-[#FEFAFC] to-[#FFFDFE] flex flex-col justify-between p-4 sm:p-6 selection:bg-pink-100 select-none font-sans overscroll-contain`}
     >
       {/* Floating ambient hearts in the background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden -z-0">
@@ -339,7 +339,7 @@ export default function LoveSurpriseTemplate({
       {/* =============================================================== */}
       {/* TOP HEADER: 15-DOT PAGINATION + RESET + CLOSE ICONS */}
       {/* =============================================================== */}
-      <div className="relative z-10 w-full flex items-center justify-between max-w-2xl mx-auto">
+      <div className={`${isEmbedded ? "relative" : "sticky top-0"} z-20 w-full flex items-center justify-between max-w-2xl mx-auto py-1`}>
         <div className="w-16" />
 
         {/* 15 Pagination Dots matching reference screenshots */}
@@ -904,7 +904,7 @@ export default function LoveSurpriseTemplate({
       {/* =============================================================== */}
       {/* BOTTOM FOOTER: CURRENT STEP INDICATOR (e.g. "1 / 15") */}
       {/* =============================================================== */}
-      <div className="absolute bottom-3 sm:bottom-4 right-4 sm:right-6 z-10 pointer-events-none">
+      <div className={`${isEmbedded ? "absolute" : "fixed"} bottom-3 sm:bottom-4 right-4 sm:right-6 z-20 pointer-events-none`}>
         <span className="text-[11px] font-bold text-pink-400 bg-white/90 px-2.5 py-0.5 rounded-full border border-pink-100 shadow-2xs">
           {step} / 15
         </span>
