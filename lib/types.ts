@@ -20,6 +20,7 @@ export interface LoveSurpriseData {
   subheading?: string;
   reasons: string[]; // 3 heartfelt reasons
   letterContent: string;
+  letterText?: string;
   photos: string[];
   theme?: string; // e.g., "classic", "classic-romance", "first-love", "minimalist"
   anniversaryDate?: string; // e.g. "2023-02-14"
