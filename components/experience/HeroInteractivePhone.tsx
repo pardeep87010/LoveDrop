@@ -268,8 +268,9 @@ export default function HeroInteractivePhone() {
                     onClick={handleYesClick}
                     style={{
                       transform: `scale(${Math.min(1 + dodgeCount * 0.12, 1.45)})`,
+                      zIndex: 10,
                     }}
-                    className="z-10 px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs shadow-xs transition-transform active:scale-95 cursor-pointer shrink-0"
+                    className="relative z-10 px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs shadow-xs transition-transform active:scale-95 cursor-pointer shrink-0"
                   >
                     {yesAccepted ? "YES! 1000x YES! 💖" : "YES! 💖"}
                   </button>
@@ -280,7 +281,8 @@ export default function HeroInteractivePhone() {
                     onClick={handleDodgeNo}
                     animate={noPos ? { x: noPos.x, y: noPos.y } : { x: 0, y: 0 }}
                     transition={{ type: "spring", stiffness: 380, damping: 22 }}
-                    className="px-3.5 py-1.5 rounded-lg bg-slate-100 text-slate-500 font-bold text-xs border border-slate-200 cursor-pointer"
+                    style={{ zIndex: 30 }}
+                    className="relative z-30 px-3.5 py-1.5 rounded-lg bg-slate-100 text-slate-500 font-bold text-xs border border-slate-200 shadow-xs cursor-pointer select-none"
                   >
                     No 💔
                   </motion.button>

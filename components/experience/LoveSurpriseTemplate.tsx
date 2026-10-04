@@ -526,7 +526,7 @@ export default function LoveSurpriseTemplate({
 
               {/* Buttons Row with Runaway No & Growing Yes */}
               <div className="relative min-h-[140px] flex items-center justify-center gap-4 pt-4">
-                {/* YES Button (Grows with each attempt) */}
+                {/* YES Button (Grows with each attempt, stays in back layer) */}
                 <motion.button
                   id="yes-btn"
                   type="button"
@@ -535,12 +535,13 @@ export default function LoveSurpriseTemplate({
                     scale: 1 + Math.min(noAttempts * 0.12, 1.8),
                   }}
                   transition={{ type: "spring", stiffness: 350, damping: 20 }}
-                  className="px-7 py-3 rounded-2xl bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm sm:text-base shadow-md shadow-pink-500/25 cursor-pointer z-10 whitespace-nowrap active:scale-95"
+                  style={{ zIndex: 10 }}
+                  className="px-7 py-3 rounded-2xl bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm sm:text-base shadow-md shadow-pink-500/25 cursor-pointer relative z-10 whitespace-nowrap active:scale-95"
                 >
                   YES! 💖
                 </motion.button>
 
-                {/* NO Button (Dodges, cycles text, shakes after 5 attempts) */}
+                {/* NO Button (Dodges, cycles text, stays on top layer above YES) */}
                 <motion.button
                   id="no-btn"
                   type="button"
@@ -557,7 +558,8 @@ export default function LoveSurpriseTemplate({
                     damping: 18,
                     rotate: { repeat: Infinity, duration: 0.3 },
                   }}
-                  className={`px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm border border-slate-200/80 shadow-xs cursor-pointer select-none whitespace-nowrap transition-colors ${
+                  style={{ zIndex: 30 }}
+                  className={`px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm border border-slate-200/80 shadow-md cursor-pointer select-none whitespace-nowrap transition-colors relative z-30 ${
                     noAttempts >= 5 ? "ring-2 ring-rose-400" : ""
                   }`}
                 >
