@@ -313,7 +313,7 @@ export default function LoveSurpriseTemplate({
     <div
       className={`relative w-full ${
         isEmbedded
-          ? "min-h-[640px] sm:min-h-[700px] rounded-3xl overflow-hidden border border-pink-100 shadow-xl"
+          ? "min-h-[480px] sm:min-h-[540px] h-full rounded-[24px] sm:rounded-[28px] overflow-y-auto overscroll-contain"
           : "min-h-full min-h-screen"
       } bg-gradient-to-b from-[#FDF3F8] via-[#FEFAFC] to-[#FFFDFE] flex flex-col justify-between p-4 sm:p-6 selection:bg-pink-100 select-none font-sans overscroll-contain`}
     >
@@ -337,10 +337,11 @@ export default function LoveSurpriseTemplate({
       </div>
 
       {/* =============================================================== */}
-      {/* TOP HEADER: 15-DOT PAGINATION + RESET + CLOSE ICONS */}
+      {/* TOP HEADER: 15-DOT PAGINATION + RESET + FULLSCREEN + CLOSE ICONS */}
+      {/* (media_1791139618461.png: 3 buttons on top right) */}
       {/* =============================================================== */}
       <div className={`${isEmbedded ? "relative" : "sticky top-0"} z-20 w-full flex items-center justify-between max-w-2xl mx-auto py-1`}>
-        <div className="w-16" />
+        <div className="w-24 sm:w-28" />
 
         {/* 15 Pagination Dots matching reference screenshots */}
         <div className="flex items-center gap-1.5 sm:gap-2">
@@ -364,9 +365,10 @@ export default function LoveSurpriseTemplate({
           })}
         </div>
 
-        {/* Top Right Controls: Restart & Close (only 2 buttons, exactly matching media_1791135826504.png) */}
+        {/* Top Right Controls: Restart, Fullscreen (media_1791139618461.png), Close */}
         <div className="flex items-center gap-1.5 sm:gap-2">
           <button
+            id="template-restart-btn"
             type="button"
             onClick={handleRestart}
             title="Restart experience"
@@ -374,8 +376,24 @@ export default function LoveSurpriseTemplate({
           >
             <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
+          {onToggleFullscreen && (
+            <button
+              id="template-fullscreen-btn"
+              type="button"
+              onClick={onToggleFullscreen}
+              title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white hover:bg-pink-50 border border-pink-100/90 shadow-sm text-slate-600 hover:text-[#FF2E63] flex items-center justify-center transition-all cursor-pointer hover:scale-105 active:scale-95"
+            >
+              {isFullscreen ? (
+                <Minimize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              ) : (
+                <Maximize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              )}
+            </button>
+          )}
           {onClose && (
             <button
+              id="template-close-btn"
               type="button"
               onClick={onClose}
               title="Close"
@@ -494,6 +512,11 @@ export default function LoveSurpriseTemplate({
                   </motion.div>
                 )}
               </motion.div>
+
+              {/* Watermark matching media_1791139618461.png */}
+              <p className="text-[10px] sm:text-[11px] font-semibold text-pink-400/80 text-center pt-3 tracking-wide select-none">
+                ♥ Made with LoveLink ♥
+              </p>
             </div>
           )}
 

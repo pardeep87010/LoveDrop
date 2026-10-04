@@ -14,10 +14,11 @@ export default function ExperienceTheMagicSection({
   recipientName = "Sarah",
 }: ExperienceTheMagicSectionProps) {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Lock body scroll and prevent background scroll chaining when full-viewport overlay is open
+  // Lock body scroll ONLY when the full-viewport overlay is open
   useEffect(() => {
-    if (isPlaying) {
+    if (isFullscreen) {
       const originalBodyOverflow = document.body.style.overflow;
       const originalHtmlOverflow = document.documentElement.style.overflow;
       const originalBodyPadding = document.body.style.paddingRight;
@@ -33,7 +34,7 @@ export default function ExperienceTheMagicSection({
 
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === "Escape") {
-          setIsPlaying(false);
+          setIsFullscreen(false);
         }
       };
       window.addEventListener("keydown", handleKeyDown);
@@ -45,7 +46,7 @@ export default function ExperienceTheMagicSection({
         window.removeEventListener("keydown", handleKeyDown);
       };
     }
-  }, [isPlaying]);
+  }, [isFullscreen]);
 
   const handleStartPlay = () => {
     soundFx.playPop();
@@ -76,131 +77,158 @@ export default function ExperienceTheMagicSection({
             </p>
           </div>
 
-          {/* Video / Interactive Player Card Frame */}
-          <div className="relative w-full max-w-4xl mx-auto rounded-[24px] sm:rounded-[28px] overflow-hidden bg-white shadow-2xl shadow-pink-900/10 border border-slate-200/80 transition-all text-left">
-            {/* Main Stage Screen: Preview Cover (media_1791134490359.png) */}
-            <div
-              className="relative w-full min-h-[360px] sm:min-h-[440px] flex flex-col items-center justify-center p-6 sm:p-10 select-none overflow-hidden cursor-pointer"
-              onClick={handleStartPlay}
-              style={{
-                backgroundColor: "#CBC0C2",
-                backgroundImage:
-                  "radial-gradient(circle at 50% 50%, rgba(245,238,241,0.55) 0%, rgba(203,192,194,0.95) 85%)",
-              }}
-            >
-              {/* Floating Ambient Sparkles and Hearts (Matching Reference) */}
-              <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                <span className="absolute top-10 left-12 text-pink-400 text-lg opacity-80">
-                  💕
-                </span>
-                <span className="absolute top-8 right-20 text-amber-300 text-base opacity-90">
-                  ✨
-                </span>
-                <span className="absolute top-1/2 left-10 -translate-y-4 text-amber-300 text-sm opacity-90">
-                  ✨
-                </span>
-                <span className="absolute top-1/2 right-12 -translate-y-2 text-pink-400 text-lg opacity-80">
-                  💕
-                </span>
-                <span className="absolute bottom-12 right-28 text-pink-400 text-sm opacity-75">
-                  💖
-                </span>
-                <span className="absolute bottom-10 left-20 text-pink-400 text-sm opacity-75">
-                  💗
-                </span>
-              </div>
-
-              {/* Center Content Mockup */}
-              <div className="relative z-10 flex flex-col items-center justify-center text-center">
-                {/* Clustered 3 Hearts */}
-                <div className="flex items-center justify-center -space-x-1 mb-1.5">
-                  <span className="text-xl transform -rotate-12">💖</span>
-                  <span className="text-2xl transform -translate-y-1">❤️</span>
-                  <span className="text-xl transform rotate-12">💕</span>
-                </div>
-
-                {/* Recipient Title (With Play Button layered directly in center) */}
-                <div className="relative flex items-center justify-center min-h-[70px] sm:min-h-[80px]">
-                  <h3 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-                    Hello, Sarah
-                  </h3>
-
-                  {/* Centered Large Circular Play Button */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <button
-                      id="play-demo-btn"
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleStartPlay();
-                      }}
-                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white shadow-2xl hover:shadow-pink-500/30 flex items-center justify-center cursor-pointer hover:scale-110 active:scale-95 transition-all group border border-white/90"
-                      title="Play Experience"
-                    >
-                      <Play className="w-7 h-7 sm:w-8 sm:h-8 fill-[#FF2E63] text-[#FF2E63] ml-1 group-hover:scale-105 transition-transform" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Subdued text under play button */}
-                <p className="text-xs sm:text-sm text-slate-700/75 font-medium mt-2">
-                  I made something special for you...
-                </p>
-
-                {/* White/cream Try Experience prompt matching image */}
-                <p className="text-xs sm:text-sm font-extrabold text-white/90 drop-shadow-xs mt-1">
-                  Try the Experience
-                </p>
-
-                {/* Pagination Dots Preview */}
-                <div className="flex items-center justify-center gap-1.5 mt-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#FF2E63]" />
-                  {[...Array(7)].map((_, i) => (
-                    <span
-                      key={i}
-                      className="w-1.5 h-1.5 rounded-full bg-white/40"
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Player Bottom Control Bar (media_1791134490359.png) */}
-            <div className="bg-white border-t border-slate-100 px-5 sm:px-7 py-3.5 sm:py-4 flex items-center justify-between z-20">
-              {/* Left Info */}
-              <div className="text-left space-y-0.5">
-                <p className="font-extrabold text-slate-900 text-sm sm:text-base leading-tight">
-                  Live Interactive Demo
-                </p>
-                <p className="text-xs text-slate-400 font-medium">
-                  Tap through the full experience
-                </p>
-              </div>
-
-              {/* Right Controls */}
-              <div className="flex items-center gap-2">
-                <button
-                  id="fullscreen-demo-btn"
-                  type="button"
-                  onClick={handleStartPlay}
-                  className="px-3.5 sm:px-4 py-2 rounded-lg border border-pink-200 hover:border-pink-300 bg-white hover:bg-pink-50/60 text-[#FF2E63] text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs active:scale-95"
-                  title="Try Experience"
+          {/* Video / Interactive Player Card Frame (Exact fixed dimensions matching media_1791139618461.png) */}
+          <div className="relative w-full max-w-4xl mx-auto rounded-[24px] sm:rounded-[28px] overflow-hidden bg-white shadow-2xl shadow-pink-900/10 border border-slate-200/80 transition-all text-left min-h-[488px] sm:min-h-[548px] flex flex-col">
+            <AnimatePresence mode="wait">
+              {!isPlaying ? (
+                <motion.div
+                  key="cover-view"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="flex-1 flex flex-col justify-between"
                 >
-                  <span>Try Experience</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
+                  {/* Main Stage Screen: Preview Cover (media_1791134490359.png) */}
+                  <div
+                    className="relative w-full flex-1 min-h-[380px] sm:min-h-[440px] flex flex-col items-center justify-center p-6 sm:p-10 select-none overflow-hidden cursor-pointer"
+                    onClick={handleStartPlay}
+                    style={{
+                      backgroundColor: "#CBC0C2",
+                      backgroundImage:
+                        "radial-gradient(circle at 50% 50%, rgba(245,238,241,0.55) 0%, rgba(203,192,194,0.95) 85%)",
+                    }}
+                  >
+                    {/* Floating Ambient Sparkles and Hearts */}
+                    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                      <span className="absolute top-10 left-12 text-pink-400 text-lg opacity-80">
+                        💕
+                      </span>
+                      <span className="absolute top-8 right-20 text-amber-300 text-base opacity-90">
+                        ✨
+                      </span>
+                      <span className="absolute top-1/2 left-10 -translate-y-4 text-amber-300 text-sm opacity-90">
+                        ✨
+                      </span>
+                      <span className="absolute top-1/2 right-12 -translate-y-2 text-pink-400 text-lg opacity-80">
+                        💕
+                      </span>
+                      <span className="absolute bottom-12 right-28 text-pink-400 text-sm opacity-75">
+                        💖
+                      </span>
+                      <span className="absolute bottom-10 left-20 text-pink-400 text-sm opacity-75">
+                        💗
+                      </span>
+                    </div>
+
+                    {/* Center Content Mockup */}
+                    <div className="relative z-10 flex flex-col items-center justify-center text-center">
+                      {/* Clustered 3 Hearts */}
+                      <div className="flex items-center justify-center -space-x-1 mb-1.5">
+                        <span className="text-xl transform -rotate-12">💖</span>
+                        <span className="text-2xl transform -translate-y-1">❤️</span>
+                        <span className="text-xl transform rotate-12">💕</span>
+                      </div>
+
+                      {/* Recipient Title (With Play Button layered directly in center) */}
+                      <div className="relative flex items-center justify-center min-h-[70px] sm:min-h-[80px]">
+                        <h3 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+                          Hello, Sarah
+                        </h3>
+
+                        {/* Centered Large Circular Play Button */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <button
+                            id="play-demo-btn"
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleStartPlay();
+                            }}
+                            className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white shadow-2xl hover:shadow-pink-500/30 flex items-center justify-center cursor-pointer hover:scale-110 active:scale-95 transition-all group border border-white/90"
+                            title="Play Experience"
+                          >
+                            <Play className="w-7 h-7 sm:w-8 sm:h-8 fill-[#FF2E63] text-[#FF2E63] ml-1 group-hover:scale-105 transition-transform" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Subdued text under play button */}
+                      <p className="text-xs sm:text-sm text-slate-700/75 font-medium mt-2">
+                        I made something special for you...
+                      </p>
+
+                      {/* White/cream Try Experience prompt matching image */}
+                      <p className="text-xs sm:text-sm font-extrabold text-white/90 drop-shadow-xs mt-1">
+                        Try the Experience
+                      </p>
+
+                      {/* Pagination Dots Preview */}
+                      <div className="flex items-center justify-center gap-1.5 mt-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#FF2E63]" />
+                        {[...Array(7)].map((_, i) => (
+                          <span
+                            key={i}
+                            className="w-1.5 h-1.5 rounded-full bg-white/40"
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Player Bottom Control Bar (media_1791134490359.png) */}
+                  <div className="bg-white border-t border-slate-100 px-5 sm:px-7 py-3.5 sm:py-4 flex items-center justify-between z-20">
+                    <div className="text-left space-y-0.5">
+                      <p className="font-extrabold text-slate-900 text-sm sm:text-base leading-tight">
+                        Live Interactive Demo
+                      </p>
+                      <p className="text-xs text-slate-400 font-medium">
+                        Tap through the full experience
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        id="fullscreen-demo-btn"
+                        type="button"
+                        onClick={handleStartPlay}
+                        className="px-3.5 sm:px-4 py-2 rounded-lg border border-pink-200 hover:border-pink-300 bg-white hover:bg-pink-50/60 text-[#FF2E63] text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs active:scale-95"
+                        title="Try Experience"
+                      >
+                        <span>Try Experience</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="in-card-player"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="flex-1 w-full h-full relative"
+                >
+                  <LoveSurpriseTemplate
+                    isEmbedded={true}
+                    onClose={() => setIsPlaying(false)}
+                    onToggleFullscreen={() => setIsFullscreen(true)}
+                    isFullscreen={false}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </section>
 
       {/* =================================================================== */}
-      {/* FULL-WINDOW EXPERIENCE OVERLAY (EXACTLY MATCHING media_1791135826504)*/}
+      {/* FULL-WINDOW EXPERIENCE OVERLAY (Triggered via Fullscreen button) */}
       {/* Pure CSS/React viewport overlay — NO browser requestFullscreen banner */}
       {/* =================================================================== */}
       <AnimatePresence>
-        {isPlaying && (
+        {isFullscreen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -210,7 +238,12 @@ export default function ExperienceTheMagicSection({
           >
             <LoveSurpriseTemplate
               isEmbedded={false}
-              onClose={() => setIsPlaying(false)}
+              onClose={() => {
+                setIsFullscreen(false);
+                setIsPlaying(false);
+              }}
+              onToggleFullscreen={() => setIsFullscreen(false)}
+              isFullscreen={true}
             />
           </motion.div>
         )}
