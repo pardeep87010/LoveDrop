@@ -14,6 +14,9 @@ import {
   Check,
   Maximize2,
   Minimize2,
+  Trophy,
+  Sparkles,
+  Star,
 } from "lucide-react";
 import { soundFx } from "@/lib/soundFx";
 import { LoveSurpriseData } from "@/lib/types";
@@ -56,6 +59,59 @@ const NINE_REASONS = [
   { id: 9, emoji: "🎨", title: "Your creativity" },
 ];
 
+// Page 6: Our Story Milestones (media_1791139908028.png)
+const OUR_STORY_MILESTONES = [
+  {
+    icon: "☕",
+    date: "2023 • June",
+    title: "We Met",
+    description: "At that coffee shop on Main Street",
+  },
+  {
+    icon: "🍽️",
+    date: "2023 • July",
+    title: "First Date",
+    description: "Dinner and a walk in the park",
+  },
+  {
+    icon: "✨",
+    date: "2023 • August",
+    title: "First Kiss",
+    description: "Under the stars",
+  },
+  {
+    icon: "💖",
+    date: "2023 • October",
+    title: "Said 'I Love You'",
+    description: "The best moment",
+  },
+];
+
+// Page 7: Love Quiz Questions (media_1791140007486.png & media_1791140043616.png)
+const QUIZ_QUESTIONS = [
+  {
+    id: 1,
+    question: "What's my favorite food?",
+    options: ["Pizza", "Sushi", "Tacos", "Italian"],
+    correct: "Sushi",
+  },
+  {
+    id: 2,
+    question: "What do I love doing most with you?",
+    options: ["Watching movies", "Traveling", "Cooking", "All of the above"],
+    correct: "All of the above",
+  },
+];
+
+// Page 8: Fortune Cookie Quotes (media_1791140088198.png)
+const FORTUNE_QUOTES = [
+  "A lifetime of happiness awaits you two",
+  "Your love story is just beginning",
+  "Every moment together is a treasure",
+  "Your soulmate is closer than you think... actually, they made this for you!",
+  "Love is the answer to every question",
+];
+
 export default function LoveSurpriseTemplate({
   data,
   isEmbedded = false,
@@ -72,8 +128,22 @@ export default function LoveSurpriseTemplate({
     data?.letterText ||
     `My dearest ${recipientName},\n\nFrom the moment I met you, my life changed in ways I never expected. Your smile has become my favorite sight, your laugh my favorite sound.\n\nEvery day with you feels like an adventure, and I can't imagine my life without you by my side. You make the ordinary extraordinary.\n\nI love you more than words could ever express, but I'm going to try anyway through this letter.\n\nForever yours,\n${senderName} 💕`;
 
-  // Step state (1 to 5)
-  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
+  // Step state (1 to 9 complete experience)
+  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9>(1);
+
+  // Page 6: Our Story Milestone State
+  const [storyMilestoneIdx, setStoryMilestoneIdx] = useState(0);
+
+  // Page 7: Love Quiz State
+  const [quizQuestionIdx, setQuizQuestionIdx] = useState(0);
+  const [quizSelectedOption, setQuizSelectedOption] = useState<string | null>(null);
+  const [quizIsLocked, setQuizIsLocked] = useState(false);
+  const [quizScore, setQuizScore] = useState(0);
+  const [quizShowComplete, setQuizShowComplete] = useState(false);
+
+  // Page 8: Fortune Cookies State
+  const [openedCookies, setOpenedCookies] = useState<number[]>([]);
+  const [activeCookieQuote, setActiveCookieQuote] = useState<string | null>(null);
 
   // -------------------------------------------------------------
   // PAGE 1: INTRO TYPING STATE
@@ -296,6 +366,73 @@ export default function LoveSurpriseTemplate({
     });
   };
 
+  // -------------------------------------------------------------
+  // PAGE 7: QUIZ HANDLER
+  // -------------------------------------------------------------
+  const handleQuizOptionSelect = (opt: string) => {
+    if (quizIsLocked) return;
+    setQuizSelectedOption(opt);
+    setQuizIsLocked(true);
+
+    const isCorrect = opt === QUIZ_QUESTIONS[quizQuestionIdx].correct;
+    if (isCorrect) {
+      soundFx.playSuccessChime();
+      setQuizScore((prev) => prev + 1);
+    } else {
+      soundFx.playPop();
+    }
+
+    setTimeout(() => {
+      if (quizQuestionIdx < QUIZ_QUESTIONS.length - 1) {
+        setQuizQuestionIdx((prev) => prev + 1);
+        setQuizSelectedOption(null);
+        setQuizIsLocked(false);
+      } else {
+        setQuizShowComplete(true);
+      }
+    }, 1200);
+  };
+
+  // -------------------------------------------------------------
+  // PAGE 8: FORTUNE COOKIES HANDLER
+  // -------------------------------------------------------------
+  const handleCookieClick = (idx: number) => {
+    soundFx.playPop();
+    if (!openedCookies.includes(idx)) {
+      setOpenedCookies((prev) => [...prev, idx]);
+    }
+    setActiveCookieQuote(FORTUNE_QUOTES[idx]);
+    confetti({
+      particleCount: 25,
+      spread: 50,
+      origin: { y: 0.6 },
+      colors: ["#FBBF24", "#F59E0B", "#FF2E63"],
+    });
+  };
+
+  // -------------------------------------------------------------
+  // PAGE 9: FINALE CELEBRATION EFFECT
+  // -------------------------------------------------------------
+  useEffect(() => {
+    if (step === 9) {
+      soundFx.playSuccessChime();
+      confetti({
+        particleCount: 100,
+        spread: 80,
+        origin: { y: 0.6 },
+        colors: ["#FF2E63", "#FF6B8B", "#FFD166", "#FDA4AF"],
+      });
+      const t = setTimeout(() => {
+        confetti({
+          particleCount: 70,
+          spread: 100,
+          origin: { y: 0.5 },
+        });
+      }, 600);
+      return () => clearTimeout(t);
+    }
+  }, [step]);
+
   // Restart handler
   const handleRestart = () => {
     soundFx.playPop();
@@ -307,6 +444,14 @@ export default function LoveSurpriseTemplate({
     setRevealedReasons([]);
     setCurrentPhotoIdx(0);
     setStep3SubStep("transition");
+    setStoryMilestoneIdx(0);
+    setQuizQuestionIdx(0);
+    setQuizSelectedOption(null);
+    setQuizIsLocked(false);
+    setQuizScore(0);
+    setQuizShowComplete(false);
+    setOpenedCookies([]);
+    setActiveCookieQuote(null);
   };
 
   return (
@@ -337,15 +482,14 @@ export default function LoveSurpriseTemplate({
       </div>
 
       {/* =============================================================== */}
-      {/* TOP HEADER: 15-DOT PAGINATION + RESET + FULLSCREEN + CLOSE ICONS */}
-      {/* (media_1791139618461.png: 3 buttons on top right) */}
+      {/* TOP HEADER: 9-DOT PAGINATION + RESET + FULLSCREEN + CLOSE ICONS */}
       {/* =============================================================== */}
       <div className={`${isEmbedded ? "relative" : "sticky top-0"} z-20 w-full flex items-center justify-between max-w-2xl mx-auto py-1`}>
         <div className="w-24 sm:w-28" />
 
-        {/* 15 Pagination Dots matching reference screenshots */}
+        {/* 9 Pagination Dots (Total 9 Stages) */}
         <div className="flex items-center gap-1.5 sm:gap-2">
-          {Array.from({ length: 15 }).map((_, idx) => {
+          {Array.from({ length: 9 }).map((_, idx) => {
             const dotNum = idx + 1;
             const isCompleted = step > dotNum;
             const isCurrent = step === dotNum;
@@ -905,19 +1049,530 @@ export default function LoveSurpriseTemplate({
                     onClick={() => {
                       soundFx.playSuccessChime();
                       confetti({
-                        particleCount: 60,
-                        spread: 70,
+                        particleCount: 50,
+                        spread: 60,
                         origin: { y: 0.7 },
                         colors: ["#FF2E63", "#FF6B8B"],
                       });
-                      alert("🎉 You've completed the 5-page demo! More chapters unlocking soon!");
+                      setStep(6);
                     }}
                     className="px-9 py-3.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
                   >
-                    <span>All 5 Revealed! Complete</span>
-                    <Check className="w-4 h-4 stroke-[3]" />
+                    <span>Continue to Our Story</span>
+                    <ArrowRight className="w-4 h-4" />
                   </button>
                 )}
+              </div>
+            </motion.div>
+          )}
+
+          {/* =========================================================== */}
+          {/* STEP 6: OUR STORY (media_1791139908028.png) */}
+          {/* =========================================================== */}
+          {step === 6 && (
+            <motion.div
+              key="step-6"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3 }}
+              className="w-full max-w-md mx-auto flex flex-col items-center text-center space-y-5"
+            >
+              {/* Header Title & Subtitle */}
+              <div className="space-y-1">
+                <h2 className="text-2xl sm:text-3xl font-black text-[#FF2E63] flex items-center justify-center gap-2 tracking-tight">
+                  <span>📅</span>
+                  <span>Our Story</span>
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-600 font-medium flex items-center justify-center gap-1.5">
+                  <span className="text-pink-500">💖</span>
+                  <span>Our journey through time</span>
+                </p>
+              </div>
+
+              {/* Progress Stepper Line (4 Milestones) */}
+              <div className="w-full max-w-xs flex items-center justify-between relative px-4 py-2">
+                {/* Background line */}
+                <div className="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-0.5 bg-pink-100" />
+                {/* Active progress bar */}
+                <div
+                  className="absolute left-6 top-1/2 -translate-y-1/2 h-0.5 bg-[#FF2E63] transition-all duration-300"
+                  style={{
+                    width: `${(storyMilestoneIdx / (OUR_STORY_MILESTONES.length - 1)) * 82}%`,
+                  }}
+                />
+                {OUR_STORY_MILESTONES.map((_, idx) => {
+                  const isCurrent = idx === storyMilestoneIdx;
+                  const isPast = idx < storyMilestoneIdx;
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => {
+                        soundFx.playPop();
+                        setStoryMilestoneIdx(idx);
+                      }}
+                      className={`relative z-10 rounded-full transition-all duration-300 cursor-pointer ${
+                        isCurrent
+                          ? "w-3.5 h-3.5 bg-[#FF2E63] ring-4 ring-pink-200"
+                          : isPast
+                          ? "w-2.5 h-2.5 bg-[#FF2E63]"
+                          : "w-2.5 h-2.5 bg-pink-100 hover:bg-pink-200"
+                      }`}
+                      aria-label={`Milestone ${idx + 1}`}
+                    />
+                  );
+                })}
+              </div>
+
+              {/* Milestone Card */}
+              <motion.div
+                key={storyMilestoneIdx}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.25 }}
+                className="w-full bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-xl shadow-pink-950/5 border border-pink-100/70 flex flex-col items-center text-center space-y-4"
+              >
+                {/* Milestone Icon */}
+                <div className="w-16 h-16 rounded-full bg-pink-50 border border-pink-100 flex items-center justify-center text-3xl shadow-inner">
+                  {OUR_STORY_MILESTONES[storyMilestoneIdx].icon}
+                </div>
+
+                {/* Date Badge */}
+                <span className="px-3.5 py-1 rounded-full bg-pink-100/70 text-[#FF2E63] text-xs font-bold tracking-wide">
+                  {OUR_STORY_MILESTONES[storyMilestoneIdx].date}
+                </span>
+
+                {/* Title & Description */}
+                <div className="space-y-1.5 pt-1">
+                  <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                    {OUR_STORY_MILESTONES[storyMilestoneIdx].title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed max-w-xs">
+                    {OUR_STORY_MILESTONES[storyMilestoneIdx].description}
+                  </p>
+                </div>
+              </motion.div>
+
+              {/* Navigation Controls: < Previous & Next > / Continue to Quiz > */}
+              <div className="flex items-center justify-center gap-3 pt-1 w-full max-w-xs">
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundFx.playPop();
+                    setStoryMilestoneIdx((prev) => Math.max(0, prev - 1));
+                  }}
+                  disabled={storyMilestoneIdx === 0}
+                  className={`px-4 py-2.5 rounded-full border text-xs font-bold transition-all ${
+                    storyMilestoneIdx === 0
+                      ? "border-slate-200 text-slate-300 cursor-not-allowed bg-white/50"
+                      : "border-pink-200 text-pink-600 bg-white hover:bg-pink-50 cursor-pointer shadow-2xs active:scale-95"
+                  }`}
+                >
+                  &lt; Previous
+                </button>
+
+                {storyMilestoneIdx < OUR_STORY_MILESTONES.length - 1 ? (
+                  <button
+                    id="story-next-btn"
+                    type="button"
+                    onClick={() => {
+                      soundFx.playPop();
+                      setStoryMilestoneIdx((prev) => prev + 1);
+                    }}
+                    className="px-6 py-2.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white text-xs font-extrabold shadow-md shadow-pink-500/20 cursor-pointer active:scale-95 transition-all"
+                  >
+                    Next &gt;
+                  </button>
+                ) : (
+                  <button
+                    id="continue-to-quiz-btn"
+                    type="button"
+                    onClick={() => {
+                      soundFx.playSuccessChime();
+                      confetti({
+                        particleCount: 50,
+                        spread: 60,
+                        origin: { y: 0.6 },
+                        colors: ["#FF2E63", "#FF6B8B"],
+                      });
+                      setStep(7);
+                    }}
+                    className="px-6 py-2.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white text-xs font-extrabold shadow-md shadow-pink-500/20 cursor-pointer active:scale-95 transition-all inline-flex items-center gap-1.5"
+                  >
+                    <span>Continue to Quiz</span>
+                    <span>&gt;</span>
+                  </button>
+                )}
+              </div>
+            </motion.div>
+          )}
+
+          {/* =========================================================== */}
+          {/* STEP 7: LOVE QUIZ (media_1791140007486.png & media_1791140043616.png) */}
+          {/* =========================================================== */}
+          {step === 7 && (
+            <motion.div
+              key="step-7"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3 }}
+              className="w-full max-w-md mx-auto flex flex-col items-center text-center space-y-4"
+            >
+              {!quizShowComplete ? (
+                <div className="w-full bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-xl shadow-pink-950/5 border border-pink-100/70 flex flex-col items-center text-center space-y-5">
+                  {/* Question Counter */}
+                  <span className="text-xs font-bold text-pink-500 tracking-wide uppercase">
+                    Question {quizQuestionIdx + 1} of {QUIZ_QUESTIONS.length}
+                  </span>
+
+                  {/* Question Title */}
+                  <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-snug">
+                    {QUIZ_QUESTIONS[quizQuestionIdx].question}
+                  </h3>
+
+                  {/* Options List */}
+                  <div className="w-full space-y-2.5 pt-1">
+                    {QUIZ_QUESTIONS[quizQuestionIdx].options.map((opt) => {
+                      const currentQ = QUIZ_QUESTIONS[quizQuestionIdx];
+                      const isSelected = quizSelectedOption === opt;
+                      const isCorrect = opt === currentQ.correct;
+
+                      let btnStyle =
+                        "border-slate-200/90 bg-white hover:border-pink-300 hover:bg-pink-50/30 text-slate-800";
+
+                      if (quizSelectedOption !== null) {
+                        if (isCorrect) {
+                          // Correct answer glows green
+                          btnStyle =
+                            "bg-emerald-100 border-2 border-emerald-400 text-emerald-900 font-bold shadow-xs";
+                        } else if (isSelected && !isCorrect) {
+                          // Wrong selected answer glows red
+                          btnStyle =
+                            "bg-rose-100 border-2 border-rose-400 text-rose-900 font-bold shadow-xs";
+                        } else {
+                          btnStyle = "border-slate-100 bg-slate-50 text-slate-400 opacity-60";
+                        }
+                      }
+
+                      return (
+                        <button
+                          key={opt}
+                          id={`quiz-opt-${opt.toLowerCase().replace(/[^a-z0-9]/g, "-")}`}
+                          type="button"
+                          disabled={quizIsLocked}
+                          onClick={() => handleQuizOptionSelect(opt)}
+                          className={`w-full py-3 sm:py-3.5 px-5 rounded-xl border text-sm font-semibold transition-all duration-200 flex items-center justify-between text-left cursor-pointer active:scale-[0.99] ${btnStyle}`}
+                        >
+                          <span>{opt}</span>
+                          {quizSelectedOption !== null && isCorrect && (
+                            <span className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs">
+                              <Check className="w-3.5 h-3.5 stroke-[3]" />
+                            </span>
+                          )}
+                          {quizSelectedOption !== null && isSelected && !isCorrect && (
+                            <span className="w-6 h-6 rounded-full bg-rose-500 text-white flex items-center justify-center text-xs">
+                              <X className="w-3.5 h-3.5 stroke-[3]" />
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : (
+                /* Quiz Complete Card (media_1791140043616.png) */
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                  className="w-full bg-white rounded-2xl sm:rounded-3xl p-8 sm:p-10 shadow-xl shadow-pink-950/5 border border-pink-100/70 flex flex-col items-center text-center space-y-4"
+                >
+                  {/* Golden Trophy */}
+                  <div className="w-16 h-16 rounded-full bg-amber-50 border border-amber-200/80 flex items-center justify-center text-amber-500">
+                    <Trophy className="w-8 h-8 fill-amber-400 text-amber-500" />
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                    Quiz Complete!
+                  </h3>
+
+                  {/* Big Score */}
+                  <div className="text-4xl font-black text-[#FF2E63] tracking-tight">
+                    {quizScore}/{QUIZ_QUESTIONS.length}
+                  </div>
+
+                  {/* Subtitle */}
+                  <p className="text-sm font-medium text-slate-600 flex items-center justify-center gap-1.5">
+                    <span>
+                      {quizScore === QUIZ_QUESTIONS.length
+                        ? "You know me so well!"
+                        : quizScore === 1
+                        ? "Let's spend more time together!"
+                        : "We'll make even more memories together!"}
+                    </span>
+                    <span>💖</span>
+                  </p>
+
+                  {/* Continue Button */}
+                  <div className="pt-2">
+                    <button
+                      id="finish-quiz-btn"
+                      type="button"
+                      onClick={() => {
+                        soundFx.playSuccessChime();
+                        confetti({
+                          particleCount: 50,
+                          spread: 60,
+                          origin: { y: 0.6 },
+                          colors: ["#FF2E63", "#FF6B8B"],
+                        });
+                        setStep(8);
+                      }}
+                      className="px-8 py-3 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
+                    >
+                      <span>Continue</span>
+                      <Heart className="w-4 h-4 fill-white text-white" />
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </motion.div>
+          )}
+
+          {/* =========================================================== */}
+          {/* STEP 8: FORTUNE COOKIES OF LOVE (media_1791140088198.png) */}
+          {/* =========================================================== */}
+          {step === 8 && (
+            <motion.div
+              key="step-8"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3 }}
+              className="w-full max-w-md mx-auto flex flex-col items-center text-center space-y-4"
+            >
+              {/* Header Title & Subtitle */}
+              <div className="space-y-1">
+                <div className="text-3xl flex items-center justify-center gap-1">
+                  <span>🥠</span>
+                  <span className="text-lg">✨</span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                  Fortune Cookies of Love
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-600 font-medium">
+                  Crack open your fortune cookies, {recipientName}!
+                </p>
+              </div>
+
+              {/* 5 Fortune Cookies Grid: 3 on Top Row, 2 on Bottom Row */}
+              <div className="flex flex-col items-center gap-2.5 pt-1">
+                {/* Row 1: 3 Cookies */}
+                <div className="flex items-center justify-center gap-3 sm:gap-4">
+                  {[0, 1, 2].map((idx) => {
+                    const isOpened = openedCookies.includes(idx);
+                    return (
+                      <button
+                        key={idx}
+                        id={`cookie-btn-${idx}`}
+                        type="button"
+                        onClick={() => handleCookieClick(idx)}
+                        className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 shadow-md shadow-amber-900/15 flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-110 active:scale-95 group ${
+                          isOpened ? "ring-4 ring-pink-300 ring-offset-2" : ""
+                        }`}
+                        title={`Cookie ${idx + 1}`}
+                      >
+                        {/* Crease line in cookie */}
+                        <div className="w-6 sm:w-7 h-1 bg-amber-600/35 rounded-full transform -rotate-12 group-hover:rotate-0 transition-transform" />
+
+                        {/* Top-right sparkle */}
+                        <span className="absolute -top-1 -right-1 text-amber-200 text-xs sm:text-sm group-hover:scale-125 transition-transform">
+                          ✨
+                        </span>
+
+                        {isOpened && (
+                          <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-pink-500 text-white flex items-center justify-center text-[10px] font-bold shadow-xs">
+                            ✓
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Row 2: 2 Cookies */}
+                <div className="flex items-center justify-center gap-3 sm:gap-4">
+                  {[3, 4].map((idx) => {
+                    const isOpened = openedCookies.includes(idx);
+                    return (
+                      <button
+                        key={idx}
+                        id={`cookie-btn-${idx}`}
+                        type="button"
+                        onClick={() => handleCookieClick(idx)}
+                        className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 shadow-md shadow-amber-900/15 flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-110 active:scale-95 group ${
+                          isOpened ? "ring-4 ring-pink-300 ring-offset-2" : ""
+                        }`}
+                        title={`Cookie ${idx + 1}`}
+                      >
+                        {/* Crease line in cookie */}
+                        <div className="w-6 sm:w-7 h-1 bg-amber-600/35 rounded-full transform -rotate-12 group-hover:rotate-0 transition-transform" />
+
+                        {/* Top-right sparkle */}
+                        <span className="absolute -top-1 -right-1 text-amber-200 text-xs sm:text-sm group-hover:scale-125 transition-transform">
+                          ✨
+                        </span>
+
+                        {isOpened && (
+                          <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-pink-500 text-white flex items-center justify-center text-[10px] font-bold shadow-xs">
+                            ✓
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Status Counter */}
+              <p className="text-xs font-semibold text-slate-500">
+                {openedCookies.length} of 5 cookies opened
+              </p>
+
+              {/* Revealed Fortune Quote Card with 3 Vertical Stars */}
+              <AnimatePresence mode="wait">
+                {activeCookieQuote && (
+                  <motion.div
+                    key={activeCookieQuote}
+                    initial={{ opacity: 0, scale: 0.95, y: 5 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.25 }}
+                    className="w-full bg-white rounded-2xl p-3.5 sm:p-4 shadow-lg shadow-pink-950/5 border border-pink-100 flex flex-col items-center text-center space-y-2 max-w-xs sm:max-w-sm"
+                  >
+                    <p className="text-xs sm:text-sm font-semibold text-slate-800 italic leading-relaxed">
+                      &ldquo;{activeCookieQuote}&rdquo;
+                    </p>
+                    {/* 3 Stars as requested in prompt */}
+                    <div className="flex flex-col items-center justify-center gap-0.5 text-amber-400">
+                      <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                      <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                      <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Action Button: Continue to Finale */}
+              <div className="pt-1">
+                {openedCookies.length < 5 ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const remaining = [0, 1, 2, 3, 4].filter((i) => !openedCookies.includes(i));
+                      if (remaining.length > 0) {
+                        handleCookieClick(remaining[0]);
+                      }
+                    }}
+                    className="px-6 py-2.5 rounded-full bg-pink-100 text-pink-600 hover:bg-pink-200/80 font-bold text-xs transition-all cursor-pointer inline-flex items-center gap-1.5"
+                  >
+                    <span>Tap cookies to reveal fortunes ({openedCookies.length}/5)</span>
+                  </button>
+                ) : (
+                  <button
+                    id="finish-fortune-btn"
+                    type="button"
+                    onClick={() => {
+                      soundFx.playSuccessChime();
+                      confetti({
+                        particleCount: 70,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ["#FF2E63", "#FFD166"],
+                      });
+                      setStep(9);
+                    }}
+                    className="px-8 py-3 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
+                  >
+                    <span>Continue to Finale</span>
+                    <Heart className="w-4 h-4 fill-white text-white" />
+                  </button>
+                )}
+              </div>
+            </motion.div>
+          )}
+
+          {/* =========================================================== */}
+          {/* STEP 9: GRAND FINALE (media_1791140228471.png) */}
+          {/* =========================================================== */}
+          {step === 9 && (
+            <motion.div
+              key="step-9"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.4 }}
+              className="w-full max-w-md mx-auto flex flex-col items-center text-center space-y-3 sm:space-y-4 my-auto py-2"
+            >
+              {/* Recipient Name in Hot Pink */}
+              <h1 className="text-3xl sm:text-4xl font-black text-[#FF2E63] tracking-tight">
+                {recipientName}
+              </h1>
+
+              {/* Clustered 5 Animated Hearts */}
+              <div className="flex items-center justify-center gap-1.5 text-lg sm:text-xl animate-pulse">
+                <span>💖</span>
+                <span>💗</span>
+                <span>💓</span>
+                <span>💗</span>
+                <span>💖</span>
+              </div>
+
+              {/* Romantic Pledge Paragraph */}
+              <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed max-w-sm px-2">
+                I love you with all my heart, {recipientName}. You are my everything, my best friend,
+                my soulmate. Here&apos;s to forever together. 💕
+              </p>
+
+              {/* 9 Reason Tags Cloud (3 Rows) */}
+              <div className="flex flex-wrap items-center justify-center gap-1.5 max-w-sm mx-auto pt-0.5">
+                {NINE_REASONS.map((reason) => (
+                  <span
+                    key={reason.id}
+                    className="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-white/90 border border-pink-200/80 text-[10px] sm:text-xs font-semibold text-slate-700 shadow-2xs inline-flex items-center gap-1"
+                  >
+                    <span>{reason.emoji}</span>
+                    <span>{reason.title}</span>
+                  </span>
+                ))}
+              </div>
+
+              {/* Action: View Again Button */}
+              <div className="pt-1">
+                <button
+                  id="finale-view-again-btn"
+                  type="button"
+                  onClick={handleRestart}
+                  className="px-6 py-2 rounded-full bg-white hover:bg-pink-50 border border-pink-200 text-pink-600 font-bold text-xs shadow-2xs cursor-pointer inline-flex items-center gap-2 active:scale-95 transition-all"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-pink-500" />
+                  <span>View Again</span>
+                </button>
+              </div>
+
+              {/* Watermark Card: Made with LoveLink */}
+              <div className="rounded-2xl bg-white/80 border border-pink-100/80 px-4 py-2 shadow-2xs max-w-[240px] mx-auto text-center space-y-0.5">
+                <p className="text-xs font-extrabold text-[#FF2E63] flex items-center justify-center gap-1">
+                  <span>💖</span>
+                  <span>Made with LoveLink</span>
+                  <span>💖</span>
+                </p>
+                <p className="text-[10px] text-slate-500 font-medium">
+                  Create your own free love surprise
+                </p>
               </div>
             </motion.div>
           )}
@@ -925,11 +1580,11 @@ export default function LoveSurpriseTemplate({
       </div>
 
       {/* =============================================================== */}
-      {/* BOTTOM FOOTER: CURRENT STEP INDICATOR (e.g. "1 / 15") */}
+      {/* BOTTOM FOOTER: CURRENT STEP INDICATOR (e.g. "1 / 9") */}
       {/* =============================================================== */}
       <div className={`${isEmbedded ? "absolute" : "fixed"} bottom-3 sm:bottom-4 right-4 sm:right-6 z-20 pointer-events-none`}>
         <span className="text-[11px] font-bold text-pink-400 bg-white/90 px-2.5 py-0.5 rounded-full border border-pink-100 shadow-2xs">
-          {step} / 15
+          {step} / 9
         </span>
       </div>
     </div>

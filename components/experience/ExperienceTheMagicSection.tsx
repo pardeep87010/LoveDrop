@@ -73,7 +73,7 @@ export default function ExperienceTheMagicSection({
               Experience the Magic
             </h2>
             <p className="text-sm sm:text-base text-slate-600 font-medium leading-relaxed">
-              Click play to see exactly what your recipient will experience - all 15 interactive stages!
+              Click play to see exactly what your recipient will experience - all 9 interactive stages!
             </p>
           </div>
 
@@ -163,10 +163,10 @@ export default function ExperienceTheMagicSection({
                         Try the Experience
                       </p>
 
-                      {/* Pagination Dots Preview */}
+                      {/* Pagination Dots Preview (9 Stages) */}
                       <div className="flex items-center justify-center gap-1.5 mt-2">
                         <span className="w-1.5 h-1.5 rounded-full bg-[#FF2E63]" />
-                        {[...Array(7)].map((_, i) => (
+                        {[...Array(8)].map((_, i) => (
                           <span
                             key={i}
                             className="w-1.5 h-1.5 rounded-full bg-white/40"
