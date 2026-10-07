@@ -868,7 +868,7 @@ export default function CreatorWizard({
                           rows={8}
                           value={letterText}
                           onChange={(e) => setLetterText(e.target.value)}
-                          className="w-full p-4 rounded-2xl border border-pink-200 focus:border-[#FF2E63] focus:ring-2 focus:ring-pink-100 outline-none text-sm font-medium text-slate-800 bg-pink-50/20 leading-relaxed font-sans"
+                          className="w-full p-4 rounded-2xl border border-pink-200 focus:border-[#FF2E63] focus:ring-2 focus:ring-pink-100 outline-none text-sm font-medium text-slate-800 bg-pink-50/20 leading-relaxed font-sans no-scrollbar"
                         />
                       </div>
 
@@ -1875,38 +1875,56 @@ export default function CreatorWizard({
                         </div>
 
                         {/* Optional PIN Protection */}
-                        <div>
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                              <Lock className="w-3.5 h-3.5 text-slate-500" />
-                              <span>Passcode Protection (Optional)</span>
-                            </span>
+                        <div className="p-3.5 rounded-2xl bg-pink-50/40 border border-pink-100/90 space-y-2.5">
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="space-y-0.5">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <Lock className="w-3.5 h-3.5 text-rose-500 shrink-0" />
+                                <span className="text-xs font-bold text-slate-800">
+                                  Secret Passcode Protection
+                                </span>
+                                <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                                  Optional • Default OFF
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-slate-500 leading-tight">
+                                By default, your partner can open the link directly with 1 tap (no PIN). Turn this ON only if you want secret date/PIN protection.
+                              </p>
+                            </div>
                             <button
                               type="button"
                               onClick={() => {
                                 soundFx.playPop();
                                 setEnablePin(!enablePin);
                               }}
-                              className={`relative w-10 h-5 rounded-full transition-colors cursor-pointer ${
+                              className={`relative w-11 h-6 rounded-full transition-colors cursor-pointer shrink-0 ${
                                 enablePin ? "bg-[#FF2E63]" : "bg-slate-300"
                               }`}
                             >
                               <span
-                                className={`absolute top-0.5 left-0.5 bg-white w-4 h-4 rounded-full transition-transform shadow-xs ${
+                                className={`absolute top-0.5 left-0.5 bg-white w-5 h-5 rounded-full transition-transform shadow-xs ${
                                   enablePin ? "translate-x-5" : ""
                                 }`}
                               />
                             </button>
                           </div>
                           {enablePin && (
-                            <input
-                              type="password"
-                              maxLength={4}
-                              value={secretPin}
-                              onChange={(e) => setSecretPin(e.target.value)}
-                              placeholder="Enter 4-digit secret PIN..."
-                              className="w-full mt-2 px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 outline-none focus:border-pink-400 bg-white"
-                            />
+                            <div className="pt-2 border-t border-pink-100/80 space-y-1.5 animate-fadeIn">
+                              <label className="block text-[11px] font-bold text-slate-700">
+                                Set 4-Digit Secret PIN:
+                              </label>
+                              <input
+                                type="password"
+                                maxLength={4}
+                                value={secretPin}
+                                onChange={(e) => setSecretPin(e.target.value.replace(/\D/g, ""))}
+                                placeholder="e.g. 1402 (Anniversary Date)"
+                                className="w-full px-4 py-2.5 rounded-xl border border-pink-200 text-xs font-mono font-bold tracking-widest text-slate-800 outline-none focus:border-[#FF2E63] focus:ring-2 focus:ring-pink-100 bg-white"
+                              />
+                              <p className="text-[10px] text-slate-400">
+                                Recipient will need to enter this 4-digit PIN to open the surprise envelope.
+                              </p>
+                            </div>
                           )}
                         </div>
                       </div>

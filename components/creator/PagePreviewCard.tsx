@@ -555,7 +555,7 @@ export default function PagePreviewCard({
                     </div>
 
                     {/* Scrollable Letter Body */}
-                    <div className="max-h-[220px] overflow-y-auto pr-1 text-slate-800 font-sans text-[11px] leading-relaxed space-y-2 whitespace-pre-wrap scrollbar-thin">
+                    <div className="max-h-[220px] overflow-y-auto pr-1 text-slate-800 font-sans text-[11px] leading-relaxed space-y-2 whitespace-pre-wrap no-scrollbar">
                       {letterText || "My dearest Sarah..."}
                     </div>
 
@@ -691,7 +691,7 @@ export default function PagePreviewCard({
                     </div>
 
                     {/* 3x3 Interactive Grid of Reasons */}
-                    <div className="grid grid-cols-3 gap-1.5 max-h-[240px] overflow-y-auto pr-0.5 scrollbar-thin">
+                    <div className="grid grid-cols-3 gap-1.5 max-h-[240px] overflow-y-auto pr-0.5 no-scrollbar">
                       {reasons.map((r, i) => {
                         const isFlipped = flippedReasons.includes(r.id);
                         return (

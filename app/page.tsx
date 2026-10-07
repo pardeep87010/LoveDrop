@@ -431,9 +431,11 @@ export default function HomePage() {
               </div>
 
               <div className="space-y-1">
-                <p className="font-extrabold text-2xl sm:text-3xl text-emerald-600">₹99</p>
+                <p className="font-extrabold text-2xl sm:text-3xl text-emerald-600">
+                  {region === "IN" ? "₹199" : "$3.49"}
+                </p>
                 <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                  Transparent One-Time
+                  Starting Price
                 </p>
               </div>
             </div>
@@ -574,7 +576,7 @@ export default function HomePage() {
         </section>
 
         {/* =================================================================== */}
-        {/* 3. THE 5-CHAPTER EXPERIENCE SHOWCASE */}
+        {/* 3. THE 9-CHAPTER EXPERIENCE SHOWCASE */}
         {/* =================================================================== */}
         <section id="chapters" className="w-full py-16 sm:py-20 px-4 sm:px-6">
           <div className="max-w-6xl mx-auto space-y-12">
@@ -583,10 +585,10 @@ export default function HomePage() {
                 Interactive Journey
               </span>
               <h2 className="font-extrabold text-3xl sm:text-4xl text-slate-900 tracking-tight">
-                Not Just a Message. A 5-Chapter Experience.
+                Not Just a Message. A 9-Chapter Experience.
               </h2>
               <p className="text-sm text-slate-500 font-medium">
-                Here is the exact journey your partner experiences when they click your secret link:
+                Here is the exact journey your partner experiences across all 9 interactive pages:
               </p>
             </div>
 
@@ -604,7 +606,7 @@ export default function HomePage() {
                     The Sealed Wax Envelope
                   </h3>
                   <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
-                    She arrives at a personal sealed digital envelope with your names. Tapping the wax stamp physically unseals the letter with sound.
+                    She arrives at a personal sealed digital envelope with your names and dynamic typing text. Tapping the wax stamp physically unseals the letter.
                   </p>
                 </div>
               </div>
@@ -622,61 +624,133 @@ export default function HomePage() {
                     The Runaway &quot;NO&quot; Button
                   </h3>
                   <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
-                    The viral game! If she tries to click &quot;No&quot;, the button teleports away with cute dialogues (&quot;Pakad ke dikhao! 😜&quot;) until she taps YES.
+                    The viral game! If she tries to click &quot;No&quot;, the button playfully teleports away with cute dialogues (&quot;Pakad ke dikhao! 😜&quot;) until she taps YES.
                   </p>
                 </div>
               </div>
 
               {/* Card 3 */}
               <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
-                <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center">
-                  <Camera className="w-6 h-6" />
+                <div className="w-12 h-12 rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center">
+                  <Heart className="w-6 h-6 fill-pink-500 text-pink-500" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-extrabold text-purple-600 uppercase tracking-wider">
+                  <span className="text-[10px] font-extrabold text-pink-600 uppercase tracking-wider">
                     Chapter 3
                   </span>
                   <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
-                    Polaroids &amp; 3 Sweet Reasons
+                    The Sealed Handwritten Letter
                   </h3>
                   <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
-                    Couple memories framed as vintage Polaroids taped with washi tape, followed by the 3 specific reasons why you adore her.
+                    A deeply heartfelt personal message in elegant parchment style with wax seal emblem that conveys feelings words alone couldn&apos;t express.
                   </p>
                 </div>
               </div>
 
               {/* Card 4 */}
               <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                  <Heart className="w-6 h-6" />
+                <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                  <Camera className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-extrabold text-emerald-600 uppercase tracking-wider">
+                  <span className="text-[10px] font-extrabold text-purple-600 uppercase tracking-wider">
                     Chapter 4
                   </span>
                   <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
-                    The Handwritten Letter
+                    Polaroid Photo Memories
                   </h3>
                   <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
-                    A heartfelt message in cursive handwriting style that says what a plain text message never could.
+                    Cherished memories framed as vintage Polaroids taped with decorative washi tape, with romantic titles, captions, and interactive counter.
                   </p>
                 </div>
               </div>
 
               {/* Card 5 */}
-              <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors md:col-span-2">
-                <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
-                  <MessageCircle className="w-6 h-6" />
+              <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                  <Sparkles className="w-6 h-6" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-extrabold text-rose-600 uppercase tracking-wider">
+                  <span className="text-[10px] font-extrabold text-emerald-600 uppercase tracking-wider">
                     Chapter 5
                   </span>
                   <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
-                    Celebration &amp; Real-Time WhatsApp Alert
+                    9 Sweet Reasons Why
                   </h3>
                   <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
-                    As soon as she completes the experience, confetti explodes across her screen, and an instant notification pings your WhatsApp: &quot;She said YES! 🎉&quot;.
+                    Interactive 3x3 grid of heartfelt reasons why they mean the world to you. Tapping each card reveals a loving reason with smooth flip animations.
+                  </p>
+                </div>
+              </div>
+
+              {/* Card 6 */}
+              <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
+                <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                  <Clock className="w-6 h-6" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-extrabold text-blue-600 uppercase tracking-wider">
+                    Chapter 6
+                  </span>
+                  <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
+                    Our Story Milestones
+                  </h3>
+                  <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
+                    Chronological relationship journey from &quot;We Met&quot;, &quot;First Date&quot;, &quot;First Kiss&quot; to &quot;Said I Love You&quot; in a beautiful timeline.
+                  </p>
+                </div>
+              </div>
+
+              {/* Card 7 */}
+              <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
+                <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                  <Gamepad2 className="w-6 h-6" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-extrabold text-indigo-600 uppercase tracking-wider">
+                    Chapter 7
+                  </span>
+                  <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
+                    Couple Trivia Quiz
+                  </h3>
+                  <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
+                    Fun couple trivia quiz testing how well they know your favorite food, favorite moments, and cute inside jokes with instant correct/wrong feedback.
+                  </p>
+                </div>
+              </div>
+
+              {/* Card 8 */}
+              <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
+                <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                  <Cookie className="w-6 h-6" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-extrabold text-amber-600 uppercase tracking-wider">
+                    Chapter 8
+                  </span>
+                  <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
+                    Romantic Fortune Quotes
+                  </h3>
+                  <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
+                    Romantic fortune predictions and sweet star-rated relationship insights (&quot;Your soulmate is closer than you think!&quot;) revealed one by one.
+                  </p>
+                </div>
+              </div>
+
+              {/* Card 9 */}
+              <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
+                <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                  <PartyPopper className="w-6 h-6" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-extrabold text-rose-600 uppercase tracking-wider">
+                    Chapter 9
+                  </span>
+                  <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
+                    Grand Finale &amp; WhatsApp Alert
+                  </h3>
+                  <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
+                    Confetti explodes across the screen, romantic background soundtrack plays, and an instant notification pings your WhatsApp: &quot;She said YES! 🎉&quot;.
                   </p>
                 </div>
               </div>
@@ -1232,7 +1306,7 @@ export default function HomePage() {
                 onClick={() => soundFx.playPop()}
                 className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-white hover:bg-rose-50 text-[#FF4D63] font-extrabold text-sm sm:text-base shadow-lg transition-all active:scale-95 flex items-center gap-2 cursor-pointer group"
               >
-                <span>Create Your LoveLink Website (₹99)</span>
+                <span>Create Your LoveLink Website ✨</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
 

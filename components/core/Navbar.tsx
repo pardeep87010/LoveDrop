@@ -40,7 +40,7 @@ export default function Navbar() {
             href="#chapters"
             className="hover:text-rose-600 transition-colors py-2 px-3 rounded-lg hover:bg-rose-50/60"
           >
-            5 Chapters
+            9 Chapters
           </a>
           <a
             href="#themes"
