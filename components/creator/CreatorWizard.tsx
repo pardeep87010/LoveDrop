@@ -270,6 +270,7 @@ export default function CreatorWizard({
   const [createdSlug, setCreatedSlug] = useState("");
   const [copiedLink, setCopiedLink] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
+  const [showMobilePreviewModal, setShowMobilePreviewModal] = useState(false);
 
   // Audio preview playback
   const audioPreviewRef = useRef<HTMLAudioElement | null>(null);
@@ -462,12 +463,12 @@ export default function CreatorWizard({
       </header>
 
       {/* Main Content Area */}
-      <main className={`max-w-4xl mx-auto px-4 pt-6 sm:pt-8 ${isCreated ? "flex items-center justify-center min-h-[calc(100vh-140px)]" : ""}`}>
-        <div className={isCreated ? "w-full max-w-xl mx-auto" : "grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"}>
+      <main className={`max-w-7xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 ${isCreated ? "flex items-center justify-center min-h-[calc(100vh-140px)]" : ""}`}>
+        <div className={isCreated ? "w-full max-w-xl mx-auto" : "grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start"}>
           {/* =============================================================== */}
           {/* LEFT / TOP FORM CONTROLS (Mobile First)                         */}
           {/* =============================================================== */}
-          <div className={isCreated ? "w-full" : "lg:col-span-7 space-y-6"}>
+          <div className={isCreated ? "w-full" : "lg:col-span-7 xl:col-span-7 space-y-6"}>
             <AnimatePresence mode="wait">
               {/* ----------------------------------------------------------- */}
               {/* STEP 1: PAGE 1 (WELCOME & TYPING INTRO)                     */}
@@ -2101,13 +2102,19 @@ export default function CreatorWizard({
           {/* RIGHT / SIDEBAR: REALISTIC LIVE PHONE PREVIEW                    */}
           {/* =============================================================== */}
           {!isCreated && (
-            <div className="lg:col-span-5 flex justify-center sticky top-24">
+            <div className="lg:col-span-5 xl:col-span-5 flex justify-center sticky top-20">
               <PagePreviewCard
                 step={step}
                 recipientName={recipientName}
                 senderName={senderName}
+                typingWord1={typingWord1}
+                typingWord2={typingWord2}
+                buttonText={buttonText}
                 question={question}
+                yesButtonText={yesButtonText}
+                dodgePhrases={dodgePhrases}
                 letterText={letterText}
+                waxSealEmoji={waxSealEmoji}
                 photos={photos}
                 reasons={reasons}
                 milestones={milestones}
@@ -2115,11 +2122,100 @@ export default function CreatorWizard({
                 fortuneQuotes={fortuneQuotes}
                 themeColor={selectedThemeObj.accent}
                 themeBg={selectedThemeObj.cardBg}
+                enablePin={enablePin}
+                secretPin={secretPin}
+                bgMusic={bgMusic}
+                onStepChange={(s) => goToStep(s as any)}
               />
             </div>
           )}
         </div>
       </main>
+
+      {/* =================================================================== */}
+      {/* MOBILE FLOATING PREVIEW BUTTON (< lg)                               */}
+      {/* =================================================================== */}
+      {!isCreated && (
+        <button
+          type="button"
+          onClick={() => {
+            soundFx.playPop();
+            setShowMobilePreviewModal(true);
+          }}
+          className="lg:hidden fixed bottom-20 right-4 z-40 px-4 py-2.5 rounded-full bg-slate-900/95 hover:bg-black text-white font-black text-xs shadow-2xl flex items-center gap-2 backdrop-blur-md border border-slate-700/80 active:scale-95 cursor-pointer ring-2 ring-pink-500/30"
+        >
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+          </span>
+          <Smartphone className="w-4 h-4 text-pink-400" />
+          <span>Live Preview</span>
+          <span className="px-1.5 py-0.5 rounded-full bg-[#FF2E63] text-[10px] text-white font-black">
+            {step}/9
+          </span>
+        </button>
+      )}
+
+      {/* =================================================================== */}
+      {/* MOBILE PREVIEW MODAL (< lg)                                         */}
+      {/* =================================================================== */}
+      <AnimatePresence>
+        {!isCreated && showMobilePreviewModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="lg:hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md p-3 sm:p-4 overflow-y-auto flex flex-col items-center justify-start pt-6"
+          >
+            {/* Modal Header */}
+            <div className="w-full max-w-[380px] flex items-center justify-between pb-3 text-white">
+              <div className="flex items-center gap-1.5">
+                <Smartphone className="w-4 h-4 text-pink-400" />
+                <span className="text-xs font-black">Live Mobile Preview</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  soundFx.playPop();
+                  setShowMobilePreviewModal(false);
+                }}
+                className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-1 cursor-pointer border border-white/20"
+              >
+                <X className="w-3.5 h-3.5" />
+                <span>Close</span>
+              </button>
+            </div>
+
+            {/* Centered Phone Preview */}
+            <div className="w-full flex justify-center pb-8">
+              <PagePreviewCard
+                step={step}
+                recipientName={recipientName}
+                senderName={senderName}
+                typingWord1={typingWord1}
+                typingWord2={typingWord2}
+                buttonText={buttonText}
+                question={question}
+                yesButtonText={yesButtonText}
+                dodgePhrases={dodgePhrases}
+                letterText={letterText}
+                waxSealEmoji={waxSealEmoji}
+                photos={photos}
+                reasons={reasons}
+                milestones={milestones}
+                quizQuestions={quizQuestions}
+                fortuneQuotes={fortuneQuotes}
+                themeColor={selectedThemeObj.accent}
+                themeBg={selectedThemeObj.cardBg}
+                enablePin={enablePin}
+                secretPin={secretPin}
+                bgMusic={bgMusic}
+                onStepChange={(s) => goToStep(s as any)}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* =================================================================== */}
       {/* STICKY BOTTOM NAVIGATION BAR (Mobile First)                        */}
