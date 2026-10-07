@@ -80,29 +80,20 @@ export default function PagePreviewCard({
   bgMusic = "romantic-lofi",
   onStepChange,
 }: PagePreviewCardProps) {
-  // Sync preview step with wizard step by default, but allow creator to navigate pages inside preview
+  // Sync preview step with wizard step
   const [previewStep, setPreviewStep] = useState(step);
-  const [isSyncedWithWizard, setIsSyncedWithWizard] = useState(true);
 
-  // When parent step changes, if synced, update previewStep
+  // ALWAYS sync previewStep whenever parent step changes (e.g. user clicks Continue to Page X)
   useEffect(() => {
-    if (isSyncedWithWizard) {
-      setPreviewStep(step);
-    }
-  }, [step, isSyncedWithWizard]);
+    setPreviewStep(step);
+  }, [step]);
 
-  const handleStepJump = (s: number) => {
+  // Navigate to step in both phone preview and wizard
+  const navigateToStep = (s: number) => {
     soundFx.playPop();
     setPreviewStep(s);
-    setIsSyncedWithWizard(false);
-  };
-
-  const handleToggleSync = () => {
-    soundFx.playPop();
-    const nextSync = !isSyncedWithWizard;
-    setIsSyncedWithWizard(nextSync);
-    if (nextSync) {
-      setPreviewStep(step);
+    if (onStepChange) {
+      onStepChange(s);
     }
   };
 
@@ -172,7 +163,7 @@ export default function PagePreviewCard({
       origin: { y: 0.6 },
       colors: [themeColor, "#FF6B8B", "#FFD166"],
     });
-    setPreviewStep(3);
+    navigateToStep(3);
   };
 
   // Current dodge phrase based on escape count
@@ -303,39 +294,29 @@ export default function PagePreviewCard({
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
             </span>
-            <span className="tracking-tight">Live Recipient View</span>
-            <span className="text-[10px] text-pink-600 bg-pink-100/80 px-2 py-0.5 rounded-full font-black">
+            <span className="tracking-tight">Live Phone Preview</span>
+            <span className="text-[10px] text-pink-600 bg-pink-100/90 px-2 py-0.5 rounded-full font-black">
               Page {previewStep}/9
             </span>
           </div>
 
-          {/* Sync / Free Explore Toggle */}
-          <button
-            type="button"
-            onClick={handleToggleSync}
-            title={isSyncedWithWizard ? "Auto-synced with editor step" : "Click to re-sync with editor"}
-            className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold border transition-all cursor-pointer ${
-              isSyncedWithWizard
-                ? "bg-pink-50 text-pink-600 border-pink-200"
-                : "bg-slate-100 text-slate-600 border-slate-200 hover:bg-pink-50"
-            }`}
-          >
+          {/* Sync indicator */}
+          <div className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-pink-50 text-pink-600 border border-pink-200">
             <Link2 className="w-3 h-3" />
-            <span>{isSyncedWithWizard ? "Synced" : "Manual"}</span>
-          </button>
+            <span>Synced</span>
+          </div>
         </div>
 
         {/* 9 Quick Page Switcher Buttons */}
         <div className="flex items-center justify-between gap-1 p-1 bg-white/80 backdrop-blur-sm rounded-2xl border border-pink-100 shadow-2xs">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((s) => {
             const isCurrent = previewStep === s;
-            const isEditingStep = step === s;
             return (
               <button
                 key={s}
                 type="button"
-                onClick={() => handleStepJump(s)}
-                title={`Preview Page ${s}`}
+                onClick={() => navigateToStep(s)}
+                title={`Jump to Page ${s}`}
                 className={`flex-1 py-1 text-[11px] font-black rounded-xl transition-all cursor-pointer relative ${
                   isCurrent
                     ? "bg-[#FF2E63] text-white shadow-xs scale-105"
@@ -343,9 +324,6 @@ export default function PagePreviewCard({
                 }`}
               >
                 <span>{s}</span>
-                {isEditingStep && !isCurrent && (
-                  <span className="absolute -top-1 -right-0.5 w-1.5 h-1.5 rounded-full bg-pink-500 ring-1 ring-white" />
-                )}
               </button>
             );
           })}
@@ -461,10 +439,7 @@ export default function PagePreviewCard({
                     {/* Action Button */}
                     <button
                       type="button"
-                      onClick={() => {
-                        soundFx.playPop();
-                        setPreviewStep(2);
-                      }}
+                      onClick={() => navigateToStep(2)}
                       className="w-full py-2.5 rounded-full text-white font-extrabold text-xs shadow-md transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-1.5"
                       style={{ backgroundColor: themeColor }}
                     >
@@ -597,10 +572,7 @@ export default function PagePreviewCard({
                     {/* Next Page Arrow */}
                     <button
                       type="button"
-                      onClick={() => {
-                        soundFx.playPop();
-                        setPreviewStep(4);
-                      }}
+                      onClick={() => navigateToStep(4)}
                       className="w-full py-2 rounded-xl text-white font-bold text-[11px] shadow-sm flex items-center justify-center gap-1 cursor-pointer font-sans"
                       style={{ backgroundColor: themeColor }}
                     >
@@ -685,10 +657,7 @@ export default function PagePreviewCard({
                     {/* Next Step Button */}
                     <button
                       type="button"
-                      onClick={() => {
-                        soundFx.playPop();
-                        setPreviewStep(5);
-                      }}
+                      onClick={() => navigateToStep(5)}
                       className="w-full py-2 rounded-xl text-white font-bold text-[11px] shadow-sm flex items-center justify-center gap-1 cursor-pointer"
                       style={{ backgroundColor: themeColor }}
                     >
@@ -747,10 +716,7 @@ export default function PagePreviewCard({
                     {/* Next Step Button */}
                     <button
                       type="button"
-                      onClick={() => {
-                        soundFx.playPop();
-                        setPreviewStep(6);
-                      }}
+                      onClick={() => navigateToStep(6)}
                       className="w-full py-2 rounded-xl text-white font-bold text-[11px] shadow-sm flex items-center justify-center gap-1 cursor-pointer"
                       style={{ backgroundColor: themeColor }}
                     >
@@ -840,10 +806,7 @@ export default function PagePreviewCard({
                     {/* Next Page Button */}
                     <button
                       type="button"
-                      onClick={() => {
-                        soundFx.playPop();
-                        setPreviewStep(7);
-                      }}
+                      onClick={() => navigateToStep(7)}
                       className="w-full py-2 rounded-xl text-white font-bold text-[11px] shadow-sm flex items-center justify-center gap-1 cursor-pointer"
                       style={{ backgroundColor: themeColor }}
                     >
@@ -933,10 +896,7 @@ export default function PagePreviewCard({
                     {/* Next Page Button */}
                     <button
                       type="button"
-                      onClick={() => {
-                        soundFx.playPop();
-                        setPreviewStep(8);
-                      }}
+                      onClick={() => navigateToStep(8)}
                       className="w-full py-2 rounded-xl text-white font-bold text-[11px] shadow-sm flex items-center justify-center gap-1 cursor-pointer"
                       style={{ backgroundColor: themeColor }}
                     >
@@ -1006,10 +966,7 @@ export default function PagePreviewCard({
                     {/* Next Page Button */}
                     <button
                       type="button"
-                      onClick={() => {
-                        soundFx.playPop();
-                        setPreviewStep(9);
-                      }}
+                      onClick={() => navigateToStep(9)}
                       className="w-full py-2 rounded-xl text-white font-bold text-[11px] shadow-sm flex items-center justify-center gap-1 cursor-pointer"
                       style={{ backgroundColor: themeColor }}
                     >
@@ -1097,10 +1054,7 @@ export default function PagePreviewCard({
 
                         <button
                           type="button"
-                          onClick={() => {
-                            soundFx.playPop();
-                            setPreviewStep(1);
-                          }}
+                          onClick={() => navigateToStep(1)}
                           className="w-full py-2 rounded-xl text-white font-bold text-xs shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
                           style={{ backgroundColor: themeColor }}
                         >
@@ -1124,7 +1078,7 @@ export default function PagePreviewCard({
               {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((dot) => (
                 <span
                   key={dot}
-                  onClick={() => handleStepJump(dot)}
+                  onClick={() => navigateToStep(dot)}
                   className={`rounded-full transition-all cursor-pointer ${
                     dot === previewStep
                       ? "w-3 h-1 bg-[#FF2E63]"

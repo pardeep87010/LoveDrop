@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import {
@@ -17,9 +17,12 @@ import {
   Trophy,
   Sparkles,
   Star,
+  Music,
+  VolumeX,
 } from "lucide-react";
 import { soundFx } from "@/lib/soundFx";
 import { LoveSurpriseData } from "@/lib/types";
+import RomanticBackground from "@/components/experience/RomanticBackground";
 
 interface LoveSurpriseTemplateProps {
   data?: Partial<LoveSurpriseData>;
@@ -183,6 +186,77 @@ export default function LoveSurpriseTemplate({
   // Page 8: Fortune Cookies State
   const [openedCookies, setOpenedCookies] = useState<number[]>([]);
   const [activeCookieQuote, setActiveCookieQuote] = useState<string | null>(null);
+
+  // Background Romantic Music Playback
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isPlayingMusic, setIsPlayingMusic] = useState(false);
+  const [musicBlocked, setMusicBlocked] = useState(false);
+
+  const musicTrackSrc =
+    data?.bgMusic === "summer-guitar"
+      ? "/music/summer-gouyad-5.mp3"
+      : "/music/love-bgm.mp3";
+
+  useEffect(() => {
+    const audio = new Audio(musicTrackSrc);
+    audio.loop = true;
+    audio.volume = 0.65;
+    audioRef.current = audio;
+
+    const tryStartMusic = () => {
+      if (audioRef.current && audioRef.current.paused) {
+        audioRef.current
+          .play()
+          .then(() => {
+            setIsPlayingMusic(true);
+            setMusicBlocked(false);
+          })
+          .catch(() => {
+            setMusicBlocked(true);
+          });
+      }
+    };
+
+    tryStartMusic();
+
+    const handleFirstGesture = () => {
+      tryStartMusic();
+      window.removeEventListener("click", handleFirstGesture);
+      window.removeEventListener("touchstart", handleFirstGesture);
+      window.removeEventListener("keydown", handleFirstGesture);
+    };
+
+    window.addEventListener("click", handleFirstGesture, { passive: true });
+    window.addEventListener("touchstart", handleFirstGesture, { passive: true });
+    window.addEventListener("keydown", handleFirstGesture, { passive: true });
+
+    return () => {
+      window.removeEventListener("click", handleFirstGesture);
+      window.removeEventListener("touchstart", handleFirstGesture);
+      window.removeEventListener("keydown", handleFirstGesture);
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, [musicTrackSrc]);
+
+  const toggleMusic = () => {
+    soundFx.playPop();
+    if (!audioRef.current) return;
+    if (isPlayingMusic) {
+      audioRef.current.pause();
+      setIsPlayingMusic(false);
+    } else {
+      audioRef.current
+        .play()
+        .then(() => {
+          setIsPlayingMusic(true);
+          setMusicBlocked(false);
+        })
+        .catch(() => {});
+    }
+  };
 
   // -------------------------------------------------------------
   // PAGE 1: INTRO TYPING STATE
@@ -503,27 +577,27 @@ export default function LoveSurpriseTemplate({
           : "min-h-[100dvh] flex-1 overflow-y-auto overscroll-none px-3 py-3 sm:px-6 sm:py-4"
       } bg-gradient-to-b from-[#FDF3F8] via-[#FEFAFC] to-[#FFFDFE] flex flex-col justify-between selection:bg-pink-100 select-none font-sans`}
     >
-      {/* Floating ambient hearts in the background */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden -z-0">
-        <span className="absolute top-[18%] left-[8%] text-pink-300 text-lg opacity-60 animate-bounce duration-3000">
-          💖
-        </span>
-        <span className="absolute top-[28%] right-[10%] text-pink-300 text-base opacity-50 animate-pulse duration-2500">
-          💕
-        </span>
-        <span className="absolute top-[65%] left-[12%] text-rose-300 text-sm opacity-40">
-          💗
-        </span>
-        <span className="absolute top-[52%] right-[14%] text-pink-400 text-lg opacity-50 animate-bounce duration-4000">
-          💓
-        </span>
-        <span className="absolute top-[82%] right-[22%] text-rose-300 text-xs opacity-40">
-          ✨
-        </span>
-      </div>
+      {/* RICH ANIMATED ROMANTIC BACKGROUND (Floating Hearts, Petals, Glowing Bokeh Orbs) */}
+      <RomanticBackground />
+
+      {/* Autoplay Helper Banner (Disappears when music starts) */}
+      <AnimatePresence>
+        {musicBlocked && !isPlayingMusic && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            onClick={toggleMusic}
+            className="fixed top-12 left-1/2 -translate-x-1/2 z-40 px-4 py-2 rounded-full bg-white/95 border border-pink-200 shadow-xl text-[#FF2E63] font-black text-xs flex items-center gap-2 cursor-pointer hover:bg-pink-50 backdrop-blur-md active:scale-95"
+          >
+            <Music className="w-3.5 h-3.5 text-[#FF2E63] animate-bounce" />
+            <span>🎵 Tap here to start romantic music</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* =============================================================== */}
-      {/* TOP HEADER: 9-DOT PAGINATION + RESET + FULLSCREEN + CLOSE ICONS */}
+      {/* TOP HEADER: 9-DOT PAGINATION + MUSIC + RESET + FULLSCREEN + CLOSE */}
       {/* =============================================================== */}
       <div className={`${isEmbedded ? "relative" : "sticky top-0"} z-20 w-full flex items-center justify-between max-w-xl mx-auto py-1`}>
         <div className="w-24 sm:w-28" />
@@ -550,8 +624,34 @@ export default function LoveSurpriseTemplate({
           })}
         </div>
 
-        {/* Top Right Controls: Restart, Fullscreen (media_1791139618461.png), Close */}
+        {/* Top Right Controls: Music Toggle, Restart, Fullscreen, Close */}
         <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Music Audio Toggle Button */}
+          <button
+            id="template-music-btn"
+            type="button"
+            onClick={toggleMusic}
+            title={isPlayingMusic ? "Pause romantic song" : "Play romantic song"}
+            className={`h-8 sm:h-9 px-2.5 sm:px-3 rounded-full border shadow-sm flex items-center gap-1.5 transition-all cursor-pointer hover:scale-105 active:scale-95 ${
+              isPlayingMusic
+                ? "bg-gradient-to-r from-[#FF2E63] to-rose-500 text-white border-pink-400 shadow-pink-500/25"
+                : "bg-white hover:bg-pink-50 text-slate-600 border-pink-100"
+            }`}
+          >
+            {isPlayingMusic ? (
+              <>
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
+                <Music className="w-3.5 h-3.5 text-white animate-bounce" />
+                <span className="text-[10px] sm:text-[11px] font-black hidden xs:inline">Song On</span>
+              </>
+            ) : (
+              <>
+                <VolumeX className="w-3.5 h-3.5 text-slate-400" />
+                <span className="text-[10px] sm:text-[11px] font-bold text-slate-500">Play Song</span>
+              </>
+            )}
+          </button>
+
           <button
             id="template-restart-btn"
             type="button"
