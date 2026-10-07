@@ -499,9 +499,9 @@ export default function LoveSurpriseTemplate({
     <div
       className={`relative w-full ${
         isEmbedded
-          ? "min-h-[480px] sm:min-h-[540px] h-full rounded-[24px] sm:rounded-[28px] overflow-y-auto overscroll-contain"
-          : "min-h-full min-h-screen"
-      } bg-gradient-to-b from-[#FDF3F8] via-[#FEFAFC] to-[#FFFDFE] flex flex-col justify-between p-4 sm:p-6 selection:bg-pink-100 select-none font-sans overscroll-contain`}
+          ? "min-h-[480px] sm:min-h-[540px] h-full rounded-[24px] sm:rounded-[28px] overflow-y-auto overscroll-contain p-4 sm:p-6"
+          : "min-h-[100dvh] flex-1 overflow-y-auto overscroll-none px-3 py-3 sm:px-6 sm:py-4"
+      } bg-gradient-to-b from-[#FDF3F8] via-[#FEFAFC] to-[#FFFDFE] flex flex-col justify-between selection:bg-pink-100 select-none font-sans`}
     >
       {/* Floating ambient hearts in the background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden -z-0">
@@ -525,7 +525,7 @@ export default function LoveSurpriseTemplate({
       {/* =============================================================== */}
       {/* TOP HEADER: 9-DOT PAGINATION + RESET + FULLSCREEN + CLOSE ICONS */}
       {/* =============================================================== */}
-      <div className={`${isEmbedded ? "relative" : "sticky top-0"} z-20 w-full flex items-center justify-between max-w-2xl mx-auto py-1`}>
+      <div className={`${isEmbedded ? "relative" : "sticky top-0"} z-20 w-full flex items-center justify-between max-w-xl mx-auto py-1`}>
         <div className="w-24 sm:w-28" />
 
         {/* 9 Pagination Dots (Total 9 Stages) */}
@@ -593,7 +593,7 @@ export default function LoveSurpriseTemplate({
       {/* =============================================================== */}
       {/* MAIN CARD STAGE CONTAINER */}
       {/* =============================================================== */}
-      <div className="relative z-10 flex-1 flex items-center justify-center my-4 sm:my-6">
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-center w-full max-w-xl mx-auto my-auto py-2 sm:py-4">
         <AnimatePresence mode="wait">
           {/* =========================================================== */}
           {/* PAGE 1: WELCOME CARD & TYPING INTRO (media_1791134834458.png) */}
@@ -604,7 +604,7 @@ export default function LoveSurpriseTemplate({
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
-                className="relative bg-white rounded-[28px] sm:rounded-[32px] p-6 sm:p-9 shadow-xl shadow-pink-900/5 border border-pink-100/70 text-center space-y-4"
+                className="relative bg-white rounded-[28px] sm:rounded-[32px] p-6 sm:p-9 shadow-xl shadow-pink-900/5 border border-pink-100/70 text-center space-y-4 min-h-[440px] flex flex-col justify-center"
               >
                 {/* Top Golden Badge: Special! */}
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-amber-400 to-yellow-400 text-slate-900 font-extrabold text-[11px] shadow-sm flex items-center gap-1.5 whitespace-nowrap">
@@ -699,9 +699,11 @@ export default function LoveSurpriseTemplate({
               </motion.div>
 
               {/* Watermark matching media_1791139618461.png */}
-              <p className="text-[10px] sm:text-[11px] font-semibold text-pink-400/80 text-center pt-3 tracking-wide select-none">
-                ♥ Made with LoveLink ♥
-              </p>
+              {isEmbedded && (
+                <p className="text-[10px] sm:text-[11px] font-semibold text-pink-400/80 text-center pt-3 tracking-wide select-none">
+                  ♥ Made with LoveLink ♥
+                </p>
+              )}
             </div>
           )}
 
@@ -715,7 +717,7 @@ export default function LoveSurpriseTemplate({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.94 }}
               transition={{ duration: 0.35 }}
-              className="w-full max-w-md mx-auto bg-white rounded-[32px] p-8 sm:p-12 shadow-xl shadow-pink-900/5 border border-pink-100/70 text-center space-y-6"
+              className="w-full max-w-md mx-auto bg-white rounded-[32px] p-8 sm:p-12 shadow-xl shadow-pink-900/5 border border-pink-100/70 text-center space-y-6 min-h-[440px] flex flex-col justify-center"
             >
               {/* Center Pink Heart */}
               <div className="w-14 h-14 rounded-full bg-pink-50 text-[#FF2E63] flex items-center justify-center mx-auto shadow-xs">
@@ -793,7 +795,7 @@ export default function LoveSurpriseTemplate({
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.05 }}
               transition={{ duration: 0.4 }}
-              className="w-full max-w-sm mx-auto bg-white rounded-[32px] p-8 sm:p-10 shadow-xl shadow-pink-900/5 border border-pink-100 text-center space-y-4"
+              className="w-full max-w-sm mx-auto bg-white rounded-[32px] p-8 sm:p-10 shadow-xl shadow-pink-900/5 border border-pink-100 text-center space-y-4 min-h-[360px] flex flex-col justify-center"
             >
               <div className="w-16 h-16 rounded-full bg-pink-100 text-[#FF2E63] flex items-center justify-center mx-auto shadow-sm">
                 <Heart className="w-8 h-8 fill-[#FF2E63]" />
@@ -1604,30 +1606,43 @@ export default function LoveSurpriseTemplate({
                 </button>
               </div>
 
-              {/* Watermark Card: Made with LoveLink */}
-              <div className="rounded-2xl bg-white/80 border border-pink-100/80 px-4 py-2 shadow-2xs max-w-[240px] mx-auto text-center space-y-0.5">
-                <p className="text-xs font-extrabold text-[#FF2E63] flex items-center justify-center gap-1">
-                  <span>💖</span>
-                  <span>Made with LoveLink</span>
-                  <span>💖</span>
-                </p>
-                <p className="text-[10px] text-slate-500 font-medium">
-                  Create your own free love surprise
-                </p>
-              </div>
+              {/* Watermark Card: Made with LoveLink - only when embedded */}
+              {isEmbedded && (
+                <div className="rounded-2xl bg-white/80 border border-pink-100/80 px-4 py-2 shadow-2xs max-w-[240px] mx-auto text-center space-y-0.5">
+                  <p className="text-xs font-extrabold text-[#FF2E63] flex items-center justify-center gap-1">
+                    <span>💖</span>
+                    <span>Made with LoveLink</span>
+                    <span>💖</span>
+                  </p>
+                  <p className="text-[10px] text-slate-500 font-medium">
+                    Create your own free love surprise
+                  </p>
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
       {/* =============================================================== */}
-      {/* BOTTOM FOOTER: CURRENT STEP INDICATOR (e.g. "1 / 9") */}
+      {/* BOTTOM FOOTER: CURRENT STEP INDICATOR & BRANDING */}
       {/* =============================================================== */}
-      <div className={`${isEmbedded ? "absolute" : "fixed"} bottom-3 sm:bottom-4 right-4 sm:right-6 z-20 pointer-events-none`}>
-        <span className="text-[11px] font-bold text-pink-400 bg-white/90 px-2.5 py-0.5 rounded-full border border-pink-100 shadow-2xs">
-          {step} / 9
-        </span>
-      </div>
+      {isEmbedded ? (
+        <div className="absolute bottom-3 right-4 z-20 pointer-events-none">
+          <span className="text-[11px] font-bold text-pink-400 bg-white/90 px-2.5 py-0.5 rounded-full border border-pink-100 shadow-2xs">
+            {step} / 9
+          </span>
+        </div>
+      ) : (
+        <footer className="relative z-20 w-full max-w-xl mx-auto flex items-center justify-between px-3 py-1.5 text-[11px] text-pink-400/80 font-medium">
+          <span className="select-none font-semibold tracking-wide flex items-center gap-1 text-pink-400">
+            <span>♥</span> Made with LoveLink
+          </span>
+          <span className="font-bold text-pink-500 bg-white/90 px-2.5 py-0.5 rounded-full border border-pink-100 shadow-2xs">
+            {step} / 9
+          </span>
+        </footer>
+      )}
     </div>
   );
 }

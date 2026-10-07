@@ -396,7 +396,7 @@ export default function CreatorWizard({
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FDF3F8] via-[#FEFAFC] to-[#FFFDFE] text-slate-800 pb-28 selection:bg-pink-100 selection:text-pink-600">
+    <div className={`min-h-screen bg-gradient-to-b from-[#FDF3F8] via-[#FEFAFC] to-[#FFFDFE] text-slate-800 ${isCreated ? "pb-8" : "pb-28"} selection:bg-pink-100 selection:text-pink-600`}>
       {/* =================================================================== */}
       {/* TOP NAVIGATION BAR: BACK & CLOSE BUTTONS (Matches user request)     */}
       {/* =================================================================== */}
@@ -413,9 +413,11 @@ export default function CreatorWizard({
 
           <div className="text-center">
             <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#FF2E63] block">
-              PAGE {step} OF 9
+              {isCreated ? "SURPRISE READY 🎉" : `PAGE ${step} OF 9`}
             </span>
-            <span className="text-xs font-bold text-slate-800">{stepTitles[step - 1]}</span>
+            <span className="text-xs font-bold text-slate-800">
+              {isCreated ? "Website Created Successfully" : stepTitles[step - 1]}
+            </span>
           </div>
 
           <Link
@@ -428,42 +430,44 @@ export default function CreatorWizard({
           </Link>
         </div>
 
-        {/* 9-Step Progress Dots Track */}
-        <div className="max-w-2xl mx-auto pt-2 pb-0.5">
-          <div className="flex items-center justify-between gap-1">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((s) => {
-              const isCurrent = step === s;
-              const isCompleted = step > s;
-              return (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => goToStep(s as any)}
-                  className="flex-1 py-1 group flex flex-col items-center cursor-pointer"
-                >
-                  <div
-                    className={`w-full h-1.5 rounded-full transition-all ${
-                      isCurrent
-                        ? "bg-[#FF2E63] shadow-xs"
-                        : isCompleted
-                        ? "bg-pink-400"
-                        : "bg-pink-100"
-                    }`}
-                  />
-                </button>
-              );
-            })}
+        {/* 9-Step Progress Dots Track - only while creating */}
+        {!isCreated && (
+          <div className="max-w-2xl mx-auto pt-2 pb-0.5">
+            <div className="flex items-center justify-between gap-1">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((s) => {
+                const isCurrent = step === s;
+                const isCompleted = step > s;
+                return (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => goToStep(s as any)}
+                    className="flex-1 py-1 group flex flex-col items-center cursor-pointer"
+                  >
+                    <div
+                      className={`w-full h-1.5 rounded-full transition-all ${
+                        isCurrent
+                          ? "bg-[#FF2E63] shadow-xs"
+                          : isCompleted
+                          ? "bg-pink-400"
+                          : "bg-pink-100"
+                      }`}
+                    />
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-4xl mx-auto px-4 pt-6 sm:pt-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <main className={`max-w-4xl mx-auto px-4 pt-6 sm:pt-8 ${isCreated ? "flex items-center justify-center min-h-[calc(100vh-140px)]" : ""}`}>
+        <div className={isCreated ? "w-full max-w-xl mx-auto" : "grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"}>
           {/* =============================================================== */}
           {/* LEFT / TOP FORM CONTROLS (Mobile First)                         */}
           {/* =============================================================== */}
-          <div className="lg:col-span-7 space-y-6">
+          <div className={isCreated ? "w-full" : "lg:col-span-7 space-y-6"}>
             <AnimatePresence mode="wait">
               {/* ----------------------------------------------------------- */}
               {/* STEP 1: PAGE 1 (WELCOME & TYPING INTRO)                     */}
@@ -1788,17 +1792,19 @@ export default function CreatorWizard({
                   exit={{ opacity: 0, y: -12 }}
                   className="space-y-6"
                 >
-                  <div className="space-y-1">
-                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-pink-500">
-                      Step 9 • Publish
-                    </span>
-                    <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                      Ready to Publish &amp; Send? 💖
-                    </h2>
-                    <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                      Select your access duration and get an instant private link &amp; printable QR card.
-                    </p>
-                  </div>
+                  {!isCreated && (
+                    <div className="space-y-1">
+                      <span className="text-[11px] font-extrabold uppercase tracking-wider text-pink-500">
+                        Step 9 • Publish
+                      </span>
+                      <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                        Ready to Publish &amp; Send? 💖
+                      </h2>
+                      <p className="text-xs sm:text-sm text-slate-500 font-medium">
+                        Select your access duration and get an instant private link &amp; printable QR card.
+                      </p>
+                    </div>
+                  )}
 
                   {!isCreated ? (
                     <div className="space-y-6">
@@ -2094,22 +2100,24 @@ export default function CreatorWizard({
           {/* =============================================================== */}
           {/* RIGHT / SIDEBAR: REALISTIC LIVE PHONE PREVIEW                    */}
           {/* =============================================================== */}
-          <div className="lg:col-span-5 flex justify-center sticky top-24">
-            <PagePreviewCard
-              step={step}
-              recipientName={recipientName}
-              senderName={senderName}
-              question={question}
-              letterText={letterText}
-              photos={photos}
-              reasons={reasons}
-              milestones={milestones}
-              quizQuestions={quizQuestions}
-              fortuneQuotes={fortuneQuotes}
-              themeColor={selectedThemeObj.accent}
-              themeBg={selectedThemeObj.cardBg}
-            />
-          </div>
+          {!isCreated && (
+            <div className="lg:col-span-5 flex justify-center sticky top-24">
+              <PagePreviewCard
+                step={step}
+                recipientName={recipientName}
+                senderName={senderName}
+                question={question}
+                letterText={letterText}
+                photos={photos}
+                reasons={reasons}
+                milestones={milestones}
+                quizQuestions={quizQuestions}
+                fortuneQuotes={fortuneQuotes}
+                themeColor={selectedThemeObj.accent}
+                themeBg={selectedThemeObj.cardBg}
+              />
+            </div>
+          )}
         </div>
       </main>
 

@@ -41,7 +41,7 @@ export default function RecipientView({ data }: RecipientViewProps) {
 
   if (!isUnlocked) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#FDF3F8] via-[#FEFAFC] to-[#FFFDFE] flex items-center justify-center p-4">
+      <div className="min-h-[100dvh] w-full bg-gradient-to-b from-[#FDF3F8] via-[#FEFAFC] to-[#FFFDFE] flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}

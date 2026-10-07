@@ -21,7 +21,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-screen bg-[#FDFBF7] selection:bg-rose-100 selection:text-rose-800">
+      <body className="min-h-[100dvh] bg-gradient-to-b from-[#FDF3F8] via-[#FEFAFC] to-[#FFFDFE] selection:bg-rose-100 selection:text-rose-800">
         {children}
       </body>
     </html>

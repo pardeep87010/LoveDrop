@@ -18,11 +18,15 @@ export default function SurprisePage() {
 
   if (!data) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FDFBF7]">
+      <div className="min-h-[100dvh] flex items-center justify-center bg-gradient-to-b from-[#FDF3F8] via-[#FEFAFC] to-[#FFFDFE]">
         <div className="w-8 h-8 border-4 border-rose-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
-  return <RecipientView data={data} />;
+  return (
+    <main className="min-h-[100dvh] w-full flex flex-col bg-gradient-to-b from-[#FDF3F8] via-[#FEFAFC] to-[#FFFDFE]">
+      <RecipientView data={data} />
+    </main>
+  );
 }
