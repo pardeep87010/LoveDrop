@@ -210,12 +210,19 @@ export default function ExperienceTheMagicSection({
                   transition={{ duration: 0.2 }}
                   className="flex-1 w-full h-full relative"
                 >
-                  <LoveSurpriseTemplate
-                    isEmbedded={true}
-                    onClose={() => setIsPlaying(false)}
-                    onToggleFullscreen={() => setIsFullscreen(true)}
-                    isFullscreen={false}
-                  />
+                  {!isFullscreen ? (
+                    <LoveSurpriseTemplate
+                      isEmbedded={true}
+                      onClose={() => setIsPlaying(false)}
+                      onToggleFullscreen={() => setIsFullscreen(true)}
+                      isFullscreen={false}
+                    />
+                  ) : (
+                    <div className="flex-1 w-full h-full min-h-[480px] flex flex-col items-center justify-center bg-gradient-to-b from-[#FDF3F8] to-[#FFFDFE] p-6 text-center">
+                      <p className="text-sm font-extrabold text-[#FF2E63]">Playing in Fullscreen Mode 💖</p>
+                      <p className="text-xs text-slate-400 mt-1 font-medium">Close fullscreen window to return</p>
+                    </div>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>

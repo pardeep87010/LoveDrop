@@ -265,6 +265,9 @@ export default function CreatorWizard({
   const [enablePin, setEnablePin] = useState(false);
   const [secretPin, setSecretPin] = useState("");
   const [whatsappNumber, setWhatsappNumber] = useState("+91 98765 43210");
+  const [whatsappMessage, setWhatsappMessage] = useState(
+    "Hey! I just opened your special love website and I loved it so much! You made my day! ❤️"
+  );
   const [isProcessingPay, setIsProcessingPay] = useState(false);
   const [isCreated, setIsCreated] = useState(false);
   const [createdSlug, setCreatedSlug] = useState("");
@@ -358,6 +361,7 @@ export default function CreatorWizard({
         dodgeIntensity: "savage",
         bgMusic: bgMusic,
         whatsappNumber: whatsappNumber,
+        whatsappMessage: whatsappMessage,
         isPaid: true,
         createdAt: new Date().toISOString(),
         expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
@@ -1860,18 +1864,35 @@ export default function CreatorWizard({
                           </div>
                         </div>
 
-                        {/* WhatsApp Alert Phone */}
-                        <div>
-                          <label className="block text-xs font-bold text-slate-700 mb-1">
-                            Your WhatsApp Number (For instant alert ping when they complete)
-                          </label>
-                          <input
-                            type="text"
-                            value={whatsappNumber}
-                            onChange={(e) => setWhatsappNumber(e.target.value)}
-                            placeholder="+91 98765 43210"
-                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 outline-none focus:border-pink-400 bg-white"
-                          />
+                        {/* WhatsApp Alert Phone & Predefined Response Message */}
+                        <div className="space-y-3">
+                          <div>
+                            <label className="block text-xs font-bold text-slate-700 mb-1">
+                              Your WhatsApp Number (For instant alert & reply button on Page 9)
+                            </label>
+                            <input
+                              type="text"
+                              value={whatsappNumber}
+                              onChange={(e) => setWhatsappNumber(e.target.value)}
+                              placeholder="+91 98765 43210"
+                              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 outline-none focus:border-pink-400 bg-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold text-slate-700 mb-1">
+                              Predefined WhatsApp Message (Auto-fills when recipient taps WhatsApp button on Page 9)
+                            </label>
+                            <input
+                              type="text"
+                              value={whatsappMessage}
+                              onChange={(e) => setWhatsappMessage(e.target.value)}
+                              placeholder="e.g. Hey! I just opened your special love website and I loved it so much! ❤️"
+                              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 outline-none focus:border-pink-400 bg-white"
+                            />
+                            <p className="text-[10px] text-slate-400 mt-1">
+                              When your recipient reaches Page 9 and clicks &quot;Reply on WhatsApp&quot;, this exact message will pre-fill in their WhatsApp text box automatically!
+                            </p>
+                          </div>
                         </div>
 
                         {/* Optional PIN Protection */}

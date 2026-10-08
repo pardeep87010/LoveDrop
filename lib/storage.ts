@@ -26,6 +26,7 @@ export const DEFAULT_DEMO_SURPRISE: LoveSurpriseData = {
   dodgeIntensity: "savage",
   bgMusic: "summer-guitar",
   whatsappNumber: "+91 98765 43210",
+  whatsappMessage: "Hey Aman! I just opened your special love website and I loved it so much! You made my day! ❤️",
   isPaid: true,
   createdAt: new Date().toISOString(),
   expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),

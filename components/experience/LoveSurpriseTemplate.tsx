@@ -19,9 +19,12 @@ import {
   Star,
   Music,
   VolumeX,
+  Download,
+  MessageCircle,
+  Disc,
 } from "lucide-react";
 import { soundFx } from "@/lib/soundFx";
-import { LoveSurpriseData } from "@/lib/types";
+import { LoveSurpriseData, AudioTrackId } from "@/lib/types";
 import RomanticBackground from "@/components/experience/RomanticBackground";
 
 interface LoveSurpriseTemplateProps {
@@ -191,9 +194,13 @@ export default function LoveSurpriseTemplate({
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlayingMusic, setIsPlayingMusic] = useState(false);
   const [musicBlocked, setMusicBlocked] = useState(false);
+  const [selectedTrack, setSelectedTrack] = useState<AudioTrackId>(
+    (data?.bgMusic as AudioTrackId) || "romantic-lofi"
+  );
+  const [showSongPicker, setShowSongPicker] = useState(false);
 
   const musicTrackSrc =
-    data?.bgMusic === "summer-guitar"
+    selectedTrack === "summer-guitar"
       ? "/music/summer-gouyad-5.mp3"
       : "/music/love-bgm.mp3";
 
@@ -254,9 +261,151 @@ export default function LoveSurpriseTemplate({
           setIsPlayingMusic(true);
           setMusicBlocked(false);
         })
-        .catch(() => {});
+        .catch(() => {
+          setMusicBlocked(true);
+        });
     }
   };
+
+  const changeTrack = (trackId: AudioTrackId) => {
+    soundFx.playPop();
+    setSelectedTrack(trackId);
+    setShowSongPicker(false);
+  };
+
+  // Certificate Download Handler
+  const handleDownloadCertificate = () => {
+    soundFx.playSuccessChime();
+    confetti({ particleCount: 120, spread: 90, origin: { y: 0.6 } });
+
+    const canvas = document.createElement("canvas");
+    canvas.width = 1200;
+    canvas.height = 800;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Background gradient
+    const bgGrad = ctx.createLinearGradient(0, 0, 1200, 800);
+    bgGrad.addColorStop(0, "#FFFDF9");
+    bgGrad.addColorStop(0.5, "#FFF5F8");
+    bgGrad.addColorStop(1, "#FDF2F7");
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, 1200, 800);
+
+    // Outer Gold Border
+    ctx.strokeStyle = "#D4AF37";
+    ctx.lineWidth = 12;
+    ctx.strokeRect(30, 30, 1140, 740);
+
+    // Inner Rose Border
+    ctx.strokeStyle = "#FF2E63";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(48, 48, 1104, 704);
+
+    // Corner Decorative Elements
+    ctx.fillStyle = "#FF2E63";
+    ctx.font = "28px serif";
+    ctx.fillText("💖", 65, 90);
+    ctx.fillText("💖", 1105, 90);
+    ctx.fillText("💖", 65, 730);
+    ctx.fillText("💖", 1105, 730);
+
+    // Header
+    ctx.fillStyle = "#1E293B";
+    ctx.font = "bold 44px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("CERTIFICATE OF ETERNAL LOVE", 600, 135);
+
+    // Subheader
+    ctx.fillStyle = "#FF2E63";
+    ctx.font = "bold 20px sans-serif";
+    ctx.fillText("OFFICIAL & UNBREAKABLE BOND OF PASSION", 600, 180);
+
+    // Divider line
+    ctx.strokeStyle = "#CBD5E1";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(350, 205);
+    ctx.lineTo(850, 205);
+    ctx.stroke();
+
+    // Certificate Body
+    ctx.fillStyle = "#64748B";
+    ctx.font = "500 22px sans-serif";
+    ctx.fillText("This is to proudly certify that", 600, 260);
+
+    // Recipient Name
+    ctx.fillStyle = "#FF2E63";
+    ctx.font = "bold 56px sans-serif";
+    ctx.fillText(recipientName, 600, 335);
+
+    ctx.fillStyle = "#64748B";
+    ctx.font = "500 22px sans-serif";
+    ctx.fillText("holds the key to the heart of", 600, 400);
+
+    // Sender Name
+    ctx.fillStyle = "#0F172A";
+    ctx.font = "bold 46px sans-serif";
+    ctx.fillText(senderName, 600, 465);
+
+    // Quote
+    ctx.fillStyle = "#475569";
+    ctx.font = "italic 20px sans-serif";
+    ctx.fillText(
+      `"Love is not about how many days, months, or years you have been together.`,
+      600,
+      535
+    );
+    ctx.fillText(
+      `Love is about how much you love each other every single day."`,
+      600,
+      565
+    );
+
+    // Date & Signatures
+    const dateStr = new Date().toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#64748B";
+    ctx.font = "bold 18px sans-serif";
+    ctx.fillText(`DATE ISSUED: ${dateStr}`, 120, 680);
+
+    ctx.textAlign = "right";
+    ctx.fillText(`GIVEN WITH LOVE BY: ${senderName} ❤️`, 1080, 680);
+
+    // Center Seal Badge
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#FF2E63";
+    ctx.font = "bold 24px sans-serif";
+    ctx.fillText("🏵️ OFFICIALLY SEALED WITH LOVE 🏵️", 600, 680);
+
+    // Trigger Download
+    const link = document.createElement("a");
+    link.download = `Certificate_of_Love_${recipientName}_and_${senderName}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  };
+
+  // WhatsApp Reply Action Handler
+  const handleWhatsAppClick = () => {
+    soundFx.playPop();
+    confetti({ particleCount: 50, spread: 60 });
+
+    const rawPhone = data?.whatsappNumber || "+91 98765 43210";
+    const cleanPhone = rawPhone.replace(/\D/g, "");
+
+    const predefinedMsg =
+      data?.whatsappMessage ||
+      `Hey ${senderName}! I just opened your special love website and I loved it so much! You made my day! ❤️`;
+
+    const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(predefinedMsg)}`;
+    window.open(waUrl, "_blank");
+  };
+
 
   // -------------------------------------------------------------
   // PAGE 1: INTRO TYPING STATE
@@ -651,6 +800,65 @@ export default function LoveSurpriseTemplate({
               </>
             )}
           </button>
+
+          {/* Interactive Song Track Switcher Button */}
+          <div className="relative">
+            <button
+              id="template-change-song-btn"
+              type="button"
+              onClick={() => {
+                soundFx.playPop();
+                setShowSongPicker(!showSongPicker);
+              }}
+              title="Change Background Song"
+              className="h-8 sm:h-9 px-2.5 sm:px-3 rounded-full bg-white hover:bg-pink-50 border border-pink-100/90 shadow-sm text-slate-700 hover:text-[#FF2E63] flex items-center gap-1.5 transition-all cursor-pointer hover:scale-105 active:scale-95 text-[10px] sm:text-[11px] font-extrabold"
+            >
+              <Disc className="w-3.5 h-3.5 text-pink-500" />
+              <span className="hidden xs:inline">
+                {selectedTrack === "summer-guitar" ? "Guitar 🎸" : "BGM 🎹"}
+              </span>
+            </button>
+
+            {/* Song Picker Dropdown Menu */}
+            <AnimatePresence>
+              {showSongPicker && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9, y: 6 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, y: 6 }}
+                  className="absolute right-0 top-10 z-50 w-52 p-2 rounded-2xl bg-white/95 backdrop-blur-md border border-pink-100 shadow-2xl space-y-1 text-left"
+                >
+                  <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2.5 py-1">
+                    Change Music Track:
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => changeTrack("romantic-lofi")}
+                    className={`w-full px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
+                      selectedTrack === "romantic-lofi"
+                        ? "bg-pink-50 text-[#FF2E63]"
+                        : "hover:bg-slate-50 text-slate-700"
+                    }`}
+                  >
+                    <span>🎹 Love BGM (Piano)</span>
+                    {selectedTrack === "romantic-lofi" && <Check className="w-3.5 h-3.5 text-[#FF2E63]" />}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => changeTrack("summer-guitar")}
+                    className={`w-full px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-between transition-colors cursor-pointer ${
+                      selectedTrack === "summer-guitar"
+                        ? "bg-pink-50 text-[#FF2E63]"
+                        : "hover:bg-slate-50 text-slate-700"
+                    }`}
+                  >
+                    <span>🎸 Sunset Guitar (Acoustic)</span>
+                    {selectedTrack === "summer-guitar" && <Check className="w-3.5 h-3.5 text-[#FF2E63]" />}
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
 
           <button
             id="template-restart-btn"
@@ -1691,6 +1899,50 @@ export default function LoveSurpriseTemplate({
                     <span>{reason.title}</span>
                   </span>
                 ))}
+              </div>
+
+              {/* Certificate of Eternal Love Card */}
+              <div className="w-full max-w-sm mx-auto p-4 rounded-3xl bg-gradient-to-b from-[#FFFDF9] via-[#FFF5F8] to-[#FDF2F7] border border-amber-300/80 shadow-md space-y-2.5 text-center relative overflow-hidden my-1">
+                <div className="flex items-center justify-between text-xs font-bold text-amber-800">
+                  <span className="flex items-center gap-1">📜 Certificate of Love</span>
+                  <span className="text-[10px] bg-amber-100/80 text-amber-900 border border-amber-200/80 px-2 py-0.5 rounded-full font-black uppercase">
+                    Official &amp; Sealed
+                  </span>
+                </div>
+                <div className="py-2.5 px-3 rounded-2xl bg-white/95 border border-pink-100 shadow-2xs space-y-1">
+                  <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">
+                    Unbreakable Bond
+                  </p>
+                  <p className="text-base sm:text-lg font-black text-slate-900">
+                    {recipientName} &amp; {senderName}
+                  </p>
+                  <p className="text-[11px] text-slate-500 font-medium italic">
+                    &quot;Sealed with endless love, passion &amp; trust&quot;
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleDownloadCertificate}
+                  className="w-full py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white font-extrabold text-xs shadow-md shadow-amber-500/20 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <Download className="w-4 h-4 text-white" />
+                  <span>Download Certificate of Love 📜</span>
+                </button>
+              </div>
+
+              {/* Predefined WhatsApp Action Button */}
+              <div className="w-full max-w-sm mx-auto space-y-1">
+                <button
+                  type="button"
+                  onClick={handleWhatsAppClick}
+                  className="w-full py-3 rounded-2xl bg-gradient-to-r from-emerald-500 via-emerald-600 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-xs sm:text-sm shadow-md shadow-emerald-500/20 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2.5"
+                >
+                  <MessageCircle className="w-4 h-4 text-white fill-white" />
+                  <span>Reply to {senderName} on WhatsApp 💬</span>
+                </button>
+                <p className="text-[10px] text-slate-500 font-medium text-center truncate px-2">
+                  Auto-fills message in WhatsApp automatically
+                </p>
               </div>
 
               {/* Action: View Again Button */}

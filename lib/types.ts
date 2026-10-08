@@ -54,6 +54,7 @@ export interface LoveSurpriseData {
   dodgeIntensity: DodgeIntensity;
   bgMusic: AudioTrackId;
   whatsappNumber?: string;
+  whatsappMessage?: string;
   isPaid: boolean;
   createdAt: string;
   expiresAt: string;
