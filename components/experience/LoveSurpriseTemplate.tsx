@@ -1291,7 +1291,7 @@ export default function LoveSurpriseTemplate({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -16 }}
               transition={{ duration: 0.35 }}
-              className="w-full max-w-xl mx-auto space-y-4 text-center"
+              className="w-full max-w-xl mx-auto space-y-3.5 text-center pb-20 sm:pb-24"
             >
               {/* Header */}
               <div className="space-y-1">
@@ -1311,7 +1311,7 @@ export default function LoveSurpriseTemplate({
               </div>
 
               {/* 3x3 Grid of 9 3D Flip Cards */}
-              <div className="grid grid-cols-3 gap-2.5 sm:gap-3 max-w-md mx-auto pt-1">
+              <div className="grid grid-cols-3 gap-2 sm:gap-2.5 max-w-[340px] sm:max-w-md mx-auto pt-1">
                 {dynamicReasons.map((item) => {
                   const isFlipped = revealedReasons.includes(item.id);
 
@@ -1703,7 +1703,7 @@ export default function LoveSurpriseTemplate({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.3 }}
-              className="w-full max-w-md mx-auto flex flex-col items-center text-center space-y-4"
+              className="w-full max-w-md mx-auto flex flex-col items-center text-center space-y-4 pb-20 sm:pb-24"
             >
               {/* Header Title & Subtitle */}
               <div className="space-y-1">
@@ -1731,23 +1731,60 @@ export default function LoveSurpriseTemplate({
                         id={`cookie-btn-${idx}`}
                         type="button"
                         onClick={() => handleCookieClick(idx)}
-                        className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 shadow-md shadow-amber-900/15 flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-110 active:scale-95 group ${
-                          isOpened ? "ring-4 ring-pink-300 ring-offset-2" : ""
+                        className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 group ${
+                          isOpened
+                            ? "bg-amber-100/80 ring-2 ring-pink-400 ring-offset-1 shadow-sm"
+                            : "bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 shadow-md shadow-amber-900/15"
                         }`}
                         title={`Cookie ${idx + 1}`}
                       >
-                        {/* Crease line in cookie */}
-                        <div className="w-6 sm:w-7 h-1 bg-amber-600/35 rounded-full transform -rotate-12 group-hover:rotate-0 transition-transform" />
+                        {isOpened ? (
+                          <div className="relative flex items-center justify-center w-full h-full">
+                            {/* Left cracked half */}
+                            <motion.div
+                              initial={{ x: 2, rotate: 0 }}
+                              animate={{ x: -3, rotate: -12 }}
+                              transition={{ duration: 0.25, type: "spring", stiffness: 300 }}
+                              className="w-4 sm:w-5 h-8 sm:h-9 bg-gradient-to-l from-amber-400 to-amber-500 rounded-l-full border-r border-amber-600/50 shadow-xs flex items-center justify-end pr-0.5"
+                            >
+                              <div className="w-1 h-3 bg-amber-600/30 rounded-full" />
+                            </motion.div>
 
-                        {/* Top-right sparkle */}
-                        <span className="absolute -top-1 -right-1 text-amber-200 text-xs sm:text-sm group-hover:scale-125 transition-transform">
-                          ✨
-                        </span>
+                            {/* Center fortune paper note sticking out */}
+                            <motion.div
+                              initial={{ scale: 0.2, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              transition={{ delay: 0.1, duration: 0.2 }}
+                              className="absolute z-10 w-7 sm:w-8 h-3.5 bg-white border border-pink-300 rounded-[2px] shadow-xs flex items-center justify-center -rotate-6"
+                            >
+                              <div className="w-4 h-0.5 bg-pink-500/70 rounded-full" />
+                            </motion.div>
 
-                        {isOpened && (
-                          <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-pink-500 text-white flex items-center justify-center text-[10px] font-bold shadow-xs">
-                            ✓
-                          </span>
+                            {/* Right cracked half */}
+                            <motion.div
+                              initial={{ x: -2, rotate: 0 }}
+                              animate={{ x: 3, rotate: 12 }}
+                              transition={{ duration: 0.25, type: "spring", stiffness: 300 }}
+                              className="w-4 sm:w-5 h-8 sm:h-9 bg-gradient-to-r from-amber-400 to-amber-500 rounded-r-full border-l border-amber-600/50 shadow-xs flex items-center justify-start pl-0.5"
+                            >
+                              <div className="w-1 h-3 bg-amber-600/30 rounded-full" />
+                            </motion.div>
+
+                            {/* Opened indicator */}
+                            <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-pink-500 text-white flex items-center justify-center text-[10px] font-bold shadow-xs z-20">
+                              ✓
+                            </span>
+                          </div>
+                        ) : (
+                          <>
+                            {/* Crease line in cookie */}
+                            <div className="w-6 sm:w-7 h-1 bg-amber-600/35 rounded-full transform -rotate-12 group-hover:rotate-0 transition-transform" />
+
+                            {/* Top-right sparkle */}
+                            <span className="absolute -top-1 -right-1 text-amber-200 text-xs sm:text-sm group-hover:scale-125 transition-transform">
+                              ✨
+                            </span>
+                          </>
                         )}
                       </button>
                     );
@@ -1764,23 +1801,60 @@ export default function LoveSurpriseTemplate({
                         id={`cookie-btn-${idx}`}
                         type="button"
                         onClick={() => handleCookieClick(idx)}
-                        className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 shadow-md shadow-amber-900/15 flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-110 active:scale-95 group ${
-                          isOpened ? "ring-4 ring-pink-300 ring-offset-2" : ""
+                        className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 group ${
+                          isOpened
+                            ? "bg-amber-100/80 ring-2 ring-pink-400 ring-offset-1 shadow-sm"
+                            : "bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 shadow-md shadow-amber-900/15"
                         }`}
                         title={`Cookie ${idx + 1}`}
                       >
-                        {/* Crease line in cookie */}
-                        <div className="w-6 sm:w-7 h-1 bg-amber-600/35 rounded-full transform -rotate-12 group-hover:rotate-0 transition-transform" />
+                        {isOpened ? (
+                          <div className="relative flex items-center justify-center w-full h-full">
+                            {/* Left cracked half */}
+                            <motion.div
+                              initial={{ x: 2, rotate: 0 }}
+                              animate={{ x: -3, rotate: -12 }}
+                              transition={{ duration: 0.25, type: "spring", stiffness: 300 }}
+                              className="w-4 sm:w-5 h-8 sm:h-9 bg-gradient-to-l from-amber-400 to-amber-500 rounded-l-full border-r border-amber-600/50 shadow-xs flex items-center justify-end pr-0.5"
+                            >
+                              <div className="w-1 h-3 bg-amber-600/30 rounded-full" />
+                            </motion.div>
 
-                        {/* Top-right sparkle */}
-                        <span className="absolute -top-1 -right-1 text-amber-200 text-xs sm:text-sm group-hover:scale-125 transition-transform">
-                          ✨
-                        </span>
+                            {/* Center fortune paper note sticking out */}
+                            <motion.div
+                              initial={{ scale: 0.2, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              transition={{ delay: 0.1, duration: 0.2 }}
+                              className="absolute z-10 w-7 sm:w-8 h-3.5 bg-white border border-pink-300 rounded-[2px] shadow-xs flex items-center justify-center -rotate-6"
+                            >
+                              <div className="w-4 h-0.5 bg-pink-500/70 rounded-full" />
+                            </motion.div>
 
-                        {isOpened && (
-                          <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-pink-500 text-white flex items-center justify-center text-[10px] font-bold shadow-xs">
-                            ✓
-                          </span>
+                            {/* Right cracked half */}
+                            <motion.div
+                              initial={{ x: -2, rotate: 0 }}
+                              animate={{ x: 3, rotate: 12 }}
+                              transition={{ duration: 0.25, type: "spring", stiffness: 300 }}
+                              className="w-4 sm:w-5 h-8 sm:h-9 bg-gradient-to-r from-amber-400 to-amber-500 rounded-r-full border-l border-amber-600/50 shadow-xs flex items-center justify-start pl-0.5"
+                            >
+                              <div className="w-1 h-3 bg-amber-600/30 rounded-full" />
+                            </motion.div>
+
+                            {/* Opened indicator */}
+                            <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-pink-500 text-white flex items-center justify-center text-[10px] font-bold shadow-xs z-20">
+                              ✓
+                            </span>
+                          </div>
+                        ) : (
+                          <>
+                            {/* Crease line in cookie */}
+                            <div className="w-6 sm:w-7 h-1 bg-amber-600/35 rounded-full transform -rotate-12 group-hover:rotate-0 transition-transform" />
+
+                            {/* Top-right sparkle */}
+                            <span className="absolute -top-1 -right-1 text-amber-200 text-xs sm:text-sm group-hover:scale-125 transition-transform">
+                              ✨
+                            </span>
+                          </>
                         )}
                       </button>
                     );
@@ -1793,7 +1867,7 @@ export default function LoveSurpriseTemplate({
                 {openedCookies.length} of 5 cookies opened
               </p>
 
-              {/* Revealed Fortune Quote Card with 3 Vertical Stars */}
+              {/* Revealed Fortune Quote Card (Clean, elegant paper box without stars) */}
               <AnimatePresence mode="wait">
                 {activeCookieQuote && (
                   <motion.div
@@ -1802,17 +1876,13 @@ export default function LoveSurpriseTemplate({
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.25 }}
-                    className="w-full bg-white rounded-2xl p-3.5 sm:p-4 shadow-lg shadow-pink-950/5 border border-pink-100 flex flex-col items-center text-center space-y-2 max-w-xs sm:max-w-sm"
+                    className="w-full bg-white rounded-2xl p-4 sm:p-5 shadow-lg shadow-pink-950/10 border border-pink-100 flex flex-col items-center text-center space-y-2 max-w-xs sm:max-w-sm relative overflow-hidden"
                   >
-                    <p className="text-xs sm:text-sm font-semibold text-slate-800 italic leading-relaxed">
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 via-pink-400 to-amber-400" />
+                    <span className="text-xl leading-none">🥠</span>
+                    <p className="text-xs sm:text-sm font-semibold text-slate-800 italic leading-relaxed px-2">
                       &ldquo;{activeCookieQuote}&rdquo;
                     </p>
-                    {/* 3 Stars as requested in prompt */}
-                    <div className="flex flex-col items-center justify-center gap-0.5 text-amber-400">
-                      <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                      <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                      <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
