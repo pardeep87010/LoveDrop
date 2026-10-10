@@ -163,7 +163,7 @@ export default function PagePreviewCard({
       origin: { y: 0.6 },
       colors: [themeColor, "#FF6B8B", "#FFD166"],
     });
-    navigateToStep(3);
+    navigateToStep(8);
   };
 
   // Current dodge phrase based on escape count
@@ -463,130 +463,9 @@ export default function PagePreviewCard({
               )}
 
               {/* --------------------------------------------------------- */}
-              {/* PAGE 2: THE RUNAWAY QUESTION & DODGE NO                   */}
+              {/* PAGE 2: PHOTO MEMORIES GALLERY                            */}
               {/* --------------------------------------------------------- */}
               {previewStep === 2 && (
-                <motion.div
-                  key="step-2"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.25 }}
-                  className="w-full my-auto"
-                >
-                  <div className="bg-white rounded-[26px] p-5 shadow-lg border border-pink-100 text-center space-y-4 relative min-h-[280px] flex flex-col justify-center">
-                    <div
-                      className="w-12 h-12 rounded-full flex items-center justify-center mx-auto shadow-inner"
-                      style={{ backgroundColor: `${themeColor}15` }}
-                    >
-                      <Heart
-                        className="w-6 h-6 fill-current animate-bounce"
-                        style={{ color: themeColor }}
-                      />
-                    </div>
-
-                    <div className="space-y-1">
-                      <h4 className="text-base font-black text-slate-900 leading-snug">
-                        {question || "do you love me ??"}
-                      </h4>
-                      <p className="text-[10px] text-slate-400 font-medium">
-                        Think carefully before answering...
-                      </p>
-                    </div>
-
-                    {/* Yes & Runaway No Buttons Container */}
-                    <div className="relative pt-2 pb-3 min-h-[70px] flex items-center justify-center gap-3">
-                      {/* YES BUTTON */}
-                      <button
-                        type="button"
-                        onClick={handleYesClick}
-                        className="px-6 py-2.5 rounded-full text-white font-black text-xs shadow-md transition-all active:scale-95 cursor-pointer relative z-10"
-                        style={{ backgroundColor: themeColor }}
-                      >
-                        {yesButtonText || "YES! ❤️"}
-                      </button>
-
-                      {/* RUNAWAY "NO" BUTTON */}
-                      <motion.button
-                        type="button"
-                        onMouseEnter={handleNoDodge}
-                        onClick={handleNoDodge}
-                        animate={{ x: noButtonOffset.x, y: noButtonOffset.y }}
-                        transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                        className="px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold text-xs border border-slate-300 shadow-sm cursor-pointer whitespace-nowrap z-20 select-none"
-                      >
-                        {noEscapeCount === 0 ? "No 💔" : currentDodgePhrase}
-                      </motion.button>
-                    </div>
-
-                    {noEscapeCount > 0 && (
-                      <p className="text-[10px] font-bold text-pink-500 animate-pulse">
-                        Dodged {noEscapeCount} time{noEscapeCount > 1 ? "s" : ""}! You have to say YES! 😜
-                      </p>
-                    )}
-                  </div>
-                </motion.div>
-              )}
-
-              {/* --------------------------------------------------------- */}
-              {/* PAGE 3: HEARTFELT LOVE LETTER                             */}
-              {/* --------------------------------------------------------- */}
-              {previewStep === 3 && (
-                <motion.div
-                  key="step-3"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.25 }}
-                  className="w-full my-auto"
-                >
-                  <div className="bg-[#FFFDF9] rounded-[24px] p-4 sm:p-5 shadow-lg border border-amber-200/80 text-left space-y-3 font-serif relative">
-                    {/* Header */}
-                    <div className="flex items-center justify-between border-b border-amber-200/60 pb-2">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-sm">{waxSealEmoji || "💌"}</span>
-                        <span className="text-[11px] font-sans font-black uppercase tracking-wider text-amber-800">
-                          A Letter For You
-                        </span>
-                      </div>
-                      <span className="text-[10px] font-sans text-slate-400 font-semibold">
-                        Page 3/9
-                      </span>
-                    </div>
-
-                    {/* Scrollable Letter Body */}
-                    <div className="max-h-[220px] overflow-y-auto pr-1 text-slate-800 font-sans text-[11px] leading-relaxed space-y-2 whitespace-pre-wrap no-scrollbar">
-                      {letterText || "My dearest Sarah..."}
-                    </div>
-
-                    {/* Sign-off */}
-                    <div className="text-right pt-2 border-t border-amber-100 font-sans">
-                      <span className="text-[11px] font-bold text-rose-600 block">
-                        Forever yours,
-                      </span>
-                      <span className="text-xs font-black text-slate-900">
-                        {senderName || "Michael"} 💕
-                      </span>
-                    </div>
-
-                    {/* Next Page Arrow */}
-                    <button
-                      type="button"
-                      onClick={() => navigateToStep(4)}
-                      className="w-full py-2 rounded-xl text-white font-bold text-[11px] shadow-sm flex items-center justify-center gap-1 cursor-pointer font-sans"
-                      style={{ backgroundColor: themeColor }}
-                    >
-                      <span>Continue to Memories</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* --------------------------------------------------------- */}
-              {/* PAGE 4: PHOTO MEMORIES GALLERY                            */}
-              {/* --------------------------------------------------------- */}
-              {previewStep === 4 && (
                 <motion.div
                   key="step-4"
                   initial={{ opacity: 0, scale: 0.95 }}
@@ -657,7 +536,7 @@ export default function PagePreviewCard({
                     {/* Next Step Button */}
                     <button
                       type="button"
-                      onClick={() => navigateToStep(5)}
+                      onClick={() => navigateToStep(3)}
                       className="w-full py-2 rounded-xl text-white font-bold text-[11px] shadow-sm flex items-center justify-center gap-1 cursor-pointer"
                       style={{ backgroundColor: themeColor }}
                     >
@@ -669,9 +548,9 @@ export default function PagePreviewCard({
               )}
 
               {/* --------------------------------------------------------- */}
-              {/* PAGE 5: REASONS I LOVE YOU                                */}
+              {/* PAGE 3: REASONS I LOVE YOU                                */}
               {/* --------------------------------------------------------- */}
-              {previewStep === 5 && (
+              {previewStep === 3 && (
                 <motion.div
                   key="step-5"
                   initial={{ opacity: 0, scale: 0.95 }}
@@ -716,7 +595,7 @@ export default function PagePreviewCard({
                     {/* Next Step Button */}
                     <button
                       type="button"
-                      onClick={() => navigateToStep(6)}
+                      onClick={() => navigateToStep(4)}
                       className="w-full py-2 rounded-xl text-white font-bold text-[11px] shadow-sm flex items-center justify-center gap-1 cursor-pointer"
                       style={{ backgroundColor: themeColor }}
                     >
@@ -728,9 +607,9 @@ export default function PagePreviewCard({
               )}
 
               {/* --------------------------------------------------------- */}
-              {/* PAGE 6: OUR STORY / TIMELINE                              */}
+              {/* PAGE 4: OUR STORY / TIMELINE                              */}
               {/* --------------------------------------------------------- */}
-              {previewStep === 6 && (
+              {previewStep === 4 && (
                 <motion.div
                   key="step-6"
                   initial={{ opacity: 0, scale: 0.95 }}
@@ -806,7 +685,7 @@ export default function PagePreviewCard({
                     {/* Next Page Button */}
                     <button
                       type="button"
-                      onClick={() => navigateToStep(7)}
+                      onClick={() => navigateToStep(5)}
                       className="w-full py-2 rounded-xl text-white font-bold text-[11px] shadow-sm flex items-center justify-center gap-1 cursor-pointer"
                       style={{ backgroundColor: themeColor }}
                     >
@@ -818,9 +697,9 @@ export default function PagePreviewCard({
               )}
 
               {/* --------------------------------------------------------- */}
-              {/* PAGE 7: LOVE QUIZ                                         */}
+              {/* PAGE 5: LOVE QUIZ                                         */}
               {/* --------------------------------------------------------- */}
-              {previewStep === 7 && (
+              {previewStep === 5 && (
                 <motion.div
                   key="step-7"
                   initial={{ opacity: 0, scale: 0.95 }}
@@ -896,7 +775,7 @@ export default function PagePreviewCard({
                     {/* Next Page Button */}
                     <button
                       type="button"
-                      onClick={() => navigateToStep(8)}
+                      onClick={() => navigateToStep(6)}
                       className="w-full py-2 rounded-xl text-white font-bold text-[11px] shadow-sm flex items-center justify-center gap-1 cursor-pointer"
                       style={{ backgroundColor: themeColor }}
                     >
@@ -908,9 +787,9 @@ export default function PagePreviewCard({
               )}
 
               {/* --------------------------------------------------------- */}
-              {/* PAGE 8: FORTUNE COOKIES / PROPHECIES                      */}
+              {/* PAGE 6: FORTUNE COOKIES / PROPHECIES                      */}
               {/* --------------------------------------------------------- */}
-              {previewStep === 8 && (
+              {previewStep === 6 && (
                 <motion.div
                   key="step-8"
                   initial={{ opacity: 0, scale: 0.95 }}
@@ -966,11 +845,132 @@ export default function PagePreviewCard({
                     {/* Next Page Button */}
                     <button
                       type="button"
-                      onClick={() => navigateToStep(9)}
+                      onClick={() => navigateToStep(7)}
                       className="w-full py-2 rounded-xl text-white font-bold text-[11px] shadow-sm flex items-center justify-center gap-1 cursor-pointer"
                       style={{ backgroundColor: themeColor }}
                     >
                       <span>Final Surprise Preview</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* --------------------------------------------------------- */}
+              {/* PAGE 7: THE RUNAWAY QUESTION & DODGE NO                   */}
+              {/* --------------------------------------------------------- */}
+              {previewStep === 7 && (
+                <motion.div
+                  key="step-2"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.25 }}
+                  className="w-full my-auto"
+                >
+                  <div className="bg-white rounded-[26px] p-5 shadow-lg border border-pink-100 text-center space-y-4 relative min-h-[280px] flex flex-col justify-center">
+                    <div
+                      className="w-12 h-12 rounded-full flex items-center justify-center mx-auto shadow-inner"
+                      style={{ backgroundColor: `${themeColor}15` }}
+                    >
+                      <Heart
+                        className="w-6 h-6 fill-current animate-bounce"
+                        style={{ color: themeColor }}
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <h4 className="text-base font-black text-slate-900 leading-snug">
+                        {question || "do you love me ??"}
+                      </h4>
+                      <p className="text-[10px] text-slate-400 font-medium">
+                        Think carefully before answering...
+                      </p>
+                    </div>
+
+                    {/* Yes & Runaway No Buttons Container */}
+                    <div className="relative pt-2 pb-3 min-h-[70px] flex items-center justify-center gap-3">
+                      {/* YES BUTTON */}
+                      <button
+                        type="button"
+                        onClick={handleYesClick}
+                        className="px-6 py-2.5 rounded-full text-white font-black text-xs shadow-md transition-all active:scale-95 cursor-pointer relative z-10"
+                        style={{ backgroundColor: themeColor }}
+                      >
+                        {yesButtonText || "YES! ❤️"}
+                      </button>
+
+                      {/* RUNAWAY "NO" BUTTON */}
+                      <motion.button
+                        type="button"
+                        onMouseEnter={handleNoDodge}
+                        onClick={handleNoDodge}
+                        animate={{ x: noButtonOffset.x, y: noButtonOffset.y }}
+                        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                        className="px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold text-xs border border-slate-300 shadow-sm cursor-pointer whitespace-nowrap z-20 select-none"
+                      >
+                        {noEscapeCount === 0 ? "No 💔" : currentDodgePhrase}
+                      </motion.button>
+                    </div>
+
+                    {noEscapeCount > 0 && (
+                      <p className="text-[10px] font-bold text-pink-500 animate-pulse">
+                        Dodged {noEscapeCount} time{noEscapeCount > 1 ? "s" : ""}! You have to say YES! 😜
+                      </p>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* --------------------------------------------------------- */}
+              {/* PAGE 8: HEARTFELT LOVE LETTER                             */}
+              {/* --------------------------------------------------------- */}
+              {previewStep === 8 && (
+                <motion.div
+                  key="step-3"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.25 }}
+                  className="w-full my-auto"
+                >
+                  <div className="bg-[#FFFDF9] rounded-[24px] p-4 sm:p-5 shadow-lg border border-amber-200/80 text-left space-y-3 font-serif relative">
+                    {/* Header */}
+                    <div className="flex items-center justify-between border-b border-amber-200/60 pb-2">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm">{waxSealEmoji || "💌"}</span>
+                        <span className="text-[11px] font-sans font-black uppercase tracking-wider text-amber-800">
+                          A Letter For You
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-sans text-slate-400 font-semibold">
+                        Page 3/9
+                      </span>
+                    </div>
+
+                    {/* Scrollable Letter Body */}
+                    <div className="max-h-[220px] overflow-y-auto pr-1 text-slate-800 font-sans text-[11px] leading-relaxed space-y-2 whitespace-pre-wrap no-scrollbar">
+                      {letterText || "My dearest Sarah..."}
+                    </div>
+
+                    {/* Sign-off */}
+                    <div className="text-right pt-2 border-t border-amber-100 font-sans">
+                      <span className="text-[11px] font-bold text-rose-600 block">
+                        Forever yours,
+                      </span>
+                      <span className="text-xs font-black text-slate-900">
+                        {senderName || "Michael"} 💕
+                      </span>
+                    </div>
+
+                    {/* Next Page Arrow */}
+                    <button
+                      type="button"
+                      onClick={() => navigateToStep(9)}
+                      className="w-full py-2 rounded-xl text-white font-bold text-[11px] shadow-sm flex items-center justify-center gap-1 cursor-pointer font-sans"
+                      style={{ backgroundColor: themeColor }}
+                    >
+                      <span>Continue to Memories</span>
                       <ArrowRight className="w-3 h-3" />
                     </button>
                   </div>

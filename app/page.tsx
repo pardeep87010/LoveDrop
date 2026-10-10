@@ -611,50 +611,14 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Card 2 */}
-              <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
-                <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
-                  <Zap className="w-6 h-6 fill-amber-500 text-amber-500" />
-                </div>
-                <div>
-                  <span className="text-[10px] font-extrabold text-amber-600 uppercase tracking-wider">
-                    Chapter 2
-                  </span>
-                  <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
-                    The Runaway &quot;NO&quot; Button
-                  </h3>
-                  <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
-                    The viral game! If she tries to click &quot;No&quot;, the button playfully teleports away with cute dialogues (&quot;Pakad ke dikhao! 😜&quot;) until she taps YES.
-                  </p>
-                </div>
-              </div>
-
-              {/* Card 3 */}
-              <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
-                <div className="w-12 h-12 rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center">
-                  <Heart className="w-6 h-6 fill-pink-500 text-pink-500" />
-                </div>
-                <div>
-                  <span className="text-[10px] font-extrabold text-pink-600 uppercase tracking-wider">
-                    Chapter 3
-                  </span>
-                  <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
-                    The Sealed Handwritten Letter
-                  </h3>
-                  <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
-                    A deeply heartfelt personal message in elegant parchment style with wax seal emblem that conveys feelings words alone couldn&apos;t express.
-                  </p>
-                </div>
-              </div>
-
-              {/* Card 4 */}
+              {/* Card 2 - Polaroid Photo Memories */}
               <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
                 <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center">
                   <Camera className="w-6 h-6" />
                 </div>
                 <div>
                   <span className="text-[10px] font-extrabold text-purple-600 uppercase tracking-wider">
-                    Chapter 4
+                    Chapter 2
                   </span>
                   <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
                     Polaroid Photo Memories
@@ -665,14 +629,14 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Card 5 */}
+              {/* Card 3 - 9 Sweet Reasons Why */}
               <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
                 <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
                   <Sparkles className="w-6 h-6" />
                 </div>
                 <div>
                   <span className="text-[10px] font-extrabold text-emerald-600 uppercase tracking-wider">
-                    Chapter 5
+                    Chapter 3
                   </span>
                   <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
                     9 Sweet Reasons Why
@@ -683,14 +647,14 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Card 6 */}
+              {/* Card 4 - Our Story Milestones */}
               <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
                 <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
                   <Clock className="w-6 h-6" />
                 </div>
                 <div>
                   <span className="text-[10px] font-extrabold text-blue-600 uppercase tracking-wider">
-                    Chapter 6
+                    Chapter 4
                   </span>
                   <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
                     Our Story Milestones
@@ -701,14 +665,14 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Card 7 */}
+              {/* Card 5 - Couple Trivia Quiz */}
               <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
                 <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
                   <Gamepad2 className="w-6 h-6" />
                 </div>
                 <div>
                   <span className="text-[10px] font-extrabold text-indigo-600 uppercase tracking-wider">
-                    Chapter 7
+                    Chapter 5
                   </span>
                   <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
                     Couple Trivia Quiz
@@ -719,20 +683,56 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Card 8 */}
+              {/* Card 6 - Romantic Fortune Quotes */}
               <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
                 <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
                   <Cookie className="w-6 h-6" />
                 </div>
                 <div>
                   <span className="text-[10px] font-extrabold text-amber-600 uppercase tracking-wider">
-                    Chapter 8
+                    Chapter 6
                   </span>
                   <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
                     Romantic Fortune Quotes
                   </h3>
                   <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
                     Romantic fortune predictions and sweet star-rated relationship insights (&quot;Your soulmate is closer than you think!&quot;) revealed one by one.
+                  </p>
+                </div>
+              </div>
+
+              {/* Card 7 - The Runaway "NO" Button */}
+              <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
+                <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                  <Zap className="w-6 h-6 fill-amber-500 text-amber-500" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-extrabold text-amber-600 uppercase tracking-wider">
+                    Chapter 7
+                  </span>
+                  <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
+                    The Runaway &quot;NO&quot; Button
+                  </h3>
+                  <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
+                    The viral game! If she tries to click &quot;No&quot;, the button playfully teleports away with cute dialogues (&quot;Pakad ke dikhao! 😜&quot;) until she taps YES.
+                  </p>
+                </div>
+              </div>
+
+              {/* Card 8 - The Sealed Handwritten Letter */}
+              <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
+                <div className="w-12 h-12 rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center">
+                  <Heart className="w-6 h-6 fill-pink-500 text-pink-500" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-extrabold text-pink-600 uppercase tracking-wider">
+                    Chapter 8
+                  </span>
+                  <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
+                    The Sealed Handwritten Letter
+                  </h3>
+                  <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
+                    A deeply heartfelt personal message in elegant parchment style with wax seal emblem that conveys feelings words alone couldn&apos;t express.
                   </p>
                 </div>
               </div>

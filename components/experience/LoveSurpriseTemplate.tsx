@@ -150,13 +150,13 @@ export default function LoveSurpriseTemplate({
 
   const getNextStep = (current: number): 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 => {
     const pageKeys: Record<number, string> = {
-      2: "page2_question",
-      3: "page3_letter",
-      4: "page4_photos",
-      5: "page5_reasons",
-      6: "page6_story",
-      7: "page7_quiz",
-      8: "page8_fortunes",
+      2: "page4_photos",
+      3: "page5_reasons",
+      4: "page6_story",
+      5: "page7_quiz",
+      6: "page8_fortunes",
+      7: "page2_question",
+      8: "page3_letter",
     };
 
     for (let s = current + 1; s <= 9; s++) {
@@ -575,11 +575,11 @@ export default function LoveSurpriseTemplate({
     }
 
     setStep3SubStep("yes1");
-    setStep(getNextStep(2));
+    setStep(getNextStep(7));
   };
 
   // -------------------------------------------------------------
-  // PAGE 3: CELEBRATION (3.1 YES1 for 3s -> 3.2 YES2 -> 3.3 LETTER)
+  // PAGE 8: CELEBRATION (8.1 YES1 for 3s -> 8.2 YES2 -> 8.3 LETTER)
   // -------------------------------------------------------------
   const [step3SubStep, setStep3SubStep] = useState<"yes1" | "yes2" | "letter">("yes1");
   const [letterTypedLength, setLetterTypedLength] = useState(0);
@@ -587,7 +587,7 @@ export default function LoveSurpriseTemplate({
 
   // Auto advance from yes1 (3 seconds) to yes2
   useEffect(() => {
-    if (step === 3 && step3SubStep === "yes1") {
+    if (step === 8 && step3SubStep === "yes1") {
       const timer = setTimeout(() => {
         setStep3SubStep("yes2");
         soundFx.playSuccessChime();
@@ -604,7 +604,7 @@ export default function LoveSurpriseTemplate({
 
   // Auto advance from yes2 to letter after 4.5 seconds if user hasn't clicked
   useEffect(() => {
-    if (step === 3 && step3SubStep === "yes2") {
+    if (step === 8 && step3SubStep === "yes2") {
       const timer = setTimeout(() => {
         setStep3SubStep("letter");
         setLetterTypedLength(0);
@@ -616,7 +616,7 @@ export default function LoveSurpriseTemplate({
 
   // Letter typing interval
   useEffect(() => {
-    if (step === 3 && step3SubStep === "letter" && isTypingLetter) {
+    if (step === 8 && step3SubStep === "letter" && isTypingLetter) {
       if (letterTypedLength < letterFullText.length) {
         const timer = setTimeout(() => {
           setLetterTypedLength((prev) => prev + 1);
@@ -1073,246 +1073,11 @@ export default function LoveSurpriseTemplate({
           )}
 
           {/* =========================================================== */}
-          {/* PAGE 2: DO YOU LOVE ME? (media_1791131484804.png) */}
+          {/* PAGE 2: OUR MEMORIES CAROUSEL (media_1791132434864.png) */}
           {/* =========================================================== */}
           {step === 2 && (
             <motion.div
               key="step-2"
-              initial={{ opacity: 0, scale: 0.94, y: 16 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.94 }}
-              transition={{ duration: 0.35 }}
-              className="w-full max-w-md mx-auto bg-white rounded-[32px] p-6 sm:p-10 shadow-xl shadow-pink-900/5 border border-pink-100/70 text-center space-y-4 min-h-[460px] flex flex-col justify-center"
-            >
-              {/* Sticker Reaction Display (Cycles through 12 stickers on NO click/dodge) */}
-              <div className="flex items-center justify-center min-h-[140px] pt-1">
-                <motion.div
-                  key={noAttempts > 0 ? NO_STICKERS[Math.min(noAttempts - 1, NO_STICKERS.length - 1)] : "initial-heart"}
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: "spring", stiffness: 350, damping: 20 }}
-                  className="relative"
-                >
-                  {noAttempts > 0 ? (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img
-                      src={NO_STICKERS[Math.min(noAttempts - 1, NO_STICKERS.length - 1)]}
-                      alt={`Reaction sticker ${noAttempts}`}
-                      className="w-32 h-32 sm:w-36 sm:h-36 object-contain rounded-2xl drop-shadow-md select-none pointer-events-none"
-                    />
-                  ) : (
-                    <div className="w-20 h-20 rounded-3xl bg-pink-50 text-[#FF2E63] flex items-center justify-center mx-auto shadow-sm border border-pink-100/80">
-                      <Heart className="w-10 h-10 fill-[#FF2E63] text-[#FF2E63] animate-pulse" />
-                    </div>
-                  )}
-                </motion.div>
-              </div>
-
-              {/* Title & Subtitle */}
-              <div className="space-y-1">
-                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                  {customQuestion}
-                </h2>
-                <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                  {recipientName}, I need to know...
-                </p>
-              </div>
-
-              {/* Buttons Row with Runaway No & Growing Yes */}
-              <div className="relative min-h-[140px] flex items-center justify-center gap-4 pt-2">
-                {/* YES Button (Grows with each attempt, stays in back layer) */}
-                <motion.button
-                  id="yes-btn"
-                  type="button"
-                  onClick={handleYesClick}
-                  animate={{
-                    scale: 1 + Math.min(noAttempts * 0.12, 1.8),
-                  }}
-                  transition={{ type: "spring", stiffness: 350, damping: 20 }}
-                  style={{ zIndex: 10 }}
-                  className="px-7 py-3 rounded-2xl bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm sm:text-base shadow-md shadow-pink-500/25 cursor-pointer relative z-10 whitespace-nowrap active:scale-95"
-                >
-                  YES! 💖
-                </motion.button>
-
-                {/* NO Button (Dodges, cycles text, stays on top layer above YES) */}
-                <motion.button
-                  id="no-btn"
-                  type="button"
-                  onMouseEnter={handleNoDodge}
-                  onClick={handleNoDodge}
-                  animate={{
-                    x: noButtonPos ? noButtonPos.x : 0,
-                    y: noButtonPos ? noButtonPos.y : 0,
-                    rotate: noAttempts >= 5 ? [0, -6, 6, -4, 4, 0] : 0,
-                  }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 300,
-                    damping: 18,
-                    rotate: { repeat: Infinity, duration: 0.3 },
-                  }}
-                  style={{ zIndex: 30 }}
-                  className={`px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm border border-slate-200/80 shadow-md cursor-pointer select-none whitespace-nowrap transition-colors relative z-30 ${
-                    noAttempts >= 5 ? "ring-2 ring-rose-400" : ""
-                  }`}
-                >
-                  {noPhrases[noAttempts % noPhrases.length]}
-                </motion.button>
-              </div>
-
-              {noAttempts > 0 && (
-                <p className="text-[11px] font-semibold text-rose-400 italic">
-                  Hint: There is only one right answer! 😉
-                </p>
-              )}
-            </motion.div>
-          )}
-
-          {/* =========================================================== */}
-          {/* PAGE 3: CELEBRATION (yes1 for 3s -> yes2 -> LOVE LETTER)     */}
-          {/* =========================================================== */}
-          {step === 3 && step3SubStep === "yes1" && (
-            <motion.div
-              key="step-3-yes1"
-              initial={{ opacity: 0, scale: 0.88 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.05 }}
-              transition={{ duration: 0.35 }}
-              className="w-full max-w-sm mx-auto bg-white rounded-[32px] p-6 sm:p-8 shadow-xl shadow-pink-900/5 border border-pink-100 text-center space-y-4 min-h-[420px] flex flex-col justify-center items-center"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/stickers/yes1.gif"
-                alt="Yes Celebration 1"
-                className="w-44 h-44 sm:w-48 sm:h-48 object-contain rounded-2xl drop-shadow-md select-none pointer-events-none"
-              />
-              <div className="space-y-1">
-                <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
-                  YAAAY! I knew it! 🥰
-                </h2>
-                <p className="text-base font-extrabold text-[#FF2E63]">
-                  You love me too ❤️
-                </p>
-              </div>
-              <p className="text-[11px] font-semibold text-slate-400 italic">
-                Hang on... something special is coming... ✨
-              </p>
-            </motion.div>
-          )}
-
-          {step === 3 && step3SubStep === "yes2" && (
-            <motion.div
-              key="step-3-yes2"
-              initial={{ opacity: 0, scale: 0.88 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.05 }}
-              transition={{ duration: 0.35 }}
-              className="w-full max-w-sm mx-auto bg-white rounded-[32px] p-6 sm:p-8 shadow-xl shadow-pink-900/5 border border-pink-100 text-center space-y-4 min-h-[420px] flex flex-col justify-center items-center"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/stickers/yes2.gif"
-                alt="Yes Celebration 2"
-                className="w-44 h-44 sm:w-48 sm:h-48 object-contain rounded-2xl drop-shadow-md select-none pointer-events-none"
-              />
-              <div className="space-y-1">
-                <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
-                  Forever &amp; Always ❤️
-                </h2>
-                <p className="text-xs sm:text-sm font-semibold text-slate-600">
-                  I wrote a special love letter just for you, {recipientName}
-                </p>
-              </div>
-              <button
-                id="open-letter-btn"
-                type="button"
-                onClick={() => {
-                  soundFx.playPop();
-                  setStep3SubStep("letter");
-                  setLetterTypedLength(0);
-                  setIsTypingLetter(true);
-                }}
-                className="px-7 py-3 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-xs sm:text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
-              >
-                <span>Open My Love Letter 💌</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </motion.div>
-          )}
-
-          {step === 3 && step3SubStep === "letter" && (
-            <motion.div
-              key="step-3-letter"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -16 }}
-              transition={{ duration: 0.35 }}
-              className="w-full max-w-lg mx-auto space-y-5"
-            >
-              {/* Vintage Stationery Letter Card */}
-              <div className="relative bg-[#FFFEF7] rounded-[32px] p-7 sm:p-9 shadow-xl shadow-pink-900/5 border border-pink-200/60 text-left space-y-4">
-                {/* Letter Header with Skip Typing Button */}
-                <div className="flex items-center justify-between border-b border-pink-100 pb-3">
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#FF2E63] mx-auto sm:mx-0">
-                    <span>💕</span>
-                    <span>Love Letter</span>
-                    <span>💕</span>
-                  </div>
-
-                  {isTypingLetter && (
-                    <button
-                      id="skip-typing-btn"
-                      type="button"
-                      onClick={handleSkipLetterTyping}
-                      className="text-[11px] font-semibold text-slate-400 hover:text-[#FF2E63] flex items-center gap-1 transition-colors cursor-pointer"
-                    >
-                      <span>Skip typing</span>
-                      <FastForward className="w-3 h-3" />
-                    </button>
-                  )}
-                </div>
-
-                {/* Typewritten Text Content */}
-                <div className="text-xs sm:text-sm text-slate-700 font-serif leading-relaxed whitespace-pre-line min-h-[160px]">
-                  {letterFullText.slice(0, letterTypedLength)}
-                  {isTypingLetter && (
-                    <span className="inline-block w-0.5 h-4 bg-[#FF2E63] ml-0.5 animate-pulse" />
-                  )}
-                </div>
-
-                {/* Wax Seal Badge in Bottom Right Corner */}
-                <div className="flex justify-end pt-2">
-                  <div className="w-11 h-11 rounded-full bg-[#E02656] text-white flex items-center justify-center shadow-md shadow-rose-900/20 border-2 border-rose-300">
-                    <Heart className="w-5 h-5 fill-white" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Continue Button */}
-              <div className="text-center pt-2">
-                <button
-                  id="continue-letter-btn"
-                  type="button"
-                  onClick={() => {
-                    soundFx.playPop();
-                    setStep(getNextStep(3));
-                  }}
-                  className="px-10 py-3.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
-                >
-                  <span>Continue</span>
-                  <span>💕</span>
-                </button>
-              </div>
-            </motion.div>
-          )}
-
-          {/* =========================================================== */}
-          {/* PAGE 4: OUR MEMORIES CAROUSEL (media_1791132434864.png) */}
-          {/* =========================================================== */}
-          {step === 4 && (
-            <motion.div
-              key="step-4"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -16 }}
@@ -1390,7 +1155,7 @@ export default function LoveSurpriseTemplate({
                   type="button"
                   onClick={() => {
                     soundFx.playPop();
-                    setStep(getNextStep(4));
+                    setStep(getNextStep(2));
                   }}
                   className="px-9 py-3.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
                 >
@@ -1402,11 +1167,11 @@ export default function LoveSurpriseTemplate({
           )}
 
           {/* =========================================================== */}
-          {/* PAGE 5: 3D FLIP CARDS (media_1791132483965.png) */}
+          {/* PAGE 3: 3D FLIP CARDS (media_1791132483965.png) */}
           {/* =========================================================== */}
-          {step === 5 && (
+          {step === 3 && (
             <motion.div
-              key="step-5"
+              key="step-3"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -16 }}
@@ -1530,7 +1295,7 @@ export default function LoveSurpriseTemplate({
                         origin: { y: 0.7 },
                         colors: ["#FF2E63", "#FF6B8B"],
                       });
-                      setStep(getNextStep(5));
+                      setStep(getNextStep(3));
                     }}
                     className="px-8 py-3 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-xs sm:text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
                   >
@@ -1543,11 +1308,11 @@ export default function LoveSurpriseTemplate({
           )}
 
           {/* =========================================================== */}
-          {/* STEP 6: OUR STORY (media_1791139908028.png) */}
+          {/* STEP 4: OUR STORY (media_1791139908028.png) */}
           {/* =========================================================== */}
-          {step === 6 && (
+          {step === 4 && (
             <motion.div
-              key="step-6"
+              key="step-4"
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
@@ -1672,11 +1437,11 @@ export default function LoveSurpriseTemplate({
                         origin: { y: 0.6 },
                         colors: ["#FF2E63", "#FF6B8B"],
                       });
-                      setStep(getNextStep(6));
+                      setStep(getNextStep(4));
                     }}
                     className="px-6 py-2.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white text-xs font-extrabold shadow-md shadow-pink-500/20 cursor-pointer active:scale-95 transition-all inline-flex items-center gap-1.5"
                   >
-                    <span>Continue to Quiz</span>
+                    <span>Play Our Love Quiz</span>
                     <span>&gt;</span>
                   </button>
                 )}
@@ -1685,11 +1450,11 @@ export default function LoveSurpriseTemplate({
           )}
 
           {/* =========================================================== */}
-          {/* STEP 7: LOVE QUIZ (media_1791140007486.png & media_1791140043616.png) */}
+          {/* STEP 5: LOVE QUIZ (media_1791140007486.png & media_1791140043616.png) */}
           {/* =========================================================== */}
-          {step === 7 && (
+          {step === 5 && (
             <motion.div
-              key="step-7"
+              key="step-5"
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
@@ -1805,12 +1570,11 @@ export default function LoveSurpriseTemplate({
                           origin: { y: 0.6 },
                           colors: ["#FF2E63", "#FF6B8B"],
                         });
-                        setStep(getNextStep(7));
+                        setStep(getNextStep(5));
                       }}
                       className="px-8 py-3 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
                     >
-                      <span>Continue</span>
-                      <Heart className="w-4 h-4 fill-white text-white" />
+                      <span>Open Fortune Cookies</span> <Heart className="w-4 h-4 fill-white text-white" />
                     </button>
                   </div>
                 </motion.div>
@@ -1819,11 +1583,11 @@ export default function LoveSurpriseTemplate({
           )}
 
           {/* =========================================================== */}
-          {/* STEP 8: FORTUNE COOKIES OF LOVE (media_1791140088198.png) */}
+          {/* STEP 6: FORTUNE COOKIES OF LOVE (media_1791140088198.png) */}
           {/* =========================================================== */}
-          {step === 8 && (
+          {step === 6 && (
             <motion.div
-              key="step-8"
+              key="step-6"
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
@@ -2039,14 +1803,248 @@ export default function LoveSurpriseTemplate({
                         origin: { y: 0.6 },
                         colors: ["#FF2E63", "#FFD166"],
                       });
-                      setStep(getNextStep(8));
+                      setStep(getNextStep(6));
                     }}
                     className="px-8 py-3 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
                   >
-                    <span>Continue to Finale</span>
+                    <span>The Big Question... ❤️</span>
                     <Heart className="w-4 h-4 fill-white text-white" />
                   </button>
                 )}
+              </div>
+            </motion.div>
+          )}
+
+          {/* =========================================================== */}
+          {/* PAGE 7: DO YOU LOVE ME? (media_1791131484804.png) */}
+          {/* =========================================================== */}
+          {step === 7 && (
+            <motion.div
+              key="step-7"
+              initial={{ opacity: 0, scale: 0.94, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.94 }}
+              transition={{ duration: 0.35 }}
+              className="w-full max-w-md mx-auto bg-white rounded-[32px] p-6 sm:p-10 shadow-xl shadow-pink-900/5 border border-pink-100/70 text-center space-y-4 min-h-[460px] flex flex-col justify-center"
+            >
+              {/* Sticker Reaction Display (Cycles through 12 stickers on NO click/dodge) */}
+              <div className="flex items-center justify-center min-h-[140px] pt-1">
+                <motion.div
+                  key={noAttempts > 0 ? NO_STICKERS[Math.min(noAttempts - 1, NO_STICKERS.length - 1)] : "initial-heart"}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: "spring", stiffness: 350, damping: 20 }}
+                  className="relative"
+                >
+                  {noAttempts > 0 ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      src={NO_STICKERS[Math.min(noAttempts - 1, NO_STICKERS.length - 1)]}
+                      alt={`Reaction sticker ${noAttempts}`}
+                      className="w-32 h-32 sm:w-36 sm:h-36 object-contain rounded-2xl drop-shadow-md select-none pointer-events-none"
+                    />
+                  ) : (
+                    <div className="w-20 h-20 rounded-3xl bg-pink-50 text-[#FF2E63] flex items-center justify-center mx-auto shadow-sm border border-pink-100/80">
+                      <Heart className="w-10 h-10 fill-[#FF2E63] text-[#FF2E63] animate-pulse" />
+                    </div>
+                  )}
+                </motion.div>
+              </div>
+
+              {/* Title & Subtitle */}
+              <div className="space-y-1">
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                  {customQuestion}
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-500 font-medium">
+                  {recipientName}, I need to know...
+                </p>
+              </div>
+
+              {/* Buttons Row with Runaway No & Growing Yes */}
+              <div className="relative min-h-[140px] flex items-center justify-center gap-4 pt-2">
+                {/* YES Button (Grows with each attempt, stays in back layer) */}
+                <motion.button
+                  id="yes-btn"
+                  type="button"
+                  onClick={handleYesClick}
+                  animate={{
+                    scale: 1 + Math.min(noAttempts * 0.12, 1.8),
+                  }}
+                  transition={{ type: "spring", stiffness: 350, damping: 20 }}
+                  style={{ zIndex: 10 }}
+                  className="px-7 py-3 rounded-2xl bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm sm:text-base shadow-md shadow-pink-500/25 cursor-pointer relative z-10 whitespace-nowrap active:scale-95"
+                >
+                  YES! 💖
+                </motion.button>
+
+                {/* NO Button (Dodges, cycles text, stays on top layer above YES) */}
+                <motion.button
+                  id="no-btn"
+                  type="button"
+                  onMouseEnter={handleNoDodge}
+                  onClick={handleNoDodge}
+                  animate={{
+                    x: noButtonPos ? noButtonPos.x : 0,
+                    y: noButtonPos ? noButtonPos.y : 0,
+                    rotate: noAttempts >= 5 ? [0, -6, 6, -4, 4, 0] : 0,
+                  }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 18,
+                    rotate: { repeat: Infinity, duration: 0.3 },
+                  }}
+                  style={{ zIndex: 30 }}
+                  className={`px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm border border-slate-200/80 shadow-md cursor-pointer select-none whitespace-nowrap transition-colors relative z-30 ${
+                    noAttempts >= 5 ? "ring-2 ring-rose-400" : ""
+                  }`}
+                >
+                  {noPhrases[noAttempts % noPhrases.length]}
+                </motion.button>
+              </div>
+
+              {noAttempts > 0 && (
+                <p className="text-[11px] font-semibold text-rose-400 italic">
+                  Hint: There is only one right answer! 😉
+                </p>
+              )}
+            </motion.div>
+          )}
+
+          {/* =========================================================== */}
+          {/* PAGE 8: CELEBRATION (yes1 for 3s -> yes2 -> LOVE LETTER)     */}
+          {/* =========================================================== */}
+          {step === 8 && step3SubStep === "yes1" && (
+            <motion.div
+              key="step-8-yes1"
+              initial={{ opacity: 0, scale: 0.88 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.05 }}
+              transition={{ duration: 0.35 }}
+              className="w-full max-w-sm mx-auto bg-white rounded-[32px] p-6 sm:p-8 shadow-xl shadow-pink-900/5 border border-pink-100 text-center space-y-4 min-h-[420px] flex flex-col justify-center items-center"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/stickers/yes1.gif"
+                alt="Yes Celebration 1"
+                className="w-44 h-44 sm:w-48 sm:h-48 object-contain rounded-2xl drop-shadow-md select-none pointer-events-none"
+              />
+              <div className="space-y-1">
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
+                  YAAAY! I knew it! 🥰
+                </h2>
+                <p className="text-base font-extrabold text-[#FF2E63]">
+                  You love me too ❤️
+                </p>
+              </div>
+              <p className="text-[11px] font-semibold text-slate-400 italic">
+                Hang on... something special is coming... ✨
+              </p>
+            </motion.div>
+          )}
+
+          {step === 8 && step3SubStep === "yes2" && (
+            <motion.div
+              key="step-8-yes2"
+              initial={{ opacity: 0, scale: 0.88 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.05 }}
+              transition={{ duration: 0.35 }}
+              className="w-full max-w-sm mx-auto bg-white rounded-[32px] p-6 sm:p-8 shadow-xl shadow-pink-900/5 border border-pink-100 text-center space-y-4 min-h-[420px] flex flex-col justify-center items-center"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/stickers/yes2.gif"
+                alt="Yes Celebration 2"
+                className="w-44 h-44 sm:w-48 sm:h-48 object-contain rounded-2xl drop-shadow-md select-none pointer-events-none"
+              />
+              <div className="space-y-1">
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
+                  Forever &amp; Always ❤️
+                </h2>
+                <p className="text-xs sm:text-sm font-semibold text-slate-600">
+                  I wrote a special love letter just for you, {recipientName}
+                </p>
+              </div>
+              <button
+                id="open-letter-btn"
+                type="button"
+                onClick={() => {
+                  soundFx.playPop();
+                  setStep3SubStep("letter");
+                  setLetterTypedLength(0);
+                  setIsTypingLetter(true);
+                }}
+                className="px-7 py-3 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-xs sm:text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
+              >
+                <span>Open My Love Letter 💌</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </motion.div>
+          )}
+
+          {step === 8 && step3SubStep === "letter" && (
+            <motion.div
+              key="step-8-letter"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.35 }}
+              className="w-full max-w-lg mx-auto space-y-5"
+            >
+              {/* Vintage Stationery Letter Card */}
+              <div className="relative bg-[#FFFEF7] rounded-[32px] p-7 sm:p-9 shadow-xl shadow-pink-900/5 border border-pink-200/60 text-left space-y-4">
+                {/* Letter Header with Skip Typing Button */}
+                <div className="flex items-center justify-between border-b border-pink-100 pb-3">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#FF2E63] mx-auto sm:mx-0">
+                    <span>💕</span>
+                    <span>Love Letter</span>
+                    <span>💕</span>
+                  </div>
+
+                  {isTypingLetter && (
+                    <button
+                      id="skip-typing-btn"
+                      type="button"
+                      onClick={handleSkipLetterTyping}
+                      className="text-[11px] font-semibold text-slate-400 hover:text-[#FF2E63] flex items-center gap-1 transition-colors cursor-pointer"
+                    >
+                      <span>Skip typing</span>
+                      <FastForward className="w-3 h-3" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Typewritten Text Content */}
+                <div className="text-xs sm:text-sm text-slate-700 font-serif leading-relaxed whitespace-pre-line min-h-[160px]">
+                  {letterFullText.slice(0, letterTypedLength)}
+                  {isTypingLetter && (
+                    <span className="inline-block w-0.5 h-4 bg-[#FF2E63] ml-0.5 animate-pulse" />
+                  )}
+                </div>
+
+                {/* Wax Seal Badge in Bottom Right Corner */}
+                <div className="flex justify-end pt-2">
+                  <div className="w-11 h-11 rounded-full bg-[#E02656] text-white flex items-center justify-center shadow-md shadow-rose-900/20 border-2 border-rose-300">
+                    <Heart className="w-5 h-5 fill-white" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Continue Button */}
+              <div className="text-center pt-2">
+                <button
+                  id="continue-letter-btn"
+                  type="button"
+                  onClick={() => {
+                    soundFx.playPop();
+                    setStep(getNextStep(8));
+                  }}
+                  className="px-10 py-3.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
+                >
+                  <span>Continue to Finale 🎉</span> <ArrowRight className="w-4 h-4" />
+                </button>
               </div>
             </motion.div>
           )}

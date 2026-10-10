@@ -390,13 +390,13 @@ export default function CreatorWizard({
 
   const stepTitles = [
     "Welcome",
-    "The Question",
-    "Love Letter",
     "Photo Gallery",
     "Reasons I Love You",
     "Our Timeline",
     "Love Quiz",
     "Fortune Cookies",
+    "The Question",
+    "Love Letter",
     "Launch & Publish",
   ];
 
@@ -595,7 +595,7 @@ export default function CreatorWizard({
               )}
 
               {/* ----------------------------------------------------------- */}
-              {/* STEP 2: PAGE 2 (THE QUESTION & RUNAWAY NO)                  */}
+              {/* STEP 2: PAGE 2 (PHOTO MEMORIES GALLERY)                     */}
               {/* ----------------------------------------------------------- */}
               {step === 2 && (
                 <motion.div
@@ -607,331 +607,7 @@ export default function CreatorWizard({
                 >
                   <div className="space-y-1">
                     <span className="text-[11px] font-extrabold uppercase tracking-wider text-pink-500">
-                      Chapter 2 • The Question
-                    </span>
-                    <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                      The Big Question &amp; Runaway Button
-                    </h2>
-                    <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                      The famous runaway &quot;No&quot; button that dodges their fingers until they say YES!
-                    </p>
-                  </div>
-
-                  {/* Page Enable/Disable Toggle */}
-                  <div className="flex items-center justify-between p-4 rounded-2xl bg-white border border-pink-100 shadow-2xs">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`w-9 h-9 rounded-xl flex items-center justify-center ${
-                          enabledPages.page2_question
-                            ? "bg-emerald-50 text-emerald-600"
-                            : "bg-slate-100 text-slate-400"
-                        }`}
-                      >
-                        <Check className="w-5 h-5 stroke-[3]" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-bold text-slate-800">Include Question Page</p>
-                        <p className="text-[10px] text-slate-400">
-                          {enabledPages.page2_question ? "Active in surprise" : "Skipped by recipient"}
-                        </p>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => togglePageEnabled("page2_question")}
-                      className={`relative w-12 h-6 rounded-full transition-colors cursor-pointer ${
-                        enabledPages.page2_question ? "bg-emerald-500" : "bg-slate-300"
-                      }`}
-                    >
-                      <span
-                        className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform shadow-xs ${
-                          enabledPages.page2_question ? "translate-x-6" : ""
-                        }`}
-                      />
-                    </button>
-                  </div>
-
-                  {enabledPages.page2_question ? (
-                    <div className="bg-white rounded-3xl p-5 sm:p-6 border border-pink-100 shadow-sm space-y-4">
-                      {/* Question Text */}
-                      <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                          Your Question
-                        </label>
-                        <input
-                          type="text"
-                          value={question}
-                          onChange={(e) => setQuestion(e.target.value)}
-                          className="w-full px-4 py-3 rounded-2xl border border-pink-200 focus:border-[#FF2E63] focus:ring-2 focus:ring-pink-100 outline-none text-sm font-semibold text-slate-800 bg-pink-50/20"
-                        />
-                        {/* Question Presets */}
-                        <div className="flex flex-wrap gap-1.5 pt-2">
-                          {[
-                            "do you love me ??",
-                            "Will you be mine forever?",
-                            "Am I your favorite person in the world?",
-                            "Will you go out with me?",
-                          ].map((q) => (
-                            <button
-                              key={q}
-                              type="button"
-                              onClick={() => {
-                                soundFx.playPop();
-                                setQuestion(q);
-                              }}
-                              className={`px-2.5 py-1 rounded-full text-[11px] font-bold border transition-all cursor-pointer ${
-                                question === q
-                                  ? "bg-[#FF2E63] text-white border-[#FF2E63]"
-                                  : "bg-white text-slate-600 border-slate-200 hover:border-pink-300"
-                              }`}
-                            >
-                              {q}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Yes Button Text */}
-                      <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                          &quot;YES&quot; Button Label
-                        </label>
-                        <input
-                          type="text"
-                          value={yesButtonText}
-                          onChange={(e) => setYesButtonText(e.target.value)}
-                          className="w-full px-4 py-3 rounded-2xl border border-pink-200 focus:border-[#FF2E63] focus:ring-2 focus:ring-pink-100 outline-none text-sm font-semibold text-slate-800 bg-pink-50/20"
-                        />
-                      </div>
-
-                      {/* Dodge Phrases */}
-                      <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                          Dodging &quot;NO&quot; Button Phrases (When clicked or hovered)
-                        </label>
-                        <div className="flex flex-wrap gap-1.5 pb-2">
-                          {dodgePhrases.map((phrase, idx) => (
-                            <span
-                              key={idx}
-                              className="px-2.5 py-1 rounded-full bg-pink-50 text-pink-700 border border-pink-200 text-xs font-semibold flex items-center gap-1.5"
-                            >
-                              <span>{phrase}</span>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  soundFx.playPop();
-                                  setDodgePhrases(dodgePhrases.filter((_, i) => i !== idx));
-                                }}
-                                className="text-pink-400 hover:text-pink-700 cursor-pointer"
-                              >
-                                ×
-                              </button>
-                            </span>
-                          ))}
-                        </div>
-
-                        {/* Add custom phrase */}
-                        <div className="flex gap-2">
-                          <input
-                            type="text"
-                            value={newDodgeInput}
-                            onChange={(e) => setNewDodgeInput(e.target.value)}
-                            placeholder="Add funny phrase..."
-                            className="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-700 outline-none focus:border-pink-400"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (newDodgeInput.trim()) {
-                                soundFx.playPop();
-                                setDodgePhrases([...dodgePhrases, newDodgeInput.trim()]);
-                                setNewDodgeInput("");
-                              }
-                            }}
-                            className="px-3.5 py-2 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs cursor-pointer"
-                          >
-                            Add
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="p-6 rounded-3xl bg-amber-50/70 border border-amber-200 text-center space-y-2">
-                      <p className="text-xs font-bold text-amber-800">This page will be skipped</p>
-                      <p className="text-xs text-amber-600 font-medium">
-                        The recipient will proceed straight to the next chapter.
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() => togglePageEnabled("page2_question")}
-                        className="px-4 py-1.5 rounded-full bg-white border border-amber-300 text-amber-800 text-xs font-bold shadow-2xs cursor-pointer"
-                      >
-                        Restore Page
-                      </button>
-                    </div>
-                  )}
-                </motion.div>
-              )}
-
-              {/* ----------------------------------------------------------- */}
-              {/* STEP 3: PAGE 3 (HEARTFELT LOVE LETTER)                      */}
-              {/* ----------------------------------------------------------- */}
-              {step === 3 && (
-                <motion.div
-                  key="step-3"
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -12 }}
-                  className="space-y-6"
-                >
-                  <div className="space-y-1">
-                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-pink-500">
-                      Chapter 3 • Your Letter
-                    </span>
-                    <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                      Write From Your Heart
-                    </h2>
-                    <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                      Rendered in authentic cursive typewriter handwriting with a wax seal opening animation.
-                    </p>
-                  </div>
-
-                  {/* Page Toggle */}
-                  <div className="flex items-center justify-between p-4 rounded-2xl bg-white border border-pink-100 shadow-2xs">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`w-9 h-9 rounded-xl flex items-center justify-center ${
-                          enabledPages.page3_letter
-                            ? "bg-emerald-50 text-emerald-600"
-                            : "bg-slate-100 text-slate-400"
-                        }`}
-                      >
-                        <Check className="w-5 h-5 stroke-[3]" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-bold text-slate-800">Include Love Letter Page</p>
-                        <p className="text-[10px] text-slate-400">
-                          {enabledPages.page3_letter ? "Active in surprise" : "Skipped by recipient"}
-                        </p>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => togglePageEnabled("page3_letter")}
-                      className={`relative w-12 h-6 rounded-full transition-colors cursor-pointer ${
-                        enabledPages.page3_letter ? "bg-emerald-500" : "bg-slate-300"
-                      }`}
-                    >
-                      <span
-                        className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform shadow-xs ${
-                          enabledPages.page3_letter ? "translate-x-6" : ""
-                        }`}
-                      />
-                    </button>
-                  </div>
-
-                  {enabledPages.page3_letter ? (
-                    <div className="bg-white rounded-3xl p-5 sm:p-6 border border-pink-100 shadow-sm space-y-4">
-                      {/* Wax Seal Emoji */}
-                      <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                          Wax Seal Emblem
-                        </label>
-                        <div className="flex gap-2">
-                          {["💌", "💖", "🌹", "✨", "💍", "🕊️"].map((em) => (
-                            <button
-                              key={em}
-                              type="button"
-                              onClick={() => {
-                                soundFx.playPop();
-                                setWaxSealEmoji(em);
-                              }}
-                              className={`w-10 h-10 rounded-xl border text-lg flex items-center justify-center cursor-pointer transition-all ${
-                                waxSealEmoji === em
-                                  ? "border-[#FF2E63] bg-pink-50 ring-2 ring-[#FF2E63]/20"
-                                  : "border-slate-200 hover:border-pink-300"
-                              }`}
-                            >
-                              {em}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Letter Textarea */}
-                      <div>
-                        <div className="flex items-center justify-between mb-1.5">
-                          <label className="block text-xs font-bold text-slate-700">
-                            Letter Message
-                          </label>
-                          <span className="text-[11px] text-slate-400 font-semibold">
-                            {letterText.split(/\s+/).filter(Boolean).length} words
-                          </span>
-                        </div>
-                        <textarea
-                          rows={8}
-                          value={letterText}
-                          onChange={(e) => setLetterText(e.target.value)}
-                          className="w-full p-4 rounded-2xl border border-pink-200 focus:border-[#FF2E63] focus:ring-2 focus:ring-pink-100 outline-none text-sm font-medium text-slate-800 bg-pink-50/20 leading-relaxed font-sans no-scrollbar"
-                        />
-                      </div>
-
-                      {/* Inspiration Starters */}
-                      <div className="pt-1">
-                        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">
-                          Quick Romantic Starters (Tap to insert):
-                        </span>
-                        <div className="flex flex-wrap gap-1.5">
-                          {[
-                            "Every moment with you feels like magic.",
-                            "You make my heart skip a beat every time you look at me.",
-                            "I fall more in love with you every single day.",
-                            "Life is so much sweeter with you in it.",
-                          ].map((str, idx) => (
-                            <button
-                              key={idx}
-                              type="button"
-                              onClick={() => {
-                                soundFx.playPop();
-                                setLetterText((prev) => prev + "\n\n" + str);
-                              }}
-                              className="px-2.5 py-1 rounded-full bg-slate-50 hover:bg-pink-50 text-[11px] text-slate-600 hover:text-pink-600 border border-slate-200 transition-colors cursor-pointer"
-                            >
-                              + &quot;{str.slice(0, 30)}...&quot;
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="p-6 rounded-3xl bg-amber-50/70 border border-amber-200 text-center space-y-2">
-                      <p className="text-xs font-bold text-amber-800">This page will be skipped</p>
-                      <button
-                        type="button"
-                        onClick={() => togglePageEnabled("page3_letter")}
-                        className="px-4 py-1.5 rounded-full bg-white border border-amber-300 text-amber-800 text-xs font-bold shadow-2xs cursor-pointer"
-                      >
-                        Restore Page
-                      </button>
-                    </div>
-                  )}
-                </motion.div>
-              )}
-
-              {/* ----------------------------------------------------------- */}
-              {/* STEP 4: PAGE 4 (PHOTO MEMORIES GALLERY)                     */}
-              {/* ----------------------------------------------------------- */}
-              {step === 4 && (
-                <motion.div
-                  key="step-4"
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -12 }}
-                  className="space-y-6"
-                >
-                  <div className="space-y-1">
-                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-pink-500">
-                      Chapter 4 • Photos
+                      Chapter 2 • Photos
                     </span>
                     <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                       Photo Memories &amp; Polaroids
@@ -1088,11 +764,11 @@ export default function CreatorWizard({
               )}
 
               {/* ----------------------------------------------------------- */}
-              {/* STEP 5: PAGE 5 (REASONS I LOVE YOU)                         */}
+              {/* STEP 3: PAGE 3 (REASONS I LOVE YOU)                         */}
               {/* ----------------------------------------------------------- */}
-              {step === 5 && (
+              {step === 3 && (
                 <motion.div
-                  key="step-5"
+                  key="step-3"
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -12 }}
@@ -1100,7 +776,7 @@ export default function CreatorWizard({
                 >
                   <div className="space-y-1">
                     <span className="text-[11px] font-extrabold uppercase tracking-wider text-pink-500">
-                      Chapter 5 • Reasons
+                      Chapter 3 • Reasons
                     </span>
                     <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                       Reasons I Love You
@@ -1240,11 +916,11 @@ export default function CreatorWizard({
               )}
 
               {/* ----------------------------------------------------------- */}
-              {/* STEP 6: PAGE 6 (OUR STORY / MILESTONES TIMELINE)            */}
+              {/* STEP 4: PAGE 4 (OUR STORY / MILESTONES TIMELINE)            */}
               {/* ----------------------------------------------------------- */}
-              {step === 6 && (
+              {step === 4 && (
                 <motion.div
-                  key="step-6"
+                  key="step-4"
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -12 }}
@@ -1252,7 +928,7 @@ export default function CreatorWizard({
                 >
                   <div className="space-y-1">
                     <span className="text-[11px] font-extrabold uppercase tracking-wider text-pink-500">
-                      Chapter 6 • Our Timeline
+                      Chapter 4 • Our Timeline
                     </span>
                     <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                       Our Story &amp; Major Milestones
@@ -1444,11 +1120,11 @@ export default function CreatorWizard({
               )}
 
               {/* ----------------------------------------------------------- */}
-              {/* STEP 7: PAGE 7 (LOVE QUIZ)                                  */}
+              {/* STEP 5: PAGE 5 (LOVE QUIZ)                                  */}
               {/* ----------------------------------------------------------- */}
-              {step === 7 && (
+              {step === 5 && (
                 <motion.div
-                  key="step-7"
+                  key="step-5"
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -12 }}
@@ -1456,7 +1132,7 @@ export default function CreatorWizard({
                 >
                   <div className="space-y-1">
                     <span className="text-[11px] font-extrabold uppercase tracking-wider text-pink-500">
-                      Chapter 7 • Trivia
+                      Chapter 5 • Trivia
                     </span>
                     <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                       Couple Love Quiz
@@ -1657,11 +1333,11 @@ export default function CreatorWizard({
               )}
 
               {/* ----------------------------------------------------------- */}
-              {/* STEP 8: PAGE 8 (FORTUNE COOKIES & PROPHECIES)               */}
+              {/* STEP 6: PAGE 6 (FORTUNE COOKIES & PROPHECIES)               */}
               {/* ----------------------------------------------------------- */}
-              {step === 8 && (
+              {step === 6 && (
                 <motion.div
-                  key="step-8"
+                  key="step-6"
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -12 }}
@@ -1669,7 +1345,7 @@ export default function CreatorWizard({
                 >
                   <div className="space-y-1">
                     <span className="text-[11px] font-extrabold uppercase tracking-wider text-pink-500">
-                      Chapter 8 • Destiny
+                      Chapter 6 • Destiny
                     </span>
                     <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                       Fortune Cookies &amp; Love Prophecies
@@ -1777,6 +1453,330 @@ export default function CreatorWizard({
                       <button
                         type="button"
                         onClick={() => togglePageEnabled("page8_fortunes")}
+                        className="px-4 py-1.5 rounded-full bg-white border border-amber-300 text-amber-800 text-xs font-bold shadow-2xs cursor-pointer"
+                      >
+                        Restore Page
+                      </button>
+                    </div>
+                  )}
+                </motion.div>
+              )}
+
+              {/* ----------------------------------------------------------- */}
+              {/* STEP 7: PAGE 7 (THE QUESTION & RUNAWAY NO)                  */}
+              {/* ----------------------------------------------------------- */}
+              {step === 7 && (
+                <motion.div
+                  key="step-7"
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  className="space-y-6"
+                >
+                  <div className="space-y-1">
+                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-pink-500">
+                      Chapter 7 • The Question
+                    </span>
+                    <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                      The Big Question &amp; Runaway Button
+                    </h2>
+                    <p className="text-xs sm:text-sm text-slate-500 font-medium">
+                      The famous runaway &quot;No&quot; button that dodges their fingers until they say YES!
+                    </p>
+                  </div>
+
+                  {/* Page Enable/Disable Toggle */}
+                  <div className="flex items-center justify-between p-4 rounded-2xl bg-white border border-pink-100 shadow-2xs">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+                          enabledPages.page2_question
+                            ? "bg-emerald-50 text-emerald-600"
+                            : "bg-slate-100 text-slate-400"
+                        }`}
+                      >
+                        <Check className="w-5 h-5 stroke-[3]" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-800">Include Question Page</p>
+                        <p className="text-[10px] text-slate-400">
+                          {enabledPages.page2_question ? "Active in surprise" : "Skipped by recipient"}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => togglePageEnabled("page2_question")}
+                      className={`relative w-12 h-6 rounded-full transition-colors cursor-pointer ${
+                        enabledPages.page2_question ? "bg-emerald-500" : "bg-slate-300"
+                      }`}
+                    >
+                      <span
+                        className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform shadow-xs ${
+                          enabledPages.page2_question ? "translate-x-6" : ""
+                        }`}
+                      />
+                    </button>
+                  </div>
+
+                  {enabledPages.page2_question ? (
+                    <div className="bg-white rounded-3xl p-5 sm:p-6 border border-pink-100 shadow-sm space-y-4">
+                      {/* Question Text */}
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                          Your Question
+                        </label>
+                        <input
+                          type="text"
+                          value={question}
+                          onChange={(e) => setQuestion(e.target.value)}
+                          className="w-full px-4 py-3 rounded-2xl border border-pink-200 focus:border-[#FF2E63] focus:ring-2 focus:ring-pink-100 outline-none text-sm font-semibold text-slate-800 bg-pink-50/20"
+                        />
+                        {/* Question Presets */}
+                        <div className="flex flex-wrap gap-1.5 pt-2">
+                          {[
+                            "do you love me ??",
+                            "Will you be mine forever?",
+                            "Am I your favorite person in the world?",
+                            "Will you go out with me?",
+                          ].map((q) => (
+                            <button
+                              key={q}
+                              type="button"
+                              onClick={() => {
+                                soundFx.playPop();
+                                setQuestion(q);
+                              }}
+                              className={`px-2.5 py-1 rounded-full text-[11px] font-bold border transition-all cursor-pointer ${
+                                question === q
+                                  ? "bg-[#FF2E63] text-white border-[#FF2E63]"
+                                  : "bg-white text-slate-600 border-slate-200 hover:border-pink-300"
+                              }`}
+                            >
+                              {q}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Yes Button Text */}
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                          &quot;YES&quot; Button Label
+                        </label>
+                        <input
+                          type="text"
+                          value={yesButtonText}
+                          onChange={(e) => setYesButtonText(e.target.value)}
+                          className="w-full px-4 py-3 rounded-2xl border border-pink-200 focus:border-[#FF2E63] focus:ring-2 focus:ring-pink-100 outline-none text-sm font-semibold text-slate-800 bg-pink-50/20"
+                        />
+                      </div>
+
+                      {/* Dodge Phrases */}
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                          Dodging &quot;NO&quot; Button Phrases (When clicked or hovered)
+                        </label>
+                        <div className="flex flex-wrap gap-1.5 pb-2">
+                          {dodgePhrases.map((phrase, idx) => (
+                            <span
+                              key={idx}
+                              className="px-2.5 py-1 rounded-full bg-pink-50 text-pink-700 border border-pink-200 text-xs font-semibold flex items-center gap-1.5"
+                            >
+                              <span>{phrase}</span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  soundFx.playPop();
+                                  setDodgePhrases(dodgePhrases.filter((_, i) => i !== idx));
+                                }}
+                                className="text-pink-400 hover:text-pink-700 cursor-pointer"
+                              >
+                                ×
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+
+                        {/* Add custom phrase */}
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={newDodgeInput}
+                            onChange={(e) => setNewDodgeInput(e.target.value)}
+                            placeholder="Add funny phrase..."
+                            className="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-700 outline-none focus:border-pink-400"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (newDodgeInput.trim()) {
+                                soundFx.playPop();
+                                setDodgePhrases([...dodgePhrases, newDodgeInput.trim()]);
+                                setNewDodgeInput("");
+                              }
+                            }}
+                            className="px-3.5 py-2 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs cursor-pointer"
+                          >
+                            Add
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-6 rounded-3xl bg-amber-50/70 border border-amber-200 text-center space-y-2">
+                      <p className="text-xs font-bold text-amber-800">This page will be skipped</p>
+                      <p className="text-xs text-amber-600 font-medium">
+                        The recipient will proceed straight to the next chapter.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => togglePageEnabled("page2_question")}
+                        className="px-4 py-1.5 rounded-full bg-white border border-amber-300 text-amber-800 text-xs font-bold shadow-2xs cursor-pointer"
+                      >
+                        Restore Page
+                      </button>
+                    </div>
+                  )}
+                </motion.div>
+              )}
+
+              {/* ----------------------------------------------------------- */}
+              {/* STEP 8: PAGE 8 (HEARTFELT LOVE LETTER)                      */}
+              {/* ----------------------------------------------------------- */}
+              {step === 8 && (
+                <motion.div
+                  key="step-8"
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  className="space-y-6"
+                >
+                  <div className="space-y-1">
+                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-pink-500">
+                      Chapter 8 • Your Letter
+                    </span>
+                    <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                      Write From Your Heart
+                    </h2>
+                    <p className="text-xs sm:text-sm text-slate-500 font-medium">
+                      Rendered in authentic cursive typewriter handwriting with a wax seal opening animation.
+                    </p>
+                  </div>
+
+                  {/* Page Toggle */}
+                  <div className="flex items-center justify-between p-4 rounded-2xl bg-white border border-pink-100 shadow-2xs">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+                          enabledPages.page3_letter
+                            ? "bg-emerald-50 text-emerald-600"
+                            : "bg-slate-100 text-slate-400"
+                        }`}
+                      >
+                        <Check className="w-5 h-5 stroke-[3]" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-slate-800">Include Love Letter Page</p>
+                        <p className="text-[10px] text-slate-400">
+                          {enabledPages.page3_letter ? "Active in surprise" : "Skipped by recipient"}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => togglePageEnabled("page3_letter")}
+                      className={`relative w-12 h-6 rounded-full transition-colors cursor-pointer ${
+                        enabledPages.page3_letter ? "bg-emerald-500" : "bg-slate-300"
+                      }`}
+                    >
+                      <span
+                        className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform shadow-xs ${
+                          enabledPages.page3_letter ? "translate-x-6" : ""
+                        }`}
+                      />
+                    </button>
+                  </div>
+
+                  {enabledPages.page3_letter ? (
+                    <div className="bg-white rounded-3xl p-5 sm:p-6 border border-pink-100 shadow-sm space-y-4">
+                      {/* Wax Seal Emoji */}
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                          Wax Seal Emblem
+                        </label>
+                        <div className="flex gap-2">
+                          {["💌", "💖", "🌹", "✨", "💍", "🕊️"].map((em) => (
+                            <button
+                              key={em}
+                              type="button"
+                              onClick={() => {
+                                soundFx.playPop();
+                                setWaxSealEmoji(em);
+                              }}
+                              className={`w-10 h-10 rounded-xl border text-lg flex items-center justify-center cursor-pointer transition-all ${
+                                waxSealEmoji === em
+                                  ? "border-[#FF2E63] bg-pink-50 ring-2 ring-[#FF2E63]/20"
+                                  : "border-slate-200 hover:border-pink-300"
+                              }`}
+                            >
+                              {em}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Letter Textarea */}
+                      <div>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <label className="block text-xs font-bold text-slate-700">
+                            Letter Message
+                          </label>
+                          <span className="text-[11px] text-slate-400 font-semibold">
+                            {letterText.split(/\s+/).filter(Boolean).length} words
+                          </span>
+                        </div>
+                        <textarea
+                          rows={8}
+                          value={letterText}
+                          onChange={(e) => setLetterText(e.target.value)}
+                          className="w-full p-4 rounded-2xl border border-pink-200 focus:border-[#FF2E63] focus:ring-2 focus:ring-pink-100 outline-none text-sm font-medium text-slate-800 bg-pink-50/20 leading-relaxed font-sans no-scrollbar"
+                        />
+                      </div>
+
+                      {/* Inspiration Starters */}
+                      <div className="pt-1">
+                        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">
+                          Quick Romantic Starters (Tap to insert):
+                        </span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {[
+                            "Every moment with you feels like magic.",
+                            "You make my heart skip a beat every time you look at me.",
+                            "I fall more in love with you every single day.",
+                            "Life is so much sweeter with you in it.",
+                          ].map((str, idx) => (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => {
+                                soundFx.playPop();
+                                setLetterText((prev) => prev + "\n\n" + str);
+                              }}
+                              className="px-2.5 py-1 rounded-full bg-slate-50 hover:bg-pink-50 text-[11px] text-slate-600 hover:text-pink-600 border border-slate-200 transition-colors cursor-pointer"
+                            >
+                              + &quot;{str.slice(0, 30)}...&quot;
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-6 rounded-3xl bg-amber-50/70 border border-amber-200 text-center space-y-2">
+                      <p className="text-xs font-bold text-amber-800">This page will be skipped</p>
+                      <button
+                        type="button"
+                        onClick={() => togglePageEnabled("page3_letter")}
                         className="px-4 py-1.5 rounded-full bg-white border border-amber-300 text-amber-800 text-xs font-bold shadow-2xs cursor-pointer"
                       >
                         Restore Page
