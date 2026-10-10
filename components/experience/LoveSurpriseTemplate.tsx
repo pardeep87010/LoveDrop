@@ -493,58 +493,36 @@ export default function LoveSurpriseTemplate({
   const [noButtonPos, setNoButtonPos] = useState<{ x: number; y: number } | null>(null);
 
   const noPhrases = [
-    "No 💔",
     "Really?! 😳",
     "Are you sure ? 🥺",
-    `But ${recipientName}... 🥺`,
+    "Please........... 🥺",
     "Think Again! 😜",
     "Don't do this to me! 😭",
-    `${recipientName} please! 🥺`,
     "Come onnnn 😩",
-    "Pretty please? 🥺",
-    `I made this for you ${recipientName}! 🎁`,
-    "With a cherry on top? 🍒",
-    "You're breaking my heart! 💔",
-    "I'll be sad forever! 😢",
-    "Noooooo 😭",
-    "Fine, I'll just cry 😭",
-    `${recipientName} I'm begging! 🧎`,
-    "My heart can't take this! 💔",
-    "You wouldn't... right? 🥺🥺",
-    "I'm literally shaking rn 🫨",
-    `SAY YES ${recipientName.toUpperCase()}! 😤`,
-    "Broken 💔💔💔",
-    "I'll never recover 🥀",
-    "This is fine.... 🥲🙃",
-    "😭😭😭😭😭",
+    "So you wanna play with me 😏",
+    "Okay watch then me 😎",
+    "Do you think you can win against me? 😈",
   ];
 
-  // List of 12 stickers for runaway NO button reactions
+  // List of 12 stickers for runaway NO button reactions (New Swapped Order)
   const NO_STICKERS = [
     "/stickers/no1_sticker.gif", // 1. Kitty Sticker
     "/stickers/no2_sticker.gif", // 2. Cute Pinch GIF
-    "/stickers/no3_sticker.gif", // 3. Valgal696 GIF
-    "/stickers/no5.gif",         // 4. no5.gif
-    "/stickers/no4.gif",         // 5. no4.gif
-    "/stickers/no6_sticker.gif", // 6. Bubu Dudu Sseeyall Sticker
-    "/stickers/no7_sticker.gif", // 7. Cat Flowers Cat Rose Sticker
-    "/stickers/no8_sticker.gif", // 8. Goma Peach Bubu GIF
-    "/stickers/no9_sticker.gif", // 9. Peach And Goma White Cat GIF
-    "/stickers/no10_sticker.gif",// 10. Couple Cat GIF
+    "/stickers/no10_sticker.gif",// 3. Couple Cat GIF
+    "/stickers/no6_sticker.gif", // 4. Bubu Dudu Sseeyall Sticker
+    "/stickers/no7_sticker.gif", // 5. Cat Flowers Cat Rose Sticker
+    "/stickers/no9_sticker.gif", // 6. Peach And Goma White Cat GIF
+    "/stickers/no8_sticker.gif", // 7. Goma Peach Bubu GIF
+    "/stickers/no6.gif",         // 8. no6.gif
+    "/stickers/no3_sticker.gif", // 9. Valgal696 GIF
+    "/stickers/no5.gif",         // 10. no5.gif
     "/stickers/no11_sticker.gif",// 11. Bangladesh Flag GIF
-    "/stickers/no6.gif",         // 12. Last - no6.gif
+    "/stickers/no4.gif",         // 12. Last - no4.gif (this is the last sticker in the no.)
   ];
 
   const handleNoDodge = () => {
     soundFx.playPop();
-    const nextAttempts = noAttempts + 1;
-    setNoAttempts(nextAttempts);
-
-    // Random displacement within card boundaries
-    const maxOffset = 110;
-    const rx = (Math.random() - 0.5) * (maxOffset * 2);
-    const ry = (Math.random() - 0.5) * (maxOffset * 1.4);
-    setNoButtonPos({ x: rx, y: ry });
+    setNoAttempts((prev) => prev + 1);
   };
 
   const handleYesClick = () => {
@@ -1856,14 +1834,27 @@ export default function LoveSurpriseTemplate({
                 <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                   {customQuestion}
                 </h2>
-                <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                  {recipientName}, I need to know...
-                </p>
               </div>
 
-              {/* Buttons Row with Runaway No & Growing Yes */}
-              <div className="relative min-h-[140px] flex items-center justify-center gap-4 pt-2">
-                {/* YES Button (Grows with each attempt, stays in back layer) */}
+              {/* Reaction Message in upper area of buttons */}
+              <div className="min-h-[40px] flex items-center justify-center">
+                {noAttempts > 0 && (
+                  <motion.div
+                    key={noAttempts}
+                    initial={{ opacity: 0, y: -6, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ type: "spring", stiffness: 350, damping: 20 }}
+                  >
+                    <span className="inline-block px-4 py-1.5 rounded-full bg-pink-50 border border-pink-200 text-[#FF2E63] font-black text-xs sm:text-sm shadow-xs tracking-wide">
+                      {noPhrases[Math.min(noAttempts - 1, noPhrases.length - 1)]}
+                    </span>
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Buttons Row with Growing Yes & Clean No Button */}
+              <div className="relative min-h-[90px] flex items-center justify-center gap-4 pt-1">
+                {/* YES Button (Grows with each attempt) */}
                 <motion.button
                   id="yes-btn"
                   type="button"
@@ -1878,29 +1869,15 @@ export default function LoveSurpriseTemplate({
                   YES! 💖
                 </motion.button>
 
-                {/* NO Button (Dodges, cycles text, stays on top layer above YES) */}
+                {/* NO Button (Fixed clean label, message is shown above) */}
                 <motion.button
                   id="no-btn"
                   type="button"
-                  onMouseEnter={handleNoDodge}
                   onClick={handleNoDodge}
-                  animate={{
-                    x: noButtonPos ? noButtonPos.x : 0,
-                    y: noButtonPos ? noButtonPos.y : 0,
-                    rotate: noAttempts >= 5 ? [0, -6, 6, -4, 4, 0] : 0,
-                  }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 300,
-                    damping: 18,
-                    rotate: { repeat: Infinity, duration: 0.3 },
-                  }}
                   style={{ zIndex: 30 }}
-                  className={`px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm border border-slate-200/80 shadow-md cursor-pointer select-none whitespace-nowrap transition-colors relative z-30 ${
-                    noAttempts >= 5 ? "ring-2 ring-rose-400" : ""
-                  }`}
+                  className="px-6 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm border border-slate-200/80 shadow-md cursor-pointer select-none whitespace-nowrap transition-colors relative z-30 active:scale-95"
                 >
-                  {noPhrases[noAttempts % noPhrases.length]}
+                  No 💔
                 </motion.button>
               </div>
 

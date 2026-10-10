@@ -61,10 +61,13 @@ export default function PagePreviewCard({
   dodgePhrases = [
     "Really?! 😳",
     "Are you sure ? 🥺",
+    "Please........... 🥺",
     "Think Again! 😜",
     "Don't do this to me! 😭",
     "Come onnnn 😩",
-    "Pretty please? 🥺",
+    "So you wanna play with me 😏",
+    "Okay watch then me 😎",
+    "Do you think you can win against me? 😈",
   ],
   letterText,
   waxSealEmoji = "💌",
@@ -149,10 +152,6 @@ export default function PagePreviewCard({
   const handleNoDodge = () => {
     soundFx.playPop();
     setNoEscapeCount((prev) => prev + 1);
-    // Random position within phone screen bounds (-90px to +90px x, -80px to +80px y)
-    const rx = (Math.random() - 0.5) * 160;
-    const ry = (Math.random() - 0.5) * 120;
-    setNoButtonOffset({ x: rx, y: ry });
   };
 
   const handleYesClick = () => {
@@ -166,11 +165,11 @@ export default function PagePreviewCard({
     navigateToStep(8);
   };
 
-  // Current dodge phrase based on escape count
+  // Current dodge phrase based on escape count (clamps to last message)
   const currentDodgePhrase =
-    dodgePhrases.length > 0
-      ? dodgePhrases[(noEscapeCount - 1) % dodgePhrases.length] || "No 💔"
-      : "No 💔";
+    dodgePhrases.length > 0 && noEscapeCount > 0
+      ? dodgePhrases[Math.min(noEscapeCount - 1, dodgePhrases.length - 1)]
+      : null;
 
   // ===================================================================
   // STEP 4: PHOTO MEMORIES CAROUSEL STATE
@@ -883,13 +882,19 @@ export default function PagePreviewCard({
                       <h4 className="text-base font-black text-slate-900 leading-snug">
                         {question || "do you love me ??"}
                       </h4>
-                      <p className="text-[10px] text-slate-400 font-medium">
-                        Think carefully before answering...
-                      </p>
+                    </div>
+
+                    {/* Reaction message in upper area of buttons */}
+                    <div className="min-h-[28px] flex items-center justify-center">
+                      {currentDodgePhrase && (
+                        <span className="px-3 py-1 rounded-full bg-pink-50 border border-pink-200 text-[#FF2E63] font-black text-[11px] shadow-2xs">
+                          {currentDodgePhrase}
+                        </span>
+                      )}
                     </div>
 
                     {/* Yes & Runaway No Buttons Container */}
-                    <div className="relative pt-2 pb-3 min-h-[70px] flex items-center justify-center gap-3">
+                    <div className="relative pt-1 pb-2 min-h-[50px] flex items-center justify-center gap-3">
                       {/* YES BUTTON */}
                       <button
                         type="button"
@@ -900,16 +905,13 @@ export default function PagePreviewCard({
                         {yesButtonText || "YES! ❤️"}
                       </button>
 
-                      {/* RUNAWAY "NO" BUTTON */}
+                      {/* NO BUTTON (Fixed clean label) */}
                       <motion.button
                         type="button"
-                        onMouseEnter={handleNoDodge}
                         onClick={handleNoDodge}
-                        animate={{ x: noButtonOffset.x, y: noButtonOffset.y }}
-                        transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                        className="px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold text-xs border border-slate-300 shadow-sm cursor-pointer whitespace-nowrap z-20 select-none"
+                        className="px-5 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs border border-slate-300 shadow-sm cursor-pointer whitespace-nowrap z-20 select-none active:scale-95"
                       >
-                        {noEscapeCount === 0 ? "No 💔" : currentDodgePhrase}
+                        No 💔
                       </motion.button>
                     </div>
 
