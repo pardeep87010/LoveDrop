@@ -241,7 +241,7 @@ export default function ExperienceTheMagicSection({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[9999] w-full h-full bg-[#FFF5F8] overflow-y-auto overscroll-contain"
+            className="fixed inset-0 z-[9999] w-full h-full bg-[#FFF5F8] overflow-hidden"
           >
             <LoveSurpriseTemplate
               isEmbedded={false}

@@ -555,6 +555,25 @@ export default function LoveSurpriseTemplate({
       origin: { y: 0.65 },
       colors: ["#FF2E63", "#FF6B8B", "#FFD166", "#FF007A"],
     });
+
+    // In Love BGM: start song at 02:00 min (120 seconds) on YES click
+    if (audioRef.current) {
+      if (selectedTrack === "romantic-lofi") {
+        try {
+          audioRef.current.currentTime = 120;
+        } catch {
+          // ignore seek error if audio metadata not yet buffered
+        }
+      }
+      audioRef.current
+        .play()
+        .then(() => {
+          setIsPlayingMusic(true);
+          setMusicBlocked(false);
+        })
+        .catch(() => {});
+    }
+
     setStep3SubStep("yes1");
     setStep(getNextStep(2));
   };
@@ -756,7 +775,7 @@ export default function LoveSurpriseTemplate({
       className={`relative w-full ${
         isEmbedded
           ? "min-h-[480px] sm:min-h-[540px] h-full rounded-[24px] sm:rounded-[28px] overflow-y-auto overscroll-contain p-4 sm:p-6"
-          : "min-h-[100dvh] flex-1 overflow-y-auto overscroll-none px-3 py-3 sm:px-6 sm:py-4"
+          : "min-h-[100dvh] h-full flex-1 overflow-y-auto overscroll-contain px-3 py-2 sm:px-6 sm:py-4"
       } bg-gradient-to-b from-[#FDF3F8] via-[#FEFAFC] to-[#FFFDFE] flex flex-col justify-between selection:bg-pink-100 select-none font-sans`}
     >
       {/* RICH ANIMATED ROMANTIC BACKGROUND (Floating Hearts, Petals, Glowing Bokeh Orbs) */}
@@ -934,7 +953,7 @@ export default function LoveSurpriseTemplate({
       {/* =============================================================== */}
       {/* MAIN CARD STAGE CONTAINER */}
       {/* =============================================================== */}
-      <div className="relative z-10 flex-1 flex flex-col items-center justify-center w-full max-w-xl mx-auto my-auto py-2 sm:py-4">
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-start sm:justify-center w-full max-w-xl mx-auto py-2 sm:py-3">
         <AnimatePresence mode="wait">
           {/* =========================================================== */}
           {/* PAGE 1: WELCOME CARD & TYPING INTRO (media_1791134834458.png) */}
@@ -1392,10 +1411,10 @@ export default function LoveSurpriseTemplate({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -16 }}
               transition={{ duration: 0.35 }}
-              className="w-full max-w-xl mx-auto space-y-3.5 text-center pb-20 sm:pb-24"
+              className="w-full max-w-xl mx-auto space-y-2.5 text-center pb-8 sm:pb-12"
             >
               {/* Header */}
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 <div className="flex items-center justify-center gap-1.5 text-amber-400 text-sm">
                   <span>✨</span>
                   <h2 className="text-2xl sm:text-3xl font-black text-[#FF2E63] tracking-tight">
@@ -1406,13 +1425,13 @@ export default function LoveSurpriseTemplate({
                 <p className="text-xs text-slate-500 font-medium">
                   Tap to reveal (at least 5 to continue)
                 </p>
-                <div className="inline-block px-3 py-1 rounded-full bg-pink-50 text-[11px] font-bold text-[#FF2E63]">
+                <div className="inline-block px-3 py-0.5 rounded-full bg-pink-50 text-[11px] font-bold text-[#FF2E63]">
                   {revealedReasons.length} / 5 revealed
                 </div>
               </div>
 
-              {/* 3x3 Grid of 9 3D Flip Cards */}
-              <div className="grid grid-cols-3 gap-2 sm:gap-2.5 max-w-[340px] sm:max-w-md mx-auto pt-1">
+              {/* 3x3 Grid of 9 3D Flip Cards (Compact & Fits on Screen) */}
+              <div className="grid grid-cols-3 gap-2 max-w-[280px] sm:max-w-[310px] mx-auto pt-0.5">
                 {dynamicReasons.map((item) => {
                   const isFlipped = revealedReasons.includes(item.id);
 
@@ -1433,21 +1452,21 @@ export default function LoveSurpriseTemplate({
                       >
                         {/* FRONT FACE (Unrevealed: White card with pink heart outline) */}
                         <div
-                          className="absolute inset-0 rounded-2xl bg-white border border-pink-100 flex items-center justify-center shadow-xs"
+                          className="absolute inset-0 rounded-2xl bg-white border border-pink-100 flex items-center justify-center shadow-xs hover:border-pink-300 transition-colors"
                           style={{ backfaceVisibility: "hidden" }}
                         >
-                          <Heart className="w-6 h-6 text-pink-300 stroke-[1.8]" />
+                          <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-pink-300 stroke-[1.8]" />
                         </div>
 
                         {/* BACK FACE (Revealed: Soft pink background with emoji and reason text) */}
                         <div
-                          className="absolute inset-0 rounded-2xl bg-[#FFF0F3] border border-pink-200 p-2 flex flex-col items-center justify-center text-center shadow-xs"
+                          className="absolute inset-0 rounded-2xl bg-[#FFF0F3] border border-pink-200 p-1.5 flex flex-col items-center justify-center text-center shadow-xs"
                           style={{
                             backfaceVisibility: "hidden",
                             transform: "rotateY(180deg)",
                           }}
                         >
-                          <span className="text-base sm:text-lg mb-1">{item.emoji}</span>
+                          <span className="text-base sm:text-lg mb-0.5">{item.emoji}</span>
                           <span className="text-[10px] sm:text-[11px] font-extrabold text-slate-800 leading-tight">
                             {item.title}
                           </span>
@@ -1458,22 +1477,27 @@ export default function LoveSurpriseTemplate({
                 })}
               </div>
 
-              {/* Bottom Revealed Reasons Tray */}
-              <div className="p-3 rounded-2xl bg-white/90 border border-pink-100/70 text-left max-w-md mx-auto space-y-1.5 shadow-2xs">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
-                  Reasons revealed:
-                </span>
+              {/* Bottom Revealed Reasons Tray (Compact with scrollable tag list) */}
+              <div className="p-2 sm:p-2.5 rounded-xl bg-white/90 border border-pink-100/70 text-left max-w-[280px] sm:max-w-[310px] mx-auto space-y-1 shadow-2xs">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                    Reasons revealed:
+                  </span>
+                  <span className="text-[10px] font-black text-[#FF2E63]">
+                    {revealedReasons.length}/9
+                  </span>
+                </div>
                 {revealedReasons.length === 0 ? (
-                  <p className="text-xs text-slate-400 italic">Tap any card above to reveal</p>
+                  <p className="text-[10px] text-slate-400 italic">Tap any card above to reveal</p>
                 ) : (
-                  <div className="flex flex-wrap gap-1">
+                  <div className="flex flex-wrap gap-1 max-h-12 overflow-y-auto no-scrollbar">
                     {revealedReasons.map((id) => {
                       const reason = NINE_REASONS.find((r) => r.id === id);
                       if (!reason) return null;
                       return (
                         <span
                           key={id}
-                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-pink-50 border border-pink-200 text-[10px] font-bold text-[#FF2E63]"
+                          className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-pink-50 border border-pink-200 text-[9px] font-bold text-[#FF2E63]"
                         >
                           <span>{reason.emoji}</span>
                           <span>{reason.title}</span>
@@ -1484,13 +1508,13 @@ export default function LoveSurpriseTemplate({
                 )}
               </div>
 
-              {/* Bottom Action Button */}
-              <div className="pt-2">
+              {/* Bottom Action Button (Directly visible) */}
+              <div className="pt-1">
                 {revealedReasons.length < 5 ? (
                   <button
                     type="button"
                     disabled
-                    className="px-8 py-3 rounded-full bg-pink-100/70 text-pink-300 font-extrabold text-xs cursor-not-allowed"
+                    className="px-6 py-2.5 rounded-full bg-pink-100/70 text-pink-300 font-extrabold text-xs cursor-not-allowed"
                   >
                     Reveal {5 - revealedReasons.length} more to continue
                   </button>
@@ -1508,7 +1532,7 @@ export default function LoveSurpriseTemplate({
                       });
                       setStep(getNextStep(5));
                     }}
-                    className="px-9 py-3.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
+                    className="px-8 py-3 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-xs sm:text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
                   >
                     <span>Continue to Our Story</span>
                     <ArrowRight className="w-4 h-4" />

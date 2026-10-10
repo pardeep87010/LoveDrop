@@ -445,7 +445,7 @@ export default function HomePage() {
         {/* =================================================================== */}
         {/* 2.1 EVERY SPECIAL OCCASION (MATCHING REFERENCE IMAGE 2) */}
         {/* =================================================================== */}
-        <section className="w-full py-16 sm:py-20 px-4 sm:px-6 bg-[#FDFBF7]">
+        <section id="occasions" className="w-full py-16 sm:py-20 px-4 sm:px-6 bg-[#FDFBF7]">
           <div className="max-w-6xl mx-auto space-y-10">
             {/* Header with pill tag */}
             <div className="text-center space-y-3 max-w-2xl mx-auto">
@@ -761,7 +761,7 @@ export default function HomePage() {
         {/* =================================================================== */}
         {/* 4. CHOOSE YOUR STYLE / TEMPLATES (MATCHING REFERENCE IMAGE 5) */}
         {/* =================================================================== */}
-        <section id="styles" className="w-full bg-[#FDFBF7] py-16 sm:py-20 px-4 sm:px-6">
+        <section id="themes" className="w-full bg-[#FDFBF7] py-16 sm:py-20 px-4 sm:px-6">
           <div className="max-w-6xl mx-auto space-y-10">
             {/* Header with pill tag */}
             <div className="text-center space-y-3 max-w-2xl mx-auto">

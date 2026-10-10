@@ -31,31 +31,31 @@ export default function Navbar() {
         {/* Navigation Links */}
         <nav className="hidden md:flex items-center gap-1 text-xs font-bold text-slate-600">
           <a
-            href="#how-it-works"
+            href="/#how-it-works"
             className="hover:text-rose-600 transition-colors py-2 px-3 rounded-lg hover:bg-rose-50/60"
           >
             How It Works
           </a>
           <a
-            href="#chapters"
+            href="/#chapters"
             className="hover:text-rose-600 transition-colors py-2 px-3 rounded-lg hover:bg-rose-50/60"
           >
             9 Chapters
           </a>
           <a
-            href="#themes"
+            href="/#themes"
             className="hover:text-rose-600 transition-colors py-2 px-3 rounded-lg hover:bg-rose-50/60"
           >
             Themes &amp; Occasions
           </a>
           <a
-            href="#pricing"
+            href="/#pricing"
             className="hover:text-rose-600 transition-colors py-2 px-3 rounded-lg hover:bg-rose-50/60"
           >
             Pricing
           </a>
           <a
-            href="#faq"
+            href="/#faq"
             className="hover:text-rose-600 transition-colors py-2 px-3 rounded-lg hover:bg-rose-50/60"
           >
             FAQ
