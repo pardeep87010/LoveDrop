@@ -519,6 +519,22 @@ export default function LoveSurpriseTemplate({
     "😭😭😭😭😭",
   ];
 
+  // List of 12 stickers for runaway NO button reactions
+  const NO_STICKERS = [
+    "/stickers/no1_sticker.gif", // 1. Kitty Sticker
+    "/stickers/no2_sticker.gif", // 2. Cute Pinch GIF
+    "/stickers/no3_sticker.gif", // 3. Valgal696 GIF
+    "/stickers/no5.gif",         // 4. no5.gif
+    "/stickers/no4.gif",         // 5. no4.gif
+    "/stickers/no6_sticker.gif", // 6. Bubu Dudu Sseeyall Sticker
+    "/stickers/no7_sticker.gif", // 7. Cat Flowers Cat Rose Sticker
+    "/stickers/no8_sticker.gif", // 8. Goma Peach Bubu GIF
+    "/stickers/no9_sticker.gif", // 9. Peach And Goma White Cat GIF
+    "/stickers/no10_sticker.gif",// 10. Couple Cat GIF
+    "/stickers/no11_sticker.gif",// 11. Bangladesh Flag GIF
+    "/stickers/no6.gif",         // 12. Last - no6.gif
+  ];
+
   const handleNoDodge = () => {
     soundFx.playPop();
     const nextAttempts = noAttempts + 1;
@@ -534,30 +550,47 @@ export default function LoveSurpriseTemplate({
   const handleYesClick = () => {
     soundFx.playSuccessChime();
     confetti({
-      particleCount: 70,
-      spread: 70,
+      particleCount: 80,
+      spread: 75,
       origin: { y: 0.65 },
       colors: ["#FF2E63", "#FF6B8B", "#FFD166", "#FF007A"],
     });
-    setStep3SubStep("transition");
+    setStep3SubStep("yes1");
     setStep(getNextStep(2));
   };
 
   // -------------------------------------------------------------
-  // PAGE 3: CELEBRATION (3.1) & LOVE LETTER TYPEWRITER (3.2)
+  // PAGE 3: CELEBRATION (3.1 YES1 for 3s -> 3.2 YES2 -> 3.3 LETTER)
   // -------------------------------------------------------------
-  const [step3SubStep, setStep3SubStep] = useState<"transition" | "letter">("transition");
+  const [step3SubStep, setStep3SubStep] = useState<"yes1" | "yes2" | "letter">("yes1");
   const [letterTypedLength, setLetterTypedLength] = useState(0);
   const [isTypingLetter, setIsTypingLetter] = useState(true);
 
-  // Auto advance from 3.1 celebration to 3.2 love letter
+  // Auto advance from yes1 (3 seconds) to yes2
   useEffect(() => {
-    if (step === 3 && step3SubStep === "transition") {
+    if (step === 3 && step3SubStep === "yes1") {
+      const timer = setTimeout(() => {
+        setStep3SubStep("yes2");
+        soundFx.playSuccessChime();
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: { y: 0.6 },
+          colors: ["#FF2E63", "#FFD166"],
+        });
+      }, 3000); // exactly 3 sec as requested
+      return () => clearTimeout(timer);
+    }
+  }, [step, step3SubStep]);
+
+  // Auto advance from yes2 to letter after 4.5 seconds if user hasn't clicked
+  useEffect(() => {
+    if (step === 3 && step3SubStep === "yes2") {
       const timer = setTimeout(() => {
         setStep3SubStep("letter");
         setLetterTypedLength(0);
         setIsTypingLetter(true);
-      }, 2200);
+      }, 4500);
       return () => clearTimeout(timer);
     }
   }, [step, step3SubStep]);
@@ -707,7 +740,7 @@ export default function LoveSurpriseTemplate({
     setNoButtonPos(null);
     setRevealedReasons([]);
     setCurrentPhotoIdx(0);
-    setStep3SubStep("transition");
+    setStep3SubStep("yes1");
     setStoryMilestoneIdx(0);
     setQuizQuestionIdx(0);
     setQuizSelectedOption(null);
@@ -921,13 +954,18 @@ export default function LoveSurpriseTemplate({
                   <span>🎉</span>
                 </div>
 
-                {/* Sparkling Heart Mascot */}
+                {/* Siyatech Animated Sticker */}
                 <div className="pt-2 flex items-center justify-center gap-2">
-                  <span className="text-amber-400 text-base font-bold">✨</span>
-                  <div className="w-12 h-12 rounded-2xl bg-pink-100/80 text-[#FF2E63] flex items-center justify-center shadow-inner">
-                    <Heart className="w-7 h-7 fill-[#FF2E63] text-[#FF2E63]" />
+                  <span className="text-amber-400 text-base font-bold animate-pulse">✨</span>
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/stickers/intro_sticker.gif"
+                      alt="Siyatech Sticker"
+                      className="w-full h-full object-contain pointer-events-none drop-shadow-sm select-none"
+                    />
                   </div>
-                  <span className="text-amber-400 text-base font-bold">✨</span>
+                  <span className="text-amber-400 text-base font-bold animate-pulse">✨</span>
                 </div>
 
                 {introPhase !== "card-revealed" ? (
@@ -1025,15 +1063,34 @@ export default function LoveSurpriseTemplate({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.94 }}
               transition={{ duration: 0.35 }}
-              className="w-full max-w-md mx-auto bg-white rounded-[32px] p-8 sm:p-12 shadow-xl shadow-pink-900/5 border border-pink-100/70 text-center space-y-6 min-h-[440px] flex flex-col justify-center"
+              className="w-full max-w-md mx-auto bg-white rounded-[32px] p-6 sm:p-10 shadow-xl shadow-pink-900/5 border border-pink-100/70 text-center space-y-4 min-h-[460px] flex flex-col justify-center"
             >
-              {/* Center Pink Heart */}
-              <div className="w-14 h-14 rounded-full bg-pink-50 text-[#FF2E63] flex items-center justify-center mx-auto shadow-xs">
-                <Heart className="w-7 h-7 fill-[#FF2E63] text-[#FF2E63]" />
+              {/* Sticker Reaction Display (Cycles through 12 stickers on NO click/dodge) */}
+              <div className="flex items-center justify-center min-h-[140px] pt-1">
+                <motion.div
+                  key={noAttempts > 0 ? NO_STICKERS[Math.min(noAttempts - 1, NO_STICKERS.length - 1)] : "initial-heart"}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: "spring", stiffness: 350, damping: 20 }}
+                  className="relative"
+                >
+                  {noAttempts > 0 ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      src={NO_STICKERS[Math.min(noAttempts - 1, NO_STICKERS.length - 1)]}
+                      alt={`Reaction sticker ${noAttempts}`}
+                      className="w-32 h-32 sm:w-36 sm:h-36 object-contain rounded-2xl drop-shadow-md select-none pointer-events-none"
+                    />
+                  ) : (
+                    <div className="w-20 h-20 rounded-3xl bg-pink-50 text-[#FF2E63] flex items-center justify-center mx-auto shadow-sm border border-pink-100/80">
+                      <Heart className="w-10 h-10 fill-[#FF2E63] text-[#FF2E63] animate-pulse" />
+                    </div>
+                  )}
+                </motion.div>
               </div>
 
               {/* Title & Subtitle */}
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                   {customQuestion}
                 </h2>
@@ -1043,7 +1100,7 @@ export default function LoveSurpriseTemplate({
               </div>
 
               {/* Buttons Row with Runaway No & Growing Yes */}
-              <div className="relative min-h-[140px] flex items-center justify-center gap-4 pt-4">
+              <div className="relative min-h-[140px] flex items-center justify-center gap-4 pt-2">
                 {/* YES Button (Grows with each attempt, stays in back layer) */}
                 <motion.button
                   id="yes-btn"
@@ -1094,29 +1151,73 @@ export default function LoveSurpriseTemplate({
           )}
 
           {/* =========================================================== */}
-          {/* PAGE 3: 3.1 TRANSITION & 3.2 LOVE LETTER (media_1791132358027.png) */}
+          {/* PAGE 3: CELEBRATION (yes1 for 3s -> yes2 -> LOVE LETTER)     */}
           {/* =========================================================== */}
-          {step === 3 && step3SubStep === "transition" && (
+          {step === 3 && step3SubStep === "yes1" && (
             <motion.div
-              key="step-3-transition"
-              initial={{ opacity: 0, scale: 0.85 }}
+              key="step-3-yes1"
+              initial={{ opacity: 0, scale: 0.88 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.05 }}
-              transition={{ duration: 0.4 }}
-              className="w-full max-w-sm mx-auto bg-white rounded-[32px] p-8 sm:p-10 shadow-xl shadow-pink-900/5 border border-pink-100 text-center space-y-4 min-h-[360px] flex flex-col justify-center"
+              transition={{ duration: 0.35 }}
+              className="w-full max-w-sm mx-auto bg-white rounded-[32px] p-6 sm:p-8 shadow-xl shadow-pink-900/5 border border-pink-100 text-center space-y-4 min-h-[420px] flex flex-col justify-center items-center"
             >
-              <div className="w-16 h-16 rounded-full bg-pink-100 text-[#FF2E63] flex items-center justify-center mx-auto shadow-sm">
-                <Heart className="w-8 h-8 fill-[#FF2E63]" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/stickers/yes1.gif"
+                alt="Yes Celebration 1"
+                className="w-44 h-44 sm:w-48 sm:h-48 object-contain rounded-2xl drop-shadow-md select-none pointer-events-none"
+              />
+              <div className="space-y-1">
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
+                  YAAAY! I knew it! 🥰
+                </h2>
+                <p className="text-base font-extrabold text-[#FF2E63]">
+                  You love me too ❤️
+                </p>
               </div>
-              <h2 className="text-3xl font-black text-slate-900">I knew it! 🥰</h2>
-              <p className="text-lg font-bold text-[#FF2E63]">You love me ❤️</p>
+              <p className="text-[11px] font-semibold text-slate-400 italic">
+                Hang on... something special is coming... ✨
+              </p>
+            </motion.div>
+          )}
+
+          {step === 3 && step3SubStep === "yes2" && (
+            <motion.div
+              key="step-3-yes2"
+              initial={{ opacity: 0, scale: 0.88 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.05 }}
+              transition={{ duration: 0.35 }}
+              className="w-full max-w-sm mx-auto bg-white rounded-[32px] p-6 sm:p-8 shadow-xl shadow-pink-900/5 border border-pink-100 text-center space-y-4 min-h-[420px] flex flex-col justify-center items-center"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/stickers/yes2.gif"
+                alt="Yes Celebration 2"
+                className="w-44 h-44 sm:w-48 sm:h-48 object-contain rounded-2xl drop-shadow-md select-none pointer-events-none"
+              />
+              <div className="space-y-1">
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
+                  Forever &amp; Always ❤️
+                </h2>
+                <p className="text-xs sm:text-sm font-semibold text-slate-600">
+                  I wrote a special love letter just for you, {recipientName}
+                </p>
+              </div>
               <button
                 id="open-letter-btn"
                 type="button"
-                onClick={() => setStep3SubStep("letter")}
-                className="pt-2 text-xs font-bold text-slate-400 hover:text-[#FF2E63] underline cursor-pointer"
+                onClick={() => {
+                  soundFx.playPop();
+                  setStep3SubStep("letter");
+                  setLetterTypedLength(0);
+                  setIsTypingLetter(true);
+                }}
+                className="px-7 py-3 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-xs sm:text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
               >
-                Opening your letter...
+                <span>Open My Love Letter 💌</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
             </motion.div>
           )}
