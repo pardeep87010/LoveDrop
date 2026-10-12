@@ -27,6 +27,10 @@ import {
   Camera,
   RotateCcw,
   Zap,
+  Mail,
+  Send,
+  Upload,
+  Image as ImageIcon,
 } from "lucide-react";
 import { soundFx } from "@/lib/soundFx";
 import { LoveSurpriseData, OccasionType, AudioTrackId } from "@/lib/types";
@@ -34,6 +38,7 @@ import { generateSecureSlug, hashPasscode, sanitizeInput } from "@/lib/security"
 import { saveSurpriseData } from "@/lib/storage";
 import { usePricing } from "@/lib/pricing";
 import PagePreviewCard from "@/components/creator/PagePreviewCard";
+import { compressImageToBlob } from "@/lib/imageCompress";
 
 interface CreatorWizardProps {
   initialOccasion?: OccasionType;
@@ -86,6 +91,19 @@ const THEMES = [
   },
 ];
 
+// Official Default Runaway NO Button Sequence
+const DEFAULT_DODGE_PHRASES = [
+  "Really?! 😳",
+  "Are you sure ? 🥺",
+  "Please........... 🥺",
+  "Think Again! 😜",
+  "Don't do this to me! 😭",
+  "Come onnnn 😩",
+  "So you wanna play with me 😏",
+  "I'm ready! 👀",
+  "Do you think you can win against me? 😈",
+];
+
 export default function CreatorWizard({
   initialOccasion = "proposal",
   initialTheme = "classic-romance",
@@ -135,10 +153,13 @@ export default function CreatorWizard({
   const [dodgePhrases, setDodgePhrases] = useState<string[]>([
     "Really?! 😳",
     "Are you sure ? 🥺",
+    "Please........... 🥺",
     "Think Again! 😜",
     "Don't do this to me! 😭",
     "Come onnnn 😩",
-    "Pretty please? 🥺",
+    "So you wanna play with me 😏",
+    "I'm ready! 👀",
+    "Do you think you can win against me? 😈",
   ]);
   const [newDodgeInput, setNewDodgeInput] = useState("");
 
@@ -169,6 +190,85 @@ export default function CreatorWizard({
   ]);
   const [newPhotoUrl, setNewPhotoUrl] = useState("");
   const [newPhotoCaption, setNewPhotoCaption] = useState("");
+  const photoFileInputRef = useRef<HTMLInputElement | null>(null);
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+
+  const handlePhotoFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // 1. Strict Image Type Validation
+    if (!file.type.startsWith("image/")) {
+      alert("Only image files (JPEG, PNG, WEBP, GIF, HEIC) are allowed!");
+      if (photoFileInputRef.current) photoFileInputRef.current.value = "";
+      return;
+    }
+
+    // 2. Strict 20MB Max File Size Validation
+    if (file.size > 20 * 1024 * 1024) {
+      alert("File size exceeds 20MB limit. Single image maximum allowed size is 20MB.");
+      if (photoFileInputRef.current) photoFileInputRef.current.value = "";
+      return;
+    }
+
+    setIsUploadingPhoto(true);
+
+    try {
+      // 3. Smart Compression: Compress up to 20MB photos to ~150KB-300KB WebP
+      const { blob } = await compressImageToBlob(file, 1600, 0.82);
+
+      // 4. Send compressed image to /api/upload (which encrypts via AES-256-GCM and stores in Cloudflare R2)
+      const formData = new FormData();
+      formData.append("file", blob, file.name.replace(/\.[^/.]+$/, ".webp"));
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const uploadResult = await res.json();
+      if (uploadResult.success && uploadResult.url) {
+        soundFx.playPop();
+        confetti({ particleCount: 30, spread: 50 });
+        setPhotos((prev) => [
+          ...prev,
+          {
+            image: uploadResult.url,
+            caption: newPhotoCaption.trim() || `Our sweet memory #${prev.length + 1} 💕`,
+          },
+        ]);
+        setNewPhotoCaption("");
+        setNewPhotoUrl("");
+      } else {
+        alert(uploadResult.error || "Failed to upload image.");
+      }
+    } catch (uploadErr: any) {
+      console.warn("Upload error:", uploadErr);
+      alert(uploadErr?.message || "Error processing photo. Please try again.");
+    } finally {
+      setIsUploadingPhoto(false);
+      if (photoFileInputRef.current) photoFileInputRef.current.value = "";
+    }
+  };
+
+  const handleAddPhotoSubmit = () => {
+    if (newPhotoUrl.trim()) {
+      soundFx.playPop();
+      confetti({ particleCount: 25, spread: 45 });
+      setPhotos((prev) => [
+        ...prev,
+        {
+          image: newPhotoUrl.trim(),
+          caption: newPhotoCaption.trim() || `Our sweet memory #${prev.length + 1} 💕`,
+        },
+      ]);
+      setNewPhotoUrl("");
+      setNewPhotoCaption("");
+    } else {
+      // If URL is empty, automatically open device photo file dialog!
+      photoFileInputRef.current?.click();
+    }
+  };
 
   // ===================================================================
   // STAGE 5 (PAGE 5): REASONS I LOVE YOU
@@ -245,6 +345,38 @@ export default function CreatorWizard({
   const [newQuizQ, setNewQuizQ] = useState("");
   const [newQuizOpts, setNewQuizOpts] = useState(["", "", "", ""]);
   const [newQuizCorrect, setNewQuizCorrect] = useState("");
+  const [newQuizCorrectIdx, setNewQuizCorrectIdx] = useState(0);
+  const [quizValidationError, setQuizValidationError] = useState("");
+
+  const handleAddQuizQuestion = () => {
+    const validOptions = newQuizOpts.map((o) => o.trim()).filter(Boolean);
+    if (validOptions.length < 2) {
+      soundFx.playPop();
+      setQuizValidationError("Please enter at least 2 options for your question!");
+      return;
+    }
+
+    const finalQuestion =
+      newQuizQ.trim() || `Love Quiz Question #${quizQuestions.length + 1}`;
+    const selectedCorrect =
+      newQuizOpts[newQuizCorrectIdx]?.trim() || validOptions[0];
+
+    soundFx.playPop();
+    confetti({ particleCount: 35, spread: 55 });
+    setQuizQuestions((prev) => [
+      ...prev,
+      {
+        id: Date.now(),
+        question: finalQuestion,
+        options: validOptions,
+        correct: selectedCorrect,
+      },
+    ]);
+    setNewQuizQ("");
+    setNewQuizOpts(["", "", "", ""]);
+    setNewQuizCorrectIdx(0);
+    setQuizValidationError("");
+  };
 
   // ===================================================================
   // STAGE 8 (PAGE 8): FORTUNE COOKIES / PROPHECIES
@@ -265,6 +397,16 @@ export default function CreatorWizard({
   const [enablePin, setEnablePin] = useState(false);
   const [secretPin, setSecretPin] = useState("");
   const [whatsappNumber, setWhatsappNumber] = useState("+91 98765 43210");
+  // Resend Email States
+  const [creatorEmail, setCreatorEmail] = useState("");
+  const [sendToPartnerEmail, setSendToPartnerEmail] = useState(false);
+  const [partnerEmail, setPartnerEmail] = useState("");
+  const [customEmailNote, setCustomEmailNote] = useState("");
+  const [emailSendStatus, setEmailSendStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [emailStatusMessage, setEmailStatusMessage] = useState("");
+  const [resendDirectEmail, setResendDirectEmail] = useState("");
+  const [isSendingDirectEmail, setIsSendingDirectEmail] = useState(false);
+  const [directEmailStatus, setDirectEmailStatus] = useState<string | null>(null);
   const [whatsappMessage, setWhatsappMessage] = useState(
     "Hey! I just opened your special love website and I loved it so much! You made my day! ❤️"
   );
@@ -362,6 +504,8 @@ export default function CreatorWizard({
         bgMusic: bgMusic,
         whatsappNumber: whatsappNumber,
         whatsappMessage: whatsappMessage,
+        creatorEmail: creatorEmail.trim() || undefined,
+        recipientEmail: (sendToPartnerEmail && partnerEmail.trim()) ? partnerEmail.trim() : undefined,
         isPaid: true,
         createdAt: new Date().toISOString(),
         expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
@@ -373,6 +517,39 @@ export default function CreatorWizard({
       setIsCreated(true);
       soundFx.playSuccessChime();
 
+      // Persist to MongoDB backend and dispatch transactional emails
+      const targetSiteUrl = `${typeof window !== "undefined" ? window.location.origin : "https://ourlove.in"}/p/${secureSlug}`;
+      if (creatorEmail.trim() || (sendToPartnerEmail && partnerEmail.trim())) {
+        setEmailSendStatus("sending");
+      }
+
+      fetch("/api/surprise", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...siteData,
+          passcode: enablePin ? secretPin : undefined,
+          customMessage: customEmailNote.trim() || undefined,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            if (data.slug && data.slug !== secureSlug) {
+              setCreatedSlug(data.slug);
+            }
+            if (creatorEmail.trim() || (sendToPartnerEmail && partnerEmail.trim())) {
+              setEmailSendStatus("sent");
+              setEmailStatusMessage("💌 Love surprise saved & sent via Resend successfully!");
+            }
+          } else {
+            console.warn("MongoDB API response warning:", data.error);
+          }
+        })
+        .catch((err) => {
+          console.warn("MongoDB sync warning (offline mode):", err);
+        });
+
       confetti({
         particleCount: 150,
         spread: 120,
@@ -380,6 +557,39 @@ export default function CreatorWizard({
         colors: ["#FF2E63", "#FF6B8B", "#FFD166", "#06D6A0"],
       });
     }, 1200);
+  };
+
+  const handleSendDirectEmail = async () => {
+    if (!resendDirectEmail.trim()) return;
+    setIsSendingDirectEmail(true);
+    setDirectEmailStatus(null);
+    try {
+      const res = await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          creatorEmail: resendDirectEmail.trim(),
+          recipientName: recipientName.trim() || "My Love",
+          senderName: senderName.trim() || "Someone Special",
+          siteUrl: siteUrl,
+          passcode: enablePin ? secretPin : undefined,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setDirectEmailStatus(
+          data.simulated
+            ? "✨ Simulated email sent! (Add your RESEND_API_KEY in .env.local for live delivery)"
+            : "✅ Email sent successfully via Resend!"
+        );
+      } else {
+        setDirectEmailStatus(`❌ ${data.error || "Failed to send email"}`);
+      }
+    } catch (err: any) {
+      setDirectEmailStatus(`❌ ${err.message || "Network error"}`);
+    } finally {
+      setIsSendingDirectEmail(false);
+    }
   };
 
   const selectedThemeObj = THEMES.find((t) => t.id === theme) || THEMES[0];
@@ -707,44 +917,71 @@ export default function CreatorWizard({
                       </div>
 
                       {/* Add new photo input */}
-                      <div className="pt-2 border-t border-slate-100 space-y-2">
-                        <span className="text-xs font-bold text-slate-700">Add Another Memory</span>
+                      {/* Add new photo input */}
+                      <div className="pt-2 border-t border-slate-100 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-slate-700">Add Another Memory</span>
+                          <span className="text-[11px] text-pink-500 font-semibold">
+                            {photos.length} photos added
+                          </span>
+                        </div>
+
+                        {/* Hidden File Picker Input */}
+                        <input
+                          ref={photoFileInputRef}
+                          type="file"
+                          accept="image/png, image/jpeg, image/jpg, image/webp, image/gif, image/heic"
+                          onChange={handlePhotoFileSelect}
+                          className="hidden"
+                        />
+
+                        {/* Direct Device Upload Button */}
+                        <button
+                          type="button"
+                          disabled={isUploadingPhoto}
+                          onClick={() => photoFileInputRef.current?.click()}
+                          className="w-full py-3.5 px-4 rounded-2xl border-2 border-dashed border-pink-300 hover:border-[#FF2E63] bg-pink-50/50 hover:bg-pink-50 text-pink-700 font-bold text-xs flex items-center justify-center gap-2.5 transition-all cursor-pointer group shadow-2xs active:scale-[0.99]"
+                        >
+                          <div className="w-8 h-8 rounded-full bg-pink-100 group-hover:bg-pink-200 flex items-center justify-center text-pink-600 transition-colors">
+                            <Upload className="w-4 h-4" />
+                          </div>
+                          <span>
+                            {isUploadingPhoto
+                              ? "Compressing & Encrypting Photo..."
+                              : "📁 Choose Photo from Device (Max 20MB • Auto-Compressed)"}
+                          </span>
+                        </button>
+
+                        <div className="text-[10px] text-slate-400 font-semibold text-center flex items-center gap-2">
+                          <span className="h-[1px] flex-1 bg-slate-100" />
+                          <span>OR PASTE IMAGE URL WITH CAPTION</span>
+                          <span className="h-[1px] flex-1 bg-slate-100" />
+                        </div>
+
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                           <input
                             type="text"
                             value={newPhotoUrl}
                             onChange={(e) => setNewPhotoUrl(e.target.value)}
-                            placeholder="Image URL..."
-                            className="px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-pink-400"
+                            placeholder="Image URL (optional if uploading)..."
+                            className="px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-pink-400 bg-white"
                           />
                           <input
                             type="text"
                             value={newPhotoCaption}
                             onChange={(e) => setNewPhotoCaption(e.target.value)}
-                            placeholder="Caption..."
-                            className="px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-pink-400"
+                            placeholder="Caption (e.g. That magical evening...)"
+                            className="px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-pink-400 bg-white"
                           />
                         </div>
+
                         <button
                           type="button"
-                          onClick={() => {
-                            if (newPhotoUrl.trim()) {
-                              soundFx.playPop();
-                              setPhotos([
-                                ...photos,
-                                {
-                                  image: newPhotoUrl.trim(),
-                                  caption: newPhotoCaption.trim() || "A precious moment with you",
-                                },
-                              ]);
-                              setNewPhotoUrl("");
-                              setNewPhotoCaption("");
-                            }
-                          }}
-                          className="w-full py-2.5 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                          onClick={handleAddPhotoSubmit}
+                          className="w-full py-2.5 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95 transition-all"
                         >
                           <Plus className="w-3.5 h-3.5" />
-                          <span>Add Photo</span>
+                          <span>{newPhotoUrl.trim() ? "Add Photo from URL" : "Open File Picker to Add Photo"}</span>
                         </button>
                       </div>
                     </div>
@@ -1267,50 +1504,75 @@ export default function CreatorWizard({
                       </div>
 
                       {/* Add New Question */}
-                      <div className="pt-2 border-t border-slate-100 space-y-2">
-                        <span className="text-xs font-bold text-slate-700">Add New Quiz Question</span>
+                      <div className="pt-2 border-t border-slate-100 space-y-2.5">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-slate-700">Add New Quiz Question</span>
+                          <span className="text-[10px] text-slate-400">
+                            Tap the circle to mark correct answer
+                          </span>
+                        </div>
                         <input
                           type="text"
                           value={newQuizQ}
-                          onChange={(e) => setNewQuizQ(e.target.value)}
-                          placeholder="e.g. Where did we first travel together?"
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-pink-400"
+                          onChange={(e) => {
+                            setNewQuizQ(e.target.value);
+                            if (quizValidationError) setQuizValidationError("");
+                          }}
+                          placeholder={`Question #${quizQuestions.length + 1} (e.g. Where did we first travel together?)`}
+                          className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-pink-400 bg-white placeholder:text-slate-400 font-medium"
                         />
-                        <div className="grid grid-cols-2 gap-2">
-                          {[0, 1, 2, 3].map((i) => (
-                            <input
-                              key={i}
-                              type="text"
-                              value={newQuizOpts[i]}
-                              onChange={(e) => {
-                                const updated = [...newQuizOpts];
-                                updated[i] = e.target.value;
-                                setNewQuizOpts(updated);
-                              }}
-                              placeholder={`Option ${i + 1}`}
-                              className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs outline-none focus:border-pink-400"
-                            />
-                          ))}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {[0, 1, 2, 3].map((i) => {
+                            const isSelectedCorrect = newQuizCorrectIdx === i;
+                            return (
+                              <div
+                                key={i}
+                                className={`flex items-center gap-2 p-2 rounded-xl border transition-all ${
+                                  isSelectedCorrect
+                                    ? "bg-emerald-50/80 border-emerald-300 text-emerald-800"
+                                    : "bg-white border-slate-200 text-slate-700"
+                                }`}
+                              >
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    soundFx.playPop();
+                                    setNewQuizCorrectIdx(i);
+                                  }}
+                                  title="Click to mark this option as correct answer"
+                                  className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 cursor-pointer ${
+                                    isSelectedCorrect
+                                      ? "border-emerald-600 bg-emerald-600 text-white"
+                                      : "border-slate-300 hover:border-emerald-400"
+                                  }`}
+                                >
+                                  {isSelectedCorrect && <Check className="w-3 h-3 stroke-[3]" />}
+                                </button>
+                                <input
+                                  type="text"
+                                  value={newQuizOpts[i]}
+                                  onChange={(e) => {
+                                    const updated = [...newQuizOpts];
+                                    updated[i] = e.target.value;
+                                    setNewQuizOpts(updated);
+                                    if (quizValidationError) setQuizValidationError("");
+                                  }}
+                                  placeholder={`Option ${i + 1}${i === 0 ? " (Correct by default)" : ""}`}
+                                  className="w-full text-xs font-semibold bg-transparent outline-none placeholder:text-slate-400"
+                                />
+                              </div>
+                            );
+                          })}
                         </div>
+                        {quizValidationError && (
+                          <p className="text-xs font-bold text-rose-500 bg-rose-50 border border-rose-200 rounded-lg py-1 px-2.5 text-center">
+                            ⚠️ {quizValidationError}
+                          </p>
+                        )}
                         <button
                           type="button"
-                          onClick={() => {
-                            if (newQuizQ.trim() && newQuizOpts.some((o) => o.trim())) {
-                              soundFx.playPop();
-                              setQuizQuestions([
-                                ...quizQuestions,
-                                {
-                                  id: Date.now(),
-                                  question: newQuizQ.trim(),
-                                  options: newQuizOpts.filter(Boolean),
-                                  correct: newQuizOpts[0] || "",
-                                },
-                              ]);
-                              setNewQuizQ("");
-                              setNewQuizOpts(["", "", "", ""]);
-                            }
-                          }}
-                          className="w-full py-2.5 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                          onClick={handleAddQuizQuestion}
+                          className="w-full py-2.5 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95 transition-all"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           <span>Add Quiz Question</span>
@@ -1573,24 +1835,57 @@ export default function CreatorWizard({
                       </div>
 
                       {/* Dodge Phrases */}
-                      <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                          Dodging &quot;NO&quot; Button Phrases (When clicked or hovered)
-                        </label>
-                        <div className="flex flex-wrap gap-1.5 pb-2">
+                      <div className="space-y-2.5">
+                        <div className="flex items-center justify-between gap-2">
+                          <label className="block text-xs font-bold text-slate-700">
+                            Dodging &quot;NO&quot; Button Phrases (In Exact Sequence)
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              soundFx.playPop();
+                              setDodgePhrases([...DEFAULT_DODGE_PHRASES]);
+                            }}
+                            className="text-[11px] font-bold text-pink-600 hover:text-pink-700 flex items-center gap-1 cursor-pointer hover:underline"
+                          >
+                            <RotateCcw className="w-3 h-3" />
+                            <span>Reset to Default 9 Messages</span>
+                          </button>
+                        </div>
+
+                        {/* Phrases Sequence Chips */}
+                        <div className="flex flex-wrap gap-1.5 pb-1">
                           {dodgePhrases.map((phrase, idx) => (
                             <span
                               key={idx}
-                              className="px-2.5 py-1 rounded-full bg-pink-50 text-pink-700 border border-pink-200 text-xs font-semibold flex items-center gap-1.5"
+                              className={`px-3 py-1.5 rounded-full border text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-all ${
+                                idx === 7
+                                  ? "bg-amber-50 text-amber-900 border-amber-300 ring-1 ring-amber-400/40"
+                                  : idx === 8
+                                  ? "bg-rose-50 text-rose-900 border-rose-300 ring-1 ring-rose-400/40"
+                                  : "bg-pink-50/80 text-pink-700 border-pink-200"
+                              }`}
                             >
+                              <span className="text-[10px] font-black opacity-60">#{idx + 1}</span>
                               <span>{phrase}</span>
+                              {idx === 7 && (
+                                <span className="text-[9px] bg-amber-200 text-amber-900 font-extrabold px-1.5 py-0.5 rounded-full">
+                                  🏃 Dodge Starts
+                                </span>
+                              )}
+                              {idx === 8 && (
+                                <span className="text-[9px] bg-rose-200 text-rose-900 font-extrabold px-1.5 py-0.5 rounded-full">
+                                  🔒 Last Lock
+                                </span>
+                              )}
                               <button
                                 type="button"
                                 onClick={() => {
                                   soundFx.playPop();
                                   setDodgePhrases(dodgePhrases.filter((_, i) => i !== idx));
                                 }}
-                                className="text-pink-400 hover:text-pink-700 cursor-pointer"
+                                className="text-pink-400 hover:text-pink-700 ml-0.5 cursor-pointer text-sm font-bold leading-none"
+                                title="Remove phrase"
                               >
                                 ×
                               </button>
@@ -1598,14 +1893,50 @@ export default function CreatorWizard({
                           ))}
                         </div>
 
+                        {/* Interactive Timing Guidance Banner */}
+                        <div className="p-2.5 rounded-xl bg-pink-50/60 border border-pink-100 text-[11px] text-slate-600 space-y-1">
+                          <p className="font-bold text-pink-700 flex items-center gap-1">
+                            <span>💡</span> <span>How this sequence works for recipient:</span>
+                          </p>
+                          <p className="text-[10.5px]">
+                            • <strong>#1 to #7:</strong> NO button stays in position while showing these reactions.
+                          </p>
+                          <p className="text-[10.5px]">
+                            • <strong>#8 (&quot;I&apos;m ready! 👀&quot;):</strong> NO button begins running away on hover/click and YES button starts scaling up!
+                          </p>
+                          <p className="text-[10.5px]">
+                            • <strong>#9 (&quot;Do you think you can win against me? 😈&quot;):</strong> Displays permanently while button dodges until YES is clicked.
+                          </p>
+                        </div>
+
+                        {/* Quick Presets if any removed */}
+                        {DEFAULT_DODGE_PHRASES.some((p) => !dodgePhrases.includes(p)) && (
+                          <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                            <span className="text-[10px] font-bold text-slate-400 mr-1">Quick Add:</span>
+                            {DEFAULT_DODGE_PHRASES.filter((p) => !dodgePhrases.includes(p)).map((preset) => (
+                              <button
+                                key={preset}
+                                type="button"
+                                onClick={() => {
+                                  soundFx.playPop();
+                                  setDodgePhrases([...dodgePhrases, preset]);
+                                }}
+                                className="px-2 py-0.5 rounded-full bg-slate-100 hover:bg-pink-100 text-[10px] font-bold text-slate-600 hover:text-pink-700 transition-colors cursor-pointer"
+                              >
+                                + {preset}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+
                         {/* Add custom phrase */}
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 pt-1">
                           <input
                             type="text"
                             value={newDodgeInput}
                             onChange={(e) => setNewDodgeInput(e.target.value)}
-                            placeholder="Add funny phrase..."
-                            className="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-700 outline-none focus:border-pink-400"
+                            placeholder="Add custom reaction message..."
+                            className="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-xs text-slate-700 outline-none focus:border-pink-400 bg-white"
                           />
                           <button
                             type="button"
@@ -1616,7 +1947,7 @@ export default function CreatorWizard({
                                 setNewDodgeInput("");
                               }
                             }}
-                            className="px-3.5 py-2 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs cursor-pointer"
+                            className="px-3.5 py-2 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs cursor-pointer active:scale-95 transition-all shadow-xs"
                           >
                             Add
                           </button>
@@ -1948,6 +2279,99 @@ export default function CreatorWizard({
                             </div>
                           )}
                         </div>
+
+                        {/* Resend Email Delivery Settings */}
+                        <div className="p-3.5 rounded-2xl bg-rose-50/50 border border-pink-100/90 space-y-3">
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <Mail className="w-3.5 h-3.5 text-[#FF2E63] shrink-0" />
+                              <span className="text-xs font-bold text-slate-800">
+                                Email Delivery &amp; Backup (Resend)
+                              </span>
+                              <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-pink-100 text-[#FF2E63]">
+                                Recommended
+                              </span>
+                            </div>
+                          </div>
+                          <p className="text-[11px] text-slate-500 leading-tight">
+                            Receive your private LoveLink, secret PIN, and website backup directly in your inbox.
+                          </p>
+
+                          <div>
+                            <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                              Your Email Address:
+                            </label>
+                            <div className="relative">
+                              <input
+                                type="email"
+                                value={creatorEmail}
+                                onChange={(e) => setCreatorEmail(e.target.value)}
+                                placeholder="youremail@example.com"
+                                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 outline-none focus:border-pink-400 bg-white"
+                              />
+                              <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
+                            </div>
+                          </div>
+
+                          {/* Toggle to also email partner */}
+                          <div className="pt-2 border-t border-pink-100/70">
+                            <div className="flex items-center justify-between gap-3">
+                              <div className="space-y-0.5">
+                                <span className="text-xs font-bold text-slate-800">
+                                  Also email surprise directly to {recipientName || "partner"} 💌
+                                </span>
+                                <p className="text-[10px] text-slate-500">
+                                  Send a romantic envelope invitation email to their inbox.
+                                </p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  soundFx.playPop();
+                                  setSendToPartnerEmail(!sendToPartnerEmail);
+                                }}
+                                className={`relative w-11 h-6 rounded-full transition-colors cursor-pointer shrink-0 ${
+                                  sendToPartnerEmail ? "bg-[#FF2E63]" : "bg-slate-300"
+                                }`}
+                              >
+                                <span
+                                  className={`absolute top-0.5 left-0.5 bg-white w-5 h-5 rounded-full transition-transform shadow-xs ${
+                                    sendToPartnerEmail ? "translate-x-5" : ""
+                                  }`}
+                                />
+                              </button>
+                            </div>
+
+                            {sendToPartnerEmail && (
+                              <div className="mt-3 space-y-2.5">
+                                <div>
+                                  <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                                    Partner&apos;s Email Address:
+                                  </label>
+                                  <input
+                                    type="email"
+                                    value={partnerEmail}
+                                    onChange={(e) => setPartnerEmail(e.target.value)}
+                                    placeholder="partner@example.com"
+                                    className="w-full px-4 py-2 rounded-xl border border-pink-200 text-xs font-semibold text-slate-800 outline-none focus:border-[#FF2E63] bg-white"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                                    Custom Note in Email (Optional):
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={customEmailNote}
+                                    onChange={(e) => setCustomEmailNote(e.target.value)}
+                                    placeholder="e.g. Open this when you are alone with headphones on ❤️"
+                                    className="w-full px-4 py-2 rounded-xl border border-slate-200 text-xs text-slate-800 outline-none focus:border-pink-300 bg-white"
+                                  />
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
 
                       {/* Access Duration & Geo-Pricing */}
@@ -2129,6 +2553,69 @@ export default function CreatorWizard({
                           <ExternalLink className="w-4 h-4" />
                           <span>Open Website Now</span>
                         </Link>
+                      </div>
+
+                      {/* Email Delivery Card (Powered by Resend) */}
+                      <div className="mt-4 p-4 rounded-2xl bg-gradient-to-r from-pink-50/80 to-rose-50/80 border border-pink-200/90 text-left space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                            <Mail className="w-4 h-4 text-[#FF2E63]" />
+                            <span>Send or Resend via Email (Resend)</span>
+                          </span>
+                          {emailSendStatus === "sent" && (
+                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
+                              Email Sent ✓
+                            </span>
+                          )}
+                          {emailSendStatus === "sending" && (
+                            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 animate-pulse">
+                              Sending...
+                            </span>
+                          )}
+                        </div>
+
+                        {emailStatusMessage && (
+                          <div className={`p-2.5 rounded-xl text-xs font-semibold ${
+                            emailSendStatus === "error"
+                              ? "bg-red-50 text-red-600 border border-red-200"
+                              : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                          }`}>
+                            {emailStatusMessage}
+                          </div>
+                        )}
+
+                        <p className="text-[11px] text-slate-500">
+                          Need to send this link to another email address or backup inbox? Enter any email address below:
+                        </p>
+
+                        <div className="flex gap-2">
+                          <input
+                            type="email"
+                            value={resendDirectEmail}
+                            onChange={(e) => setResendDirectEmail(e.target.value)}
+                            placeholder="recipient@example.com"
+                            className="flex-1 px-3.5 py-2 rounded-xl border border-pink-200 text-xs font-semibold text-slate-800 outline-none focus:border-[#FF2E63] bg-white"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleSendDirectEmail}
+                            disabled={isSendingDirectEmail || !resendDirectEmail.trim()}
+                            className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-black disabled:bg-slate-300 text-white font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+                          >
+                            {isSendingDirectEmail ? (
+                              <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                              <Send className="w-3.5 h-3.5" />
+                            )}
+                            <span>Send</span>
+                          </button>
+                        </div>
+
+                        {directEmailStatus && (
+                          <p className="text-[11px] font-semibold text-slate-700">
+                            {directEmailStatus}
+                          </p>
+                        )}
                       </div>
                     </div>
                   )}

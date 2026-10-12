@@ -47,7 +47,7 @@ export default function Footer() {
             <ul className="space-y-1.5 text-xs text-slate-500 font-medium">
               <li><a href="#how-it-works" className="hover:text-rose-600 transition-colors">How It Works</a></li>
               <li><a href="#chapters" className="hover:text-rose-600 transition-colors">9-Page Surprise Experience</a></li>
-              <li><a href="#pricing" className="hover:text-rose-600 transition-colors">Pricing (From ₹199 / $3.49)</a></li>
+              <li><a href="#pricing" className="hover:text-rose-600 transition-colors">Pricing (From ₹149 / $3.49)</a></li>
               <li><a href="#faq" className="hover:text-rose-600 transition-colors">FAQ &amp; Help</a></li>
               <li><Link href="/apology" className="hover:text-rose-600 transition-colors">Dedicated Apology Flow</Link></li>
             </ul>

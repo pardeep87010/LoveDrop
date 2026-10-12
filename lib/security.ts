@@ -1,72 +1,89 @@
-// Security utilities: cryptographic slug generation, PIN hashing, and XSS sanitization
+import bcrypt from "bcryptjs";
 
 /**
- * Generates a cryptographically random, URL-safe slug.
- * Prevents sequential ID guessing or enumeration attacks.
- * Format: [clean-names]-[random-nanoid]
+ * Basic HTML escaping to prevent XSS in user-generated strings
  */
-export function generateSecureSlug(recipient: string, sender: string): string {
-  const cleanRecipient = recipient.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 15) || "love";
-  const cleanSender = sender.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 15) || "heart";
-
-  // Generate 6 cryptographically secure random alphanumeric characters
-  const charset = "23456789abcdefghjkmnpqrstuvwxyz";
-  let randomStr = "";
-  if (typeof window !== "undefined" && window.crypto && window.crypto.getRandomValues) {
-    const values = new Uint8Array(6);
-    window.crypto.getRandomValues(values);
-    for (let i = 0; i < 6; i++) {
-      randomStr += charset[values[i] % charset.length];
-    }
-  } else {
-    randomStr = Math.random().toString(36).substring(2, 8);
-  }
-
-  return `${cleanRecipient}-${cleanSender}-${randomStr}`;
+export function sanitizeString(str: unknown): string {
+  if (typeof str !== "string") return "";
+  return str
+    .trim()
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;");
 }
 
 /**
- * Computes SHA-256 hash with a fixed application salt.
- * Ensures the plaintext PIN (e.g. "1402") is never stored or exposed in the payload.
+ * Clean text without escaping normal letters (for DB storage where React handles escaping on render)
+ * Strips dangerous script tags and null bytes.
  */
-export async function hashPasscode(pin: string): Promise<string> {
-  const salt = "lovelink_secret_salt_v2_";
-  const text = salt + pin.trim();
-
-  if (typeof window !== "undefined" && window.crypto && window.crypto.subtle) {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(text);
-    const hashBuffer = await window.crypto.subtle.digest("SHA-256", data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+export function cleanUserInput(str: unknown, maxLength = 5000): string {
+  if (typeof str !== "string") return "";
+  let clean = str.trim().replace(/\0/g, ""); // strip null bytes
+  clean = clean.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, ""); // remove script tags
+  if (clean.length > maxLength) {
+    clean = clean.slice(0, maxLength);
   }
-
-  // Fallback hash for environments without WebCrypto
-  let hash = 0;
-  for (let i = 0; i < text.length; i++) {
-    const char = text.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash |= 0;
-  }
-  return Math.abs(hash).toString(16);
+  return clean;
 }
 
 /**
- * Verifies if entered PIN matches the stored hash
+ * Hash secret 4-digit passcode with salt using bcrypt
  */
-export async function verifyPasscode(enteredPin: string, storedHash?: string): Promise<boolean> {
-  if (!storedHash) return true;
-  const computed = await hashPasscode(enteredPin);
-  return computed === storedHash;
+export async function hashPasscode(passcode: string): Promise<string> {
+  const salt = await bcrypt.genSalt(10);
+  return bcrypt.hash(passcode.trim(), salt);
 }
 
 /**
- * Sanitizes user input against script injection and XSS
+ * Compare entered passcode with stored hash
+ */
+export async function verifyPasscode(
+  enteredPasscode: string,
+  storedHash: string
+): Promise<boolean> {
+  return bcrypt.compare(enteredPasscode.trim(), storedHash);
+}
+
+/**
+ * Validate email address format
+ */
+export function isValidEmail(email: unknown): boolean {
+  if (typeof email !== "string") return false;
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email.trim());
+}
+
+/**
+ * Sanitize user input (alias used in creator wizard)
  */
 export function sanitizeInput(input: string): string {
-  if (!input) return "";
-  return input
-    .replace(/[<>]/g, "") // Strip raw HTML tag delimiters
-    .replace(/javascript:/gi, "") // Strip pseudo-protocols
-    .trim();
+  return cleanUserInput(input);
+}
+
+/**
+ * Generate a clean, URL-safe secure slug from recipient and sender names
+ */
+export function generateSecureSlug(
+  recipientName: string,
+  senderName: string
+): string {
+  const cleanRecipient = recipientName
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  const cleanSender = senderName
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  const randomSuffix = Math.random().toString(36).substring(2, 6);
+  const base = `${cleanRecipient || "love"}-${cleanSender || "you"}-${randomSuffix}`;
+  return base;
 }

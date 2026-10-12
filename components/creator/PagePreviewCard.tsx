@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import {
@@ -66,7 +66,7 @@ export default function PagePreviewCard({
     "Don't do this to me! 😭",
     "Come onnnn 😩",
     "So you wanna play with me 😏",
-    "Okay watch then me 😎",
+    "I'm ready! 👀",
     "Do you think you can win against me? 😈",
   ],
   letterText,
@@ -144,18 +144,52 @@ export default function PagePreviewCard({
   };
 
   // ===================================================================
-  // STEP 2: RUNAWAY "NO" BUTTON STATE
+  // STEP 7 (PAGE 7): RUNAWAY "NO" BUTTON STATE
   // ===================================================================
   const [noEscapeCount, setNoEscapeCount] = useState(0);
-  const [noButtonOffset, setNoButtonOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [noButtonOffset, setNoButtonOffset] = useState<{ x: number; y: number } | null>(null);
+  const lastPreviewDodgeRef = useRef<number>(0);
 
-  const handleNoDodge = () => {
+  const getNextPreviewRandomNoPos = (currentPos: { x: number; y: number } | null) => {
+    const maxX = 50;
+    const maxY = 35;
+    let newX = 0;
+    let newY = 0;
+    let tries = 0;
+    do {
+      newX = Math.floor(Math.random() * (maxX * 2 + 1)) - maxX;
+      newY = Math.floor(Math.random() * (maxY * 2 + 1)) - maxY;
+      tries++;
+      const overlapsYes = newX < -30 && Math.abs(newY) < 22;
+      const isTooClose = currentPos && Math.hypot(newX - currentPos.x, newY - currentPos.y) < 30;
+      if (!overlapsYes && (!isTooClose || tries > 10)) {
+        break;
+      }
+    } while (tries < 15);
+    return { x: newX, y: newY };
+  };
+
+  const handleNoInteraction = (type: "hover" | "click") => {
+    if (noEscapeCount < 7) {
+      if (type === "click") {
+        soundFx.playPop();
+        setNoEscapeCount((prev) => prev + 1);
+      }
+      return;
+    }
+
+    const now = Date.now();
+    if (now - lastPreviewDodgeRef.current < 180) return;
+    lastPreviewDodgeRef.current = now;
+
     soundFx.playPop();
     setNoEscapeCount((prev) => prev + 1);
+    setNoButtonOffset((prev) => getNextPreviewRandomNoPos(prev));
   };
 
   const handleYesClick = () => {
     soundFx.playSuccessChime();
+    setNoButtonOffset(null);
     confetti({
       particleCount: 50,
       spread: 60,
@@ -814,30 +848,43 @@ export default function PagePreviewCard({
                           key={i}
                           type="button"
                           onClick={() => handleCrackCookie(i)}
-                          className={`w-9 h-9 rounded-2xl flex items-center justify-center text-lg transition-all cursor-pointer ${
+                          className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all cursor-pointer relative group ${
                             openedCookieIdx === i
-                              ? "bg-amber-100 ring-2 ring-amber-400 scale-110"
-                              : "bg-slate-100 hover:bg-pink-50"
+                              ? "bg-amber-100 ring-2 ring-rose-400 scale-110 shadow-sm"
+                              : "bg-amber-50/70 hover:bg-amber-100/70"
                           }`}
+                          title={`Cookie #${i + 1}`}
                         >
-                          {openedCookieIdx === i ? "✨" : "🥠"}
+                          <span className="text-lg">{openedCookieIdx === i ? "✨" : "🥠"}</span>
+                          {openedCookieIdx === i && (
+                            <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-rose-500 text-white rounded-full text-[8px] font-bold flex items-center justify-center">
+                              ✓
+                            </span>
+                          )}
                         </button>
                       ))}
                     </div>
 
-                    {/* Active Quote Card */}
-                    <div className="p-3 rounded-2xl bg-amber-50/70 border border-amber-200 text-center space-y-1.5 min-h-[70px] flex flex-col justify-center">
-                      <p className="text-[11px] font-bold text-slate-800 italic leading-snug">
-                        &quot;
-                        {openedCookieIdx !== null
-                          ? fortuneQuotes[openedCookieIdx]
-                          : fortuneQuotes[0] || "A lifetime of happiness awaits you two"}
-                        &quot;
-                      </p>
-                      <div className="flex items-center justify-center gap-1 text-[9px] text-amber-500">
-                        <span>⭐</span>
-                        <span>⭐</span>
-                        <span>⭐</span>
+                    {/* Active Authentic Romantic Fortune Slip Card */}
+                    <div className="rounded-2xl bg-gradient-to-b from-[#FFFDF9] via-[#FAF6F0] to-[#F5EFE6] p-1 border border-amber-200/90 shadow-sm">
+                      <div className="p-3 rounded-xl border border-dashed border-rose-300/80 bg-white/70 text-center space-y-1.5 min-h-[85px] flex flex-col justify-center relative overflow-hidden">
+                        <div className="flex items-center justify-center gap-1.5">
+                          <span className="text-[10px]">🏮</span>
+                          <span className="text-[9px] font-black uppercase tracking-[0.2em] text-rose-600 font-sans">
+                            Eternal Love Prophecy #{((openedCookieIdx ?? 0) + 1)}
+                          </span>
+                          <span className="text-[10px]">🏮</span>
+                        </div>
+                        <p className="text-[11px] font-serif font-semibold text-slate-800 italic leading-snug px-1">
+                          &ldquo;
+                          {openedCookieIdx !== null
+                            ? fortuneQuotes[openedCookieIdx]
+                            : fortuneQuotes[0] || "A lifetime of happiness awaits you two"}
+                          &rdquo;
+                        </p>
+                        <div className="pt-0.5 flex items-center justify-center gap-1 text-[8px] font-bold text-amber-900/80">
+                          <span>✨ Lucky Numbers: 7 • 14 • 21 • 100% ❤️</span>
+                        </div>
                       </div>
                     </div>
 
@@ -887,28 +934,49 @@ export default function PagePreviewCard({
                     {/* Reaction message in upper area of buttons */}
                     <div className="min-h-[28px] flex items-center justify-center">
                       {currentDodgePhrase && (
-                        <span className="px-3 py-1 rounded-full bg-pink-50 border border-pink-200 text-[#FF2E63] font-black text-[11px] shadow-2xs">
+                        <motion.span
+                          key={Math.min(noEscapeCount, dodgePhrases.length)}
+                          initial={{ opacity: 0, y: -4, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          className="px-3 py-1 rounded-full bg-pink-50 border border-pink-200 text-[#FF2E63] font-black text-[11px] shadow-2xs"
+                        >
                           {currentDodgePhrase}
-                        </span>
+                        </motion.span>
                       )}
                     </div>
 
                     {/* Yes & Runaway No Buttons Container */}
                     <div className="relative pt-1 pb-2 min-h-[50px] flex items-center justify-center gap-3">
-                      {/* YES BUTTON */}
-                      <button
+                      {/* YES BUTTON (Grows only after 8th sequence 'I'm ready! 👀') */}
+                      <motion.button
                         type="button"
                         onClick={handleYesClick}
+                        animate={{
+                          scale: noEscapeCount < 8 ? 1 : 1 + Math.min((noEscapeCount - 7) * 0.16, 1.6),
+                        }}
+                        transition={{ type: "spring", stiffness: 350, damping: 20 }}
                         className="px-6 py-2.5 rounded-full text-white font-black text-xs shadow-md transition-all active:scale-95 cursor-pointer relative z-10"
                         style={{ backgroundColor: themeColor }}
                       >
                         {yesButtonText || "YES! ❤️"}
-                      </button>
+                      </motion.button>
 
-                      {/* NO BUTTON (Fixed clean label) */}
+                      {/* NO BUTTON (Fixed clean label, dodges randomly from 8th sequence onwards) */}
                       <motion.button
                         type="button"
-                        onClick={handleNoDodge}
+                        animate={
+                          noButtonOffset
+                            ? { x: noButtonOffset.x, y: noButtonOffset.y }
+                            : { x: 0, y: 0 }
+                        }
+                        transition={{
+                          type: "spring",
+                          stiffness: 450,
+                          damping: 26,
+                        }}
+                        onMouseEnter={() => handleNoInteraction("hover")}
+                        onTouchStart={() => handleNoInteraction("hover")}
+                        onClick={() => handleNoInteraction("click")}
                         className="px-5 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs border border-slate-300 shadow-sm cursor-pointer whitespace-nowrap z-20 select-none active:scale-95"
                       >
                         No 💔

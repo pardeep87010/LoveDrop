@@ -118,6 +118,224 @@ const DEFAULT_FORTUNE_QUOTES = [
   "Love is the answer to every question",
 ];
 
+const DEFAULT_LUCKY_NUMBERS = [
+  "7 • 14 • 21 • 77",
+  "3 • 11 • 18 • 88",
+  "5 • 12 • 25 • 99",
+  "9 • 16 • 24 • 100",
+  "2 • 8 • 20 • 365",
+];
+
+// Realistic 3D Baked Fortune Cookie SVG Illustration
+function FortuneCookieIllustration({
+  isOpened,
+  isSelected,
+  index,
+  size = 72,
+}: {
+  isOpened: boolean;
+  isSelected?: boolean;
+  index: number;
+  size?: number;
+}) {
+  const uniqueId = `fc-${index}`;
+  return (
+    <div
+      className={`relative flex items-center justify-center transition-transform duration-300 ${
+        isSelected ? "scale-105" : ""
+      }`}
+      style={{ width: size, height: Math.round(size * 0.82) }}
+    >
+      <svg
+        viewBox="0 0 84 70"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className={`w-full h-full filter ${
+          isSelected
+            ? "drop-shadow-[0_4px_12px_rgba(245,158,11,0.5)]"
+            : "drop-shadow-[0_4px_6px_rgba(146,64,14,0.18)]"
+        }`}
+      >
+        <defs>
+          <linearGradient id={`baked-${uniqueId}`} x1="10%" y1="0%" x2="90%" y2="100%">
+            <stop offset="0%" stopColor="#FEF08A" />
+            <stop offset="25%" stopColor="#FBBF24" />
+            <stop offset="60%" stopColor="#F59E0B" />
+            <stop offset="85%" stopColor="#D97706" />
+            <stop offset="100%" stopColor="#B45309" />
+          </linearGradient>
+          <radialGradient id={`glow-${uniqueId}`} cx="42" cy="18" r="28" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#FFFBEB" stopOpacity="0.85" />
+            <stop offset="60%" stopColor="#FDE68A" stopOpacity="0" />
+          </radialGradient>
+          <linearGradient id={`crease-${uniqueId}`} x1="50%" y1="0%" x2="50%" y2="100%">
+            <stop offset="0%" stopColor="#92400E" stopOpacity="0.75" />
+            <stop offset="100%" stopColor="#78350F" stopOpacity="0.2" />
+          </linearGradient>
+        </defs>
+
+        {!isOpened ? (
+          // UNOPENED WHOLE COOKIE
+          <g>
+            {/* Main body: folded crescent lobes */}
+            <path
+              d="M 42,19 C 28,10 14,14 7,27 C -0.5,40 4,56 16,60 C 26,63 36,51 42,39 C 48,51 58,63 68,60 C 80,56 84.5,40 77,27 C 70,14 56,10 42,19 Z"
+              fill={`url(#baked-${uniqueId})`}
+            />
+
+            {/* Specular highlight crest */}
+            <path
+              d="M 42,20 C 30,12 18,16 11,28 C 8,33 9,40 14,42 C 21,31 32,23 42,23 C 52,23 63,31 70,42 C 75,40 76,33 73,28 C 66,16 54,12 42,20 Z"
+              fill={`url(#glow-${uniqueId})`}
+            />
+
+            {/* Front folded belly flap */}
+            <path
+              d="M 18,45 C 24,56 33,62 42,62 C 51,62 60,56 66,45 C 58,49 50,51 42,51 C 34,51 26,49 18,45 Z"
+              fill="#D97706"
+              opacity="0.85"
+            />
+            <path
+              d="M 21,47 C 27,55 34,59 42,59 C 50,59 57,55 63,47 C 56,50 49,52 42,52 C 35,52 28,50 21,47 Z"
+              fill="#B45309"
+              opacity="0.55"
+            />
+
+            {/* Center indent crease shadow */}
+            <path
+              d="M 40.5,21 C 41,29 40.5,39 42,47 C 43.5,39 43,29 43.5,21 Z"
+              fill={`url(#crease-${uniqueId})`}
+            />
+
+            {/* Baked rim shadows */}
+            <path d="M 7,27 C 4,40 8,54 16,59 C 13,52 10,40 12,30 Z" fill="#92400E" opacity="0.35" />
+            <path d="M 77,27 C 80,40 76,54 68,59 C 71,52 74,40 72,30 Z" fill="#92400E" opacity="0.35" />
+
+            {/* Sparkle on upper right */}
+            <path
+              d="M 67,13 Q 71,13 71,9 Q 71,13 75,13 Q 71,13 71,17 Q 71,13 67,13 Z"
+              fill="#FEF08A"
+            />
+          </g>
+        ) : (
+          // CRACKED OPEN COOKIE WITH EMERGING FORTUNE SLIP
+          <g>
+            {/* Emerging Fortune Paper Slip */}
+            <g transform="translate(42, 33) rotate(-5)">
+              <rect
+                x="-22"
+                y="-10"
+                width="44"
+                height="19"
+                rx="2.5"
+                fill="#FFFDF8"
+                stroke="#FDA4AF"
+                strokeWidth="1.2"
+              />
+              <rect
+                x="-19"
+                y="-7.5"
+                width="38"
+                height="14"
+                rx="1.5"
+                fill="none"
+                stroke="#F43F5E"
+                strokeWidth="0.7"
+                strokeDasharray="2 1.5"
+                opacity="0.75"
+              />
+              <circle cx="-11" cy="-0.5" r="2.2" fill="#E11D48" />
+              <line
+                x1="-6"
+                y1="-2"
+                x2="14"
+                y2="-2"
+                stroke="#E11D48"
+                strokeWidth="1.3"
+                strokeLinecap="round"
+              />
+              <line
+                x1="-6"
+                y1="2"
+                x2="11"
+                y2="2"
+                stroke="#FB7185"
+                strokeWidth="1.1"
+                strokeLinecap="round"
+              />
+            </g>
+
+            {/* Left cracked half */}
+            <g transform="translate(18, 33) rotate(-14) translate(-18, -33)">
+              <path
+                d="M 36,19 C 23,11 11,15 5,28 C -2,41 2,56 14,60 C 23,63 33,52 37,41 L 35,35 L 38,30 L 35,24 Z"
+                fill={`url(#baked-${uniqueId})`}
+              />
+              <path
+                d="M 36,19 L 35,24 L 38,30 L 35,35 L 37,41"
+                stroke="#FEF08A"
+                strokeWidth="1.4"
+                fill="none"
+              />
+              <path
+                d="M 31,25 C 28,31 28,37 32,39 L 34,35 L 32,30 L 34,24 Z"
+                fill="#78350F"
+                opacity="0.45"
+              />
+            </g>
+
+            {/* Right cracked half */}
+            <g transform="translate(66, 33) rotate(14) translate(-66, -33)">
+              <path
+                d="M 48,19 C 61,11 73,15 79,28 C 86,41 82,56 70,60 C 61,63 51,52 47,41 L 49,35 L 46,30 L 49,24 Z"
+                fill={`url(#baked-${uniqueId})`}
+              />
+              <path
+                d="M 48,19 L 49,24 L 46,30 L 49,35 L 47,41"
+                stroke="#FEF08A"
+                strokeWidth="1.4"
+                fill="none"
+              />
+              <path
+                d="M 53,25 C 56,31 56,37 52,39 L 50,35 L 52,30 L 50,24 Z"
+                fill="#78350F"
+                opacity="0.45"
+              />
+            </g>
+
+            {/* Golden crumbs */}
+            <circle cx="32" cy="17" r="1.4" fill="#F59E0B" />
+            <circle cx="52" cy="15" r="1.2" fill="#FBBF24" />
+            <circle cx="42" cy="11" r="1.6" fill="#FEF08A" />
+            <circle cx="34" cy="53" r="1.2" fill="#D97706" />
+            <circle cx="50" cy="55" r="1.3" fill="#F59E0B" />
+          </g>
+        )}
+      </svg>
+
+      {/* Opened indicator check badge */}
+      {isOpened && (
+        <span
+          className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shadow-md transition-all ${
+            isSelected
+              ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white ring-2 ring-white scale-110"
+              : "bg-emerald-500 text-white"
+          }`}
+        >
+          ✓
+        </span>
+      )}
+
+      {/* Active ring indicator on the cookie */}
+      {isSelected && (
+        <span className="absolute -top-1 -left-1 text-xs animate-bounce select-none">
+          ✨
+        </span>
+      )}
+    </div>
+  );
+}
+
 export default function LoveSurpriseTemplate({
   data,
   isEmbedded = false,
@@ -189,6 +407,7 @@ export default function LoveSurpriseTemplate({
   // Page 8: Fortune Cookies State
   const [openedCookies, setOpenedCookies] = useState<number[]>([]);
   const [activeCookieQuote, setActiveCookieQuote] = useState<string | null>(null);
+  const [activeCookieIdx, setActiveCookieIdx] = useState<number | null>(null);
 
   // Background Romantic Music Playback
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -273,96 +492,228 @@ export default function LoveSurpriseTemplate({
     setShowSongPicker(false);
   };
 
-  // Certificate Download Handler
+  // Certificate Download Handler (Luxury Royal Premium Design)
   const handleDownloadCertificate = () => {
     soundFx.playSuccessChime();
     confetti({ particleCount: 120, spread: 90, origin: { y: 0.6 } });
 
     const canvas = document.createElement("canvas");
     canvas.width = 1200;
-    canvas.height = 800;
+    canvas.height = 850;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Background gradient
-    const bgGrad = ctx.createLinearGradient(0, 0, 1200, 800);
-    bgGrad.addColorStop(0, "#FFFDF9");
-    bgGrad.addColorStop(0.5, "#FFF5F8");
-    bgGrad.addColorStop(1, "#FDF2F7");
+    // 1. Rich Vintage Parchment Background
+    const bgGrad = ctx.createRadialGradient(600, 425, 100, 600, 425, 750);
+    bgGrad.addColorStop(0, "#FFFFFF");
+    bgGrad.addColorStop(0.5, "#FFFBF7");
+    bgGrad.addColorStop(0.85, "#FFF5F7");
+    bgGrad.addColorStop(1, "#FAECF2");
     ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, 1200, 800);
+    ctx.fillRect(0, 0, 1200, 850);
 
-    // Outer Gold Border
-    ctx.strokeStyle = "#D4AF37";
-    ctx.lineWidth = 12;
-    ctx.strokeRect(30, 30, 1140, 740);
+    // Subtle luxury vignette tint at corners
+    ctx.fillStyle = "rgba(212, 175, 55, 0.03)";
+    ctx.fillRect(0, 0, 1200, 850);
 
-    // Inner Rose Border
-    ctx.strokeStyle = "#FF2E63";
-    ctx.lineWidth = 3;
-    ctx.strokeRect(48, 48, 1104, 704);
+    // 2. Outer Ornate Gold Foil Border (Gradient Stroke)
+    const goldGrad = ctx.createLinearGradient(0, 0, 1200, 850);
+    goldGrad.addColorStop(0, "#B8860B");
+    goldGrad.addColorStop(0.2, "#E5C158");
+    goldGrad.addColorStop(0.4, "#FDF3D0");
+    goldGrad.addColorStop(0.6, "#D4AF37");
+    goldGrad.addColorStop(0.8, "#AA771C");
+    goldGrad.addColorStop(1, "#C59B27");
 
-    // Corner Decorative Elements
-    ctx.fillStyle = "#FF2E63";
-    ctx.font = "28px serif";
-    ctx.fillText("💖", 65, 90);
-    ctx.fillText("💖", 1105, 90);
-    ctx.fillText("💖", 65, 730);
-    ctx.fillText("💖", 1105, 730);
+    ctx.strokeStyle = goldGrad;
+    ctx.lineWidth = 14;
+    ctx.strokeRect(28, 28, 1144, 794);
 
-    // Header
-    ctx.fillStyle = "#1E293B";
-    ctx.font = "bold 44px sans-serif";
+    // Inner fine gold hairline
+    ctx.strokeStyle = "#C5A059";
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(42, 42, 1116, 766);
+
+    // Inner Royal Rose Accent Border
+    ctx.strokeStyle = "#9F1239";
+    ctx.lineWidth = 2.5;
+    ctx.strokeRect(52, 52, 1096, 746);
+
+    // 3. Baroque Corner Filigree Flourishes
+    const drawCornerFlourish = (cx: number, cy: number, flipX: number, flipY: number) => {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.scale(flipX, flipY);
+      ctx.strokeStyle = "#B8860B";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(10, 35);
+      ctx.bezierCurveTo(10, 15, 15, 10, 35, 10);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(18, 45);
+      ctx.bezierCurveTo(18, 22, 22, 18, 45, 18);
+      ctx.stroke();
+
+      // Small sparkling diamond in corner
+      ctx.fillStyle = "#E11D48";
+      ctx.font = "bold 16px serif";
+      ctx.textAlign = "center";
+      ctx.fillText("✦", 22, 26);
+      ctx.restore();
+    };
+
+    drawCornerFlourish(52, 52, 1, 1);
+    drawCornerFlourish(1148, 52, -1, 1);
+    drawCornerFlourish(52, 798, 1, -1);
+    drawCornerFlourish(1148, 798, -1, -1);
+
+    // 4. Header Top Crest Emblem
     ctx.textAlign = "center";
-    ctx.fillText("CERTIFICATE OF ETERNAL LOVE", 600, 135);
+    ctx.fillStyle = "#D4AF37";
+    ctx.font = "26px serif";
+    ctx.fillText("👑   ✦   💖   ✦   👑", 600, 95);
 
-    // Subheader
-    ctx.fillStyle = "#FF2E63";
-    ctx.font = "bold 20px sans-serif";
-    ctx.fillText("OFFICIAL & UNBREAKABLE BOND OF PASSION", 600, 180);
+    // Grand Title
+    ctx.fillStyle = "#0F172A";
+    ctx.font = "bold 40px 'Playfair Display', 'Cinzel', Georgia, serif";
+    ctx.fillText("CERTIFICATE OF ETERNAL LOVE", 600, 145);
 
-    // Divider line
+    // Subheader Ribbon Badge
+    ctx.fillStyle = "#BE123C";
+    ctx.font = "bold 14px 'Montserrat', sans-serif";
+    ctx.fillText("✦  OFFICIAL & UNBREAKABLE BOND OF DEVOTION  ✦", 600, 182);
+
+    // Ornate Divider Line
     ctx.strokeStyle = "#CBD5E1";
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(350, 205);
-    ctx.lineTo(850, 205);
+    ctx.moveTo(340, 204);
+    ctx.lineTo(540, 204);
+    ctx.moveTo(660, 204);
+    ctx.lineTo(860, 204);
     ctx.stroke();
 
-    // Certificate Body
+    ctx.fillStyle = "#B8860B";
+    ctx.font = "bold 18px serif";
+    ctx.fillText("❦", 600, 210);
+
+    // 5. Body Presentation Text
     ctx.fillStyle = "#64748B";
-    ctx.font = "500 22px sans-serif";
-    ctx.fillText("This is to proudly certify that", 600, 260);
+    ctx.font = "italic 20px Georgia, serif";
+    ctx.fillText("This is to proudly & solemnly certify that", 600, 252);
 
     // Recipient Name
-    ctx.fillStyle = "#FF2E63";
-    ctx.font = "bold 56px sans-serif";
-    ctx.fillText(recipientName, 600, 335);
+    ctx.fillStyle = "#E11D48";
+    ctx.font = "bold 54px 'Playfair Display', Georgia, serif";
+    ctx.fillText(recipientName, 600, 318);
+
+    // Golden Accent Line below recipient name
+    const nameWidth = ctx.measureText(recipientName).width;
+    const lineHalf = Math.max(nameWidth / 2 + 30, 120);
+    ctx.strokeStyle = "#F59E0B";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(600 - lineHalf, 332);
+    ctx.lineTo(600 + lineHalf, 332);
+    ctx.stroke();
 
     ctx.fillStyle = "#64748B";
-    ctx.font = "500 22px sans-serif";
-    ctx.fillText("holds the key to the heart of", 600, 400);
+    ctx.font = "italic 19px Georgia, serif";
+    ctx.fillText("holds the eternal key to the heart & soul of", 600, 375);
 
     // Sender Name
     ctx.fillStyle = "#0F172A";
-    ctx.font = "bold 46px sans-serif";
-    ctx.fillText(senderName, 600, 465);
+    ctx.font = "bold 44px 'Playfair Display', Georgia, serif";
+    ctx.fillText(senderName, 600, 432);
 
-    // Quote
-    ctx.fillStyle = "#475569";
-    ctx.font = "italic 20px sans-serif";
+    // 6. The Vows Quote Plaque Box
+    ctx.fillStyle = "#FFF7FA";
+    ctx.strokeStyle = "#FCE7F3";
+    ctx.lineWidth = 1.5;
+    const qx = 210;
+    const qy = 470;
+    const qw = 780;
+    const qh = 88;
+    ctx.beginPath();
+    ctx.roundRect(qx, qy, qw, qh, 16);
+    ctx.fill();
+    ctx.stroke();
+
+    // Decorative Quote text
+    ctx.fillStyle = "#BE123C";
+    ctx.font = "bold 32px serif";
+    ctx.fillText("“", qx + 35, qy + 40);
+    ctx.fillText("”", qx + qw - 35, qy + 68);
+
+    ctx.fillStyle = "#334155";
+    ctx.font = "italic 18px Georgia, serif";
     ctx.fillText(
-      `"Love is not about how many days, months, or years you have been together.`,
+      "Love is not about how many days, months, or years you have been together.",
       600,
-      535
+      qy + 36
     );
     ctx.fillText(
-      `Love is about how much you love each other every single day."`,
+      "Love is about how much you love each other every single day.",
       600,
-      565
+      qy + 64
     );
 
-    // Date & Signatures
+    // 7. BOTTOM SECTION: NO COLLISIONS (100% Separated Columns)
+    // 7a. Center Royal Seal Medallion with Ribbon
+    const sealX = 600;
+    const sealY = 675;
+
+    // Silk Ribbon Tails
+    ctx.fillStyle = "#9F1239";
+    ctx.beginPath();
+    ctx.moveTo(sealX - 18, sealY + 25);
+    ctx.lineTo(sealX - 34, sealY + 80);
+    ctx.lineTo(sealX - 22, sealY + 74);
+    ctx.lineTo(sealX - 10, sealY + 80);
+    ctx.lineTo(sealX - 6, sealY + 25);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(sealX + 6, sealY + 25);
+    ctx.lineTo(sealX + 10, sealY + 80);
+    ctx.lineTo(sealX + 22, sealY + 74);
+    ctx.lineTo(sealX + 34, sealY + 80);
+    ctx.lineTo(sealX + 18, sealY + 25);
+    ctx.closePath();
+    ctx.fill();
+
+    // Outer Scalloped Sunburst Gold Medallion
+    ctx.fillStyle = goldGrad;
+    ctx.beginPath();
+    ctx.arc(sealX, sealY, 44, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Inner Ruby Wax Circle
+    ctx.fillStyle = "#BE123C";
+    ctx.beginPath();
+    ctx.arc(sealX, sealY, 34, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Inner Gold Beaded Ring
+    ctx.strokeStyle = "#FDF0CD";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(sealX, sealY, 30, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Center Gold Monogram & Text
+    ctx.fillStyle = "#FFFFFF";
+    ctx.font = "bold 20px serif";
+    ctx.fillText("❤", sealX, sealY + 7);
+
+    ctx.fillStyle = "#FDF0CD";
+    ctx.font = "bold 8px 'Montserrat', sans-serif";
+    ctx.fillText("★ SEALED WITH LOVE ★", sealX, sealY + 24);
+
+    // 7b. Left Box: Date of Issuance
     const dateStr = new Date().toLocaleDateString("en-US", {
       month: "long",
       day: "numeric",
@@ -370,18 +721,51 @@ export default function LoveSurpriseTemplate({
     });
 
     ctx.textAlign = "left";
-    ctx.fillStyle = "#64748B";
-    ctx.font = "bold 18px sans-serif";
-    ctx.fillText(`DATE ISSUED: ${dateStr}`, 120, 680);
+    ctx.strokeStyle = "#D4AF37";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(110, 690);
+    ctx.lineTo(370, 690);
+    ctx.stroke();
 
+    ctx.fillStyle = "#94A3B8";
+    ctx.font = "bold 12px sans-serif";
+    ctx.fillText("DATE OF ISSUANCE", 110, 712);
+
+    ctx.fillStyle = "#1E293B";
+    ctx.font = "bold 17px Georgia, serif";
+    ctx.fillText(dateStr, 110, 735);
+
+    // 7c. Right Box: Solemn Signature
     ctx.textAlign = "right";
-    ctx.fillText(`GIVEN WITH LOVE BY: ${senderName} ❤️`, 1080, 680);
+    ctx.strokeStyle = "#D4AF37";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(830, 690);
+    ctx.lineTo(1090, 690);
+    ctx.stroke();
 
-    // Center Seal Badge
+    ctx.fillStyle = "#BE123C";
+    ctx.font = "italic bold 22px 'Brush Script MT', 'Playfair Display', cursive";
+    ctx.fillText(senderName, 1090, 680);
+
+    ctx.fillStyle = "#94A3B8";
+    ctx.font = "bold 12px sans-serif";
+    ctx.fillText("PLEDGED & SIGNED WITH LOVE", 1090, 712);
+
+    ctx.fillStyle = "#E11D48";
+    ctx.font = "bold 13px sans-serif";
+    ctx.fillText(`By: ${senderName} ❤️`, 1090, 735);
+
+    // 8. Bottom Serial Verification
     ctx.textAlign = "center";
-    ctx.fillStyle = "#FF2E63";
-    ctx.font = "bold 24px sans-serif";
-    ctx.fillText("🏵️ OFFICIALLY SEALED WITH LOVE 🏵️", 600, 680);
+    ctx.fillStyle = "#94A3B8";
+    ctx.font = "11px sans-serif";
+    ctx.fillText(
+      `Registry No: LOVE-8842-FOREVER  •  Official Certificate of Endless Devotion`,
+      600,
+      812
+    );
 
     // Trigger Download
     const link = document.createElement("a");
@@ -492,17 +876,20 @@ export default function LoveSurpriseTemplate({
   const [noAttempts, setNoAttempts] = useState(0);
   const [noButtonPos, setNoButtonPos] = useState<{ x: number; y: number } | null>(null);
 
-  const noPhrases = [
-    "Really?! 😳",
-    "Are you sure ? 🥺",
-    "Please........... 🥺",
-    "Think Again! 😜",
-    "Don't do this to me! 😭",
-    "Come onnnn 😩",
-    "So you wanna play with me 😏",
-    "Okay watch then me 😎",
-    "Do you think you can win against me? 😈",
-  ];
+  const noPhrases =
+    data?.dodgePhrases && data.dodgePhrases.length > 0
+      ? data.dodgePhrases
+      : [
+          "Really?! 😳",
+          "Are you sure ? 🥺",
+          "Please........... 🥺",
+          "Think Again! 😜",
+          "Don't do this to me! 😭",
+          "Come onnnn 😩",
+          "So you wanna play with me 😏",
+          "I'm ready! 👀",
+          "Do you think you can win against me? 😈",
+        ];
 
   // List of 12 stickers for runaway NO button reactions (New Swapped Order)
   const NO_STICKERS = [
@@ -520,19 +907,70 @@ export default function LoveSurpriseTemplate({
     "/stickers/no4.gif",         // 12. Last - no4.gif (this is the last sticker in the no.)
   ];
 
-  const handleNoDodge = () => {
+  const lastDodgeTimeRef = useRef<number>(0);
+
+  // Generate safe random position within card bounds (never overflowing or overlapping YES)
+  const getNextRandomNoPos = (currentPos: { x: number; y: number } | null) => {
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+    const maxX = isMobile ? 80 : 130;
+    const maxY = isMobile ? 60 : 95;
+
+    let newX = 0;
+    let newY = 0;
+    let tries = 0;
+
+    do {
+      newX = Math.floor(Math.random() * (maxX * 2 + 1)) - maxX;
+      newY = Math.floor(Math.random() * (maxY * 2 + 1)) - maxY;
+      tries++;
+      const overlapsYes = newX < -50 && Math.abs(newY) < 38;
+      const isTooClose = currentPos && Math.hypot(newX - currentPos.x, newY - currentPos.y) < 55;
+      if (!overlapsYes && (!isTooClose || tries > 12)) {
+        break;
+      }
+    } while (tries < 20);
+
+    return { x: newX, y: newY };
+  };
+
+  const handleNoInteraction = (type: "hover" | "click") => {
+    // Before 8th message sequence (attempts 0 to 6):
+    // The button does NOT move randomly. Only clicks advance sequence.
+    if (noAttempts < 7) {
+      if (type === "click") {
+        soundFx.playPop();
+        setNoAttempts((prev) => prev + 1);
+      }
+      return;
+    }
+
+    // Starting at 8th message sequence ("Okay watch then me 😎") and onwards:
+    // When user hovers or clicks, move the button randomly away until user clicks yes!
+    const now = Date.now();
+    if (now - lastDodgeTimeRef.current < 180) {
+      return;
+    }
+    lastDodgeTimeRef.current = now;
+
     soundFx.playPop();
     setNoAttempts((prev) => prev + 1);
+    setNoButtonPos((prev) => getNextRandomNoPos(prev));
   };
 
   const handleYesClick = () => {
     soundFx.playSuccessChime();
+    setNoButtonPos(null);
     confetti({
       particleCount: 80,
       spread: 75,
       origin: { y: 0.65 },
       colors: ["#FF2E63", "#FF6B8B", "#FFD166", "#FF007A"],
     });
+
+    // Notify backend and creator via email that partner clicked YES
+    if (data?.slug) {
+      fetch(`/api/surprise/${data.slug}/response`, { method: "POST" }).catch(() => {});
+    }
 
     // In Love BGM: start song at 02:00 min (120 seconds) on YES click
     if (audioRef.current) {
@@ -693,12 +1131,27 @@ export default function LoveSurpriseTemplate({
   const handleCookieClick = (idx: number) => {
     soundFx.playPop();
     if (!openedCookies.includes(idx)) {
-      setOpenedCookies((prev) => [...prev, idx]);
+      setOpenedCookies((prev) => {
+        const next = [...prev, idx];
+        if (next.length === 5) {
+          soundFx.playSuccessChime();
+          confetti({
+            particleCount: 65,
+            spread: 75,
+            origin: { y: 0.6 },
+            colors: ["#FF2E63", "#FBBF24", "#FF6B8B", "#FFD166"],
+          });
+        }
+        return next;
+      });
     }
-    setActiveCookieQuote(dynamicFortunes[idx]);
+    setActiveCookieIdx(idx);
+    setActiveCookieQuote(
+      dynamicFortunes[idx] || DEFAULT_FORTUNE_QUOTES[idx % DEFAULT_FORTUNE_QUOTES.length]
+    );
     confetti({
-      particleCount: 25,
-      spread: 50,
+      particleCount: 30,
+      spread: 55,
       origin: { y: 0.6 },
       colors: ["#FBBF24", "#F59E0B", "#FF2E63"],
     });
@@ -1561,7 +2014,7 @@ export default function LoveSurpriseTemplate({
           )}
 
           {/* =========================================================== */}
-          {/* STEP 6: FORTUNE COOKIES OF LOVE (media_1791140088198.png) */}
+          {/* STEP 6: FORTUNE COOKIES OF LOVE                            */}
           {/* =========================================================== */}
           {step === 6 && (
             <motion.div
@@ -1574,188 +2027,221 @@ export default function LoveSurpriseTemplate({
             >
               {/* Header Title & Subtitle */}
               <div className="space-y-1">
-                <div className="text-3xl flex items-center justify-center gap-1">
+                <div className="text-3xl flex items-center justify-center gap-1.5 animate-pulse">
                   <span>🥠</span>
-                  <span className="text-lg">✨</span>
+                  <span className="text-xl">✨</span>
                 </div>
                 <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                   Fortune Cookies of Love
                 </h2>
                 <p className="text-xs sm:text-sm text-slate-600 font-medium">
-                  Crack open your fortune cookies, {recipientName}!
+                  Crack open your love fortunes, {recipientName}!
                 </p>
               </div>
 
-              {/* 5 Fortune Cookies Grid: 3 on Top Row, 2 on Bottom Row */}
-              <div className="flex flex-col items-center gap-2.5 pt-1">
+              {/* 5 Realistic Fortune Cookies Grid: 3 on Top Row, 2 on Bottom Row */}
+              <div className="flex flex-col items-center gap-2 pt-1 w-full">
                 {/* Row 1: 3 Cookies */}
-                <div className="flex items-center justify-center gap-3 sm:gap-4">
+                <div className="flex items-center justify-center gap-2.5 sm:gap-4">
                   {[0, 1, 2].map((idx) => {
                     const isOpened = openedCookies.includes(idx);
+                    const isSelected = activeCookieIdx === idx;
                     return (
                       <button
                         key={idx}
                         id={`cookie-btn-${idx}`}
                         type="button"
                         onClick={() => handleCookieClick(idx)}
-                        className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 group ${
-                          isOpened
-                            ? "bg-amber-100/80 ring-2 ring-pink-400 ring-offset-1 shadow-sm"
-                            : "bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 shadow-md shadow-amber-900/15"
+                        className={`p-1 sm:p-1.5 rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 relative group focus:outline-none ${
+                          isSelected
+                            ? "bg-amber-100/90 ring-2 ring-rose-400 ring-offset-2 ring-offset-pink-50 shadow-md"
+                            : isOpened
+                            ? "bg-amber-50/50 hover:bg-amber-100/60 shadow-xs"
+                            : "bg-white/40 hover:bg-white/80 shadow-xs hover:shadow-md"
                         }`}
-                        title={`Cookie ${idx + 1}`}
+                        title={isOpened ? `Fortune #${idx + 1} (Click to re-read)` : `Cookie #${idx + 1} (Tap to crack!)`}
                       >
-                        {isOpened ? (
-                          <div className="relative flex items-center justify-center w-full h-full">
-                            {/* Left cracked half */}
-                            <motion.div
-                              initial={{ x: 2, rotate: 0 }}
-                              animate={{ x: -3, rotate: -12 }}
-                              transition={{ duration: 0.25, type: "spring", stiffness: 300 }}
-                              className="w-4 sm:w-5 h-8 sm:h-9 bg-gradient-to-l from-amber-400 to-amber-500 rounded-l-full border-r border-amber-600/50 shadow-xs flex items-center justify-end pr-0.5"
-                            >
-                              <div className="w-1 h-3 bg-amber-600/30 rounded-full" />
-                            </motion.div>
-
-                            {/* Center fortune paper note sticking out */}
-                            <motion.div
-                              initial={{ scale: 0.2, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              transition={{ delay: 0.1, duration: 0.2 }}
-                              className="absolute z-10 w-7 sm:w-8 h-3.5 bg-white border border-pink-300 rounded-[2px] shadow-xs flex items-center justify-center -rotate-6"
-                            >
-                              <div className="w-4 h-0.5 bg-pink-500/70 rounded-full" />
-                            </motion.div>
-
-                            {/* Right cracked half */}
-                            <motion.div
-                              initial={{ x: -2, rotate: 0 }}
-                              animate={{ x: 3, rotate: 12 }}
-                              transition={{ duration: 0.25, type: "spring", stiffness: 300 }}
-                              className="w-4 sm:w-5 h-8 sm:h-9 bg-gradient-to-r from-amber-400 to-amber-500 rounded-r-full border-l border-amber-600/50 shadow-xs flex items-center justify-start pl-0.5"
-                            >
-                              <div className="w-1 h-3 bg-amber-600/30 rounded-full" />
-                            </motion.div>
-
-                            {/* Opened indicator */}
-                            <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-pink-500 text-white flex items-center justify-center text-[10px] font-bold shadow-xs z-20">
-                              ✓
-                            </span>
-                          </div>
-                        ) : (
-                          <>
-                            {/* Crease line in cookie */}
-                            <div className="w-6 sm:w-7 h-1 bg-amber-600/35 rounded-full transform -rotate-12 group-hover:rotate-0 transition-transform" />
-
-                            {/* Top-right sparkle */}
-                            <span className="absolute -top-1 -right-1 text-amber-200 text-xs sm:text-sm group-hover:scale-125 transition-transform">
-                              ✨
-                            </span>
-                          </>
-                        )}
+                        <FortuneCookieIllustration
+                          index={idx}
+                          isOpened={isOpened}
+                          isSelected={isSelected}
+                          size={70}
+                        />
+                        <span
+                          className={`text-[10px] font-bold tracking-tight mt-0.5 transition-colors ${
+                            isSelected
+                              ? "text-rose-600 font-black"
+                              : isOpened
+                              ? "text-amber-800"
+                              : "text-slate-500 group-hover:text-amber-700"
+                          }`}
+                        >
+                          {isOpened ? `Fortune #${idx + 1}` : `Cookie #${idx + 1}`}
+                        </span>
                       </button>
                     );
                   })}
                 </div>
 
                 {/* Row 2: 2 Cookies */}
-                <div className="flex items-center justify-center gap-3 sm:gap-4">
+                <div className="flex items-center justify-center gap-2.5 sm:gap-4">
                   {[3, 4].map((idx) => {
                     const isOpened = openedCookies.includes(idx);
+                    const isSelected = activeCookieIdx === idx;
                     return (
                       <button
                         key={idx}
                         id={`cookie-btn-${idx}`}
                         type="button"
                         onClick={() => handleCookieClick(idx)}
-                        className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 group ${
-                          isOpened
-                            ? "bg-amber-100/80 ring-2 ring-pink-400 ring-offset-1 shadow-sm"
-                            : "bg-gradient-to-br from-amber-300 via-amber-400 to-amber-500 shadow-md shadow-amber-900/15"
+                        className={`p-1 sm:p-1.5 rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 relative group focus:outline-none ${
+                          isSelected
+                            ? "bg-amber-100/90 ring-2 ring-rose-400 ring-offset-2 ring-offset-pink-50 shadow-md"
+                            : isOpened
+                            ? "bg-amber-50/50 hover:bg-amber-100/60 shadow-xs"
+                            : "bg-white/40 hover:bg-white/80 shadow-xs hover:shadow-md"
                         }`}
-                        title={`Cookie ${idx + 1}`}
+                        title={isOpened ? `Fortune #${idx + 1} (Click to re-read)` : `Cookie #${idx + 1} (Tap to crack!)`}
                       >
-                        {isOpened ? (
-                          <div className="relative flex items-center justify-center w-full h-full">
-                            {/* Left cracked half */}
-                            <motion.div
-                              initial={{ x: 2, rotate: 0 }}
-                              animate={{ x: -3, rotate: -12 }}
-                              transition={{ duration: 0.25, type: "spring", stiffness: 300 }}
-                              className="w-4 sm:w-5 h-8 sm:h-9 bg-gradient-to-l from-amber-400 to-amber-500 rounded-l-full border-r border-amber-600/50 shadow-xs flex items-center justify-end pr-0.5"
-                            >
-                              <div className="w-1 h-3 bg-amber-600/30 rounded-full" />
-                            </motion.div>
-
-                            {/* Center fortune paper note sticking out */}
-                            <motion.div
-                              initial={{ scale: 0.2, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              transition={{ delay: 0.1, duration: 0.2 }}
-                              className="absolute z-10 w-7 sm:w-8 h-3.5 bg-white border border-pink-300 rounded-[2px] shadow-xs flex items-center justify-center -rotate-6"
-                            >
-                              <div className="w-4 h-0.5 bg-pink-500/70 rounded-full" />
-                            </motion.div>
-
-                            {/* Right cracked half */}
-                            <motion.div
-                              initial={{ x: -2, rotate: 0 }}
-                              animate={{ x: 3, rotate: 12 }}
-                              transition={{ duration: 0.25, type: "spring", stiffness: 300 }}
-                              className="w-4 sm:w-5 h-8 sm:h-9 bg-gradient-to-r from-amber-400 to-amber-500 rounded-r-full border-l border-amber-600/50 shadow-xs flex items-center justify-start pl-0.5"
-                            >
-                              <div className="w-1 h-3 bg-amber-600/30 rounded-full" />
-                            </motion.div>
-
-                            {/* Opened indicator */}
-                            <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-pink-500 text-white flex items-center justify-center text-[10px] font-bold shadow-xs z-20">
-                              ✓
-                            </span>
-                          </div>
-                        ) : (
-                          <>
-                            {/* Crease line in cookie */}
-                            <div className="w-6 sm:w-7 h-1 bg-amber-600/35 rounded-full transform -rotate-12 group-hover:rotate-0 transition-transform" />
-
-                            {/* Top-right sparkle */}
-                            <span className="absolute -top-1 -right-1 text-amber-200 text-xs sm:text-sm group-hover:scale-125 transition-transform">
-                              ✨
-                            </span>
-                          </>
-                        )}
+                        <FortuneCookieIllustration
+                          index={idx}
+                          isOpened={isOpened}
+                          isSelected={isSelected}
+                          size={70}
+                        />
+                        <span
+                          className={`text-[10px] font-bold tracking-tight mt-0.5 transition-colors ${
+                            isSelected
+                              ? "text-rose-600 font-black"
+                              : isOpened
+                              ? "text-amber-800"
+                              : "text-slate-500 group-hover:text-amber-700"
+                          }`}
+                        >
+                          {isOpened ? `Fortune #${idx + 1}` : `Cookie #${idx + 1}`}
+                        </span>
                       </button>
                     );
                   })}
                 </div>
               </div>
 
-              {/* Status Counter */}
-              <p className="text-xs font-semibold text-slate-500">
-                {openedCookies.length} of 5 cookies opened
-              </p>
+              {/* Status Counter & Interactive Fortune Dots */}
+              <div className="flex items-center justify-center gap-2 pt-0.5">
+                <span className="text-xs font-semibold text-slate-500">
+                  {openedCookies.length} of 5 fortunes revealed
+                </span>
+                <div className="flex items-center gap-1">
+                  {[0, 1, 2, 3, 4].map((idx) => {
+                    const isOpened = openedCookies.includes(idx);
+                    const isCur = activeCookieIdx === idx;
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => {
+                          if (isOpened) {
+                            soundFx.playPop();
+                            setActiveCookieIdx(idx);
+                            setActiveCookieQuote(
+                              dynamicFortunes[idx] || DEFAULT_FORTUNE_QUOTES[idx % DEFAULT_FORTUNE_QUOTES.length]
+                            );
+                          } else {
+                            handleCookieClick(idx);
+                          }
+                        }}
+                        className={`h-2 rounded-full transition-all cursor-pointer ${
+                          isCur
+                            ? "w-6 bg-rose-500"
+                            : isOpened
+                            ? "w-2.5 bg-rose-300 hover:bg-rose-400"
+                            : "w-2 bg-slate-200 hover:bg-amber-300"
+                        }`}
+                        title={isOpened ? `Fortune #${idx + 1}` : `Crack cookie #${idx + 1}`}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
 
-              {/* Revealed Fortune Quote Card (Clean, elegant paper box without stars) */}
+              {/* Authentic Romantic Fortune Paper Slip */}
               <AnimatePresence mode="wait">
-                {activeCookieQuote && (
+                {activeCookieQuote ? (
                   <motion.div
-                    key={activeCookieQuote}
-                    initial={{ opacity: 0, scale: 0.95, y: 5 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.25 }}
-                    className="w-full bg-white rounded-2xl p-4 sm:p-5 shadow-lg shadow-pink-950/10 border border-pink-100 flex flex-col items-center text-center space-y-2 max-w-xs sm:max-w-sm relative overflow-hidden"
+                    key={`fortune-${activeCookieIdx ?? 0}`}
+                    initial={{ opacity: 0, y: 12, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                    transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 25 }}
+                    className="w-full max-w-sm sm:max-w-md mx-auto relative group"
                   >
-                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 via-pink-400 to-amber-400" />
-                    <span className="text-xl leading-none">🥠</span>
-                    <p className="text-xs sm:text-sm font-semibold text-slate-800 italic leading-relaxed px-2">
-                      &ldquo;{activeCookieQuote}&rdquo;
-                    </p>
+                    {/* Luxury Parchment Paper Slip */}
+                    <div className="relative rounded-2xl bg-gradient-to-b from-[#FFFDF9] via-[#FAF6F0] to-[#F5EFE6] p-1.5 shadow-xl shadow-amber-950/10 border border-amber-200/90 ring-1 ring-amber-100/50">
+                      {/* Inner Traditional Crimson Dashed Frame */}
+                      <div className="rounded-xl border border-dashed border-rose-300/80 bg-white/75 backdrop-blur-xs p-5 sm:p-6 flex flex-col items-center text-center space-y-2.5 relative overflow-hidden">
+                        {/* Top Chinese / Romantic Fortune Header */}
+                        <div className="flex items-center justify-center gap-2">
+                          <span className="text-xs">🏮</span>
+                          <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.22em] text-rose-600 font-sans">
+                            Eternal Love Prophecy #{((activeCookieIdx ?? 0) + 1)}
+                          </span>
+                          <span className="text-xs">🏮</span>
+                        </div>
+
+                        <div className="w-16 h-[1px] bg-gradient-to-r from-transparent via-rose-300 to-transparent" />
+
+                        {/* The Romantic Fortune Quote in Beautiful Serif */}
+                        <div className="relative px-2 sm:px-4 py-1">
+                          <span className="absolute -top-3 -left-1 text-2xl font-serif text-rose-300/60 select-none">“</span>
+                          <p className="font-serif italic text-base sm:text-lg text-slate-800 leading-relaxed font-semibold">
+                            {activeCookieQuote}
+                          </p>
+                          <span className="absolute -bottom-4 -right-1 text-2xl font-serif text-rose-300/60 select-none">”</span>
+                        </div>
+
+                        {/* Divider */}
+                        <div className="w-32 h-[1px] bg-gradient-to-r from-transparent via-amber-300 to-transparent pt-0.5" />
+
+                        {/* Lucky Numbers & Romantic Destiny Footer */}
+                        <div className="space-y-1 pt-0.5">
+                          <div className="text-[10px] sm:text-[11px] font-bold text-amber-900/85 tracking-wider flex items-center justify-center gap-1.5">
+                            <span className="text-amber-500">✨</span>
+                            <span>Lucky Numbers: {DEFAULT_LUCKY_NUMBERS[(activeCookieIdx ?? 0) % DEFAULT_LUCKY_NUMBERS.length]}</span>
+                            <span className="text-rose-500">✦</span>
+                            <span>Destiny: 100% ❤️</span>
+                          </div>
+                          <p className="text-[9px] sm:text-[10px] font-medium text-slate-400 italic">
+                            Destined for {recipientName} • Sealed with love by {senderName}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="w-full max-w-sm sm:max-w-md mx-auto p-1.5 rounded-2xl bg-gradient-to-b from-amber-50/70 via-pink-50/40 to-white border border-amber-200/60 shadow-sm"
+                  >
+                    <div className="rounded-xl border border-dashed border-pink-200/80 bg-white/70 p-4 sm:p-5 flex flex-col items-center text-center space-y-1.5">
+                      <div className="flex items-center gap-1.5 text-amber-500 text-sm animate-bounce">
+                        <span>✨</span>
+                        <span>🥠</span>
+                        <span>✨</span>
+                      </div>
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-800">
+                        Tap any golden cookie to crack open your fortunes!
+                      </h4>
+                      <p className="text-[11px] text-slate-500">
+                        5 sweet love prophecies are hidden inside just for you, {recipientName} 💕
+                      </p>
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
 
               {/* Action Button: Continue to Finale */}
-              <div className="pt-1">
+              <div className="pt-2">
                 {openedCookies.length < 5 ? (
                   <button
                     type="button"
@@ -1765,9 +2251,10 @@ export default function LoveSurpriseTemplate({
                         handleCookieClick(remaining[0]);
                       }
                     }}
-                    className="px-6 py-2.5 rounded-full bg-pink-100 text-pink-600 hover:bg-pink-200/80 font-bold text-xs transition-all cursor-pointer inline-flex items-center gap-1.5"
+                    className="px-6 py-2.5 rounded-full bg-pink-100 hover:bg-pink-200/80 text-pink-600 font-bold text-xs transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-xs active:scale-95"
                   >
-                    <span>Tap cookies to reveal fortunes ({openedCookies.length}/5)</span>
+                    <span>Crack Next Fortune ({openedCookies.length}/5)</span>
+                    <span>✨</span>
                   </button>
                 ) : (
                   <button
@@ -1783,7 +2270,7 @@ export default function LoveSurpriseTemplate({
                       });
                       setStep(getNextStep(6));
                     }}
-                    className="px-8 py-3 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
+                    className="px-8 py-3 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2 animate-pulse"
                   >
                     <span>The Big Question... ❤️</span>
                     <Heart className="w-4 h-4 fill-white text-white" />
@@ -1840,7 +2327,7 @@ export default function LoveSurpriseTemplate({
               <div className="min-h-[40px] flex items-center justify-center">
                 {noAttempts > 0 && (
                   <motion.div
-                    key={noAttempts}
+                    key={Math.min(noAttempts, noPhrases.length)}
                     initial={{ opacity: 0, y: -6, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     transition={{ type: "spring", stiffness: 350, damping: 20 }}
@@ -1854,13 +2341,13 @@ export default function LoveSurpriseTemplate({
 
               {/* Buttons Row with Growing Yes & Clean No Button */}
               <div className="relative min-h-[90px] flex items-center justify-center gap-4 pt-1">
-                {/* YES Button (Grows with each attempt) */}
+                {/* YES Button (Grows only starting after 8th message 'I'm ready! 👀') */}
                 <motion.button
                   id="yes-btn"
                   type="button"
                   onClick={handleYesClick}
                   animate={{
-                    scale: 1 + Math.min(noAttempts * 0.12, 1.8),
+                    scale: noAttempts < 8 ? 1 : 1 + Math.min((noAttempts - 7) * 0.16, 1.6),
                   }}
                   transition={{ type: "spring", stiffness: 350, damping: 20 }}
                   style={{ zIndex: 10 }}
@@ -1869,11 +2356,23 @@ export default function LoveSurpriseTemplate({
                   YES! 💖
                 </motion.button>
 
-                {/* NO Button (Fixed clean label, message is shown above) */}
+                {/* NO Button (Fixed clean label, starts random move on 8th message sequence upon hover/click) */}
                 <motion.button
                   id="no-btn"
                   type="button"
-                  onClick={handleNoDodge}
+                  animate={
+                    noButtonPos
+                      ? { x: noButtonPos.x, y: noButtonPos.y }
+                      : { x: 0, y: 0 }
+                  }
+                  transition={{
+                    type: "spring",
+                    stiffness: 450,
+                    damping: 26,
+                  }}
+                  onMouseEnter={() => handleNoInteraction("hover")}
+                  onTouchStart={() => handleNoInteraction("hover")}
+                  onClick={() => handleNoInteraction("click")}
                   style={{ zIndex: 30 }}
                   className="px-6 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm border border-slate-200/80 shadow-md cursor-pointer select-none whitespace-nowrap transition-colors relative z-30 active:scale-95"
                 >

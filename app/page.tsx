@@ -432,7 +432,7 @@ export default function HomePage() {
 
               <div className="space-y-1">
                 <p className="font-extrabold text-2xl sm:text-3xl text-emerald-600">
-                  {region === "IN" ? "₹199" : "$3.49"}
+                  {region === "IN" ? "₹149" : "$3.49"}
                 </p>
                 <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
                   Starting Price
@@ -1034,7 +1034,7 @@ export default function HomePage() {
                   <span className="text-center text-slate-400">₹1,500+ for flowers that die</span>
                   <span className="text-center font-black text-slate-900 flex items-center justify-center gap-1">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                    From ₹199 / $3.49 (full access)
+                    From ₹149 / $3.49 (full access)
                   </span>
                 </div>
               </div>

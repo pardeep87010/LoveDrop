@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LoveSurprise — All Stickers & Flow Arrangement</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    }
+    .badge-number {
+      background: linear-gradient(135deg, #FF2E63, #FF6B8B);
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-[#FFF5F8] via-[#FFF9FA] to-[#FFF0F4] text-slate-800 min-h-screen pb-24">
+
+  <!-- ===================================================================== -->
+  <!-- TOP HEADER                                                            -->
+  <!-- ===================================================================== -->
+  <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-pink-100 shadow-sm py-4 px-6">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <span class="text-3xl">🎀</span>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+            <span>Stickers Flow & Arrangement Blueprint</span>
+            <span class="text-xs px-2.5 py-0.5 rounded-full bg-pink-100 text-[#FF2E63] font-bold">UPDATED ORDER</span>
+          </h1>
+          <p class="text-xs text-slate-500 font-medium">
+            Updated sticker sequence (3rd, 5th, 7th, 8th, 12th swaps) aur message flow (freeze on last message)
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <a href="#simulator" class="px-3.5 py-1.5 rounded-full bg-pink-50 hover:bg-pink-100 text-[#FF2E63] text-xs font-bold transition-all border border-pink-200">
+          🎮 Interactive Simulator
+        </a>
+        <a href="#page7-flow" class="px-3.5 py-1.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white text-xs font-extrabold shadow-sm transition-all">
+          💔 NO Reaction (1-12)
+        </a>
+        <a href="#page8-flow" class="px-3.5 py-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold transition-all border border-emerald-200">
+          🎉 YES Celebration (1-2)
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 pt-8 space-y-12">
+
+    <!-- ===================================================================== -->
+    <!-- INTERACTIVE SIMULATOR (TRY THE FLOW LIVE)                             -->
+    <!-- ===================================================================== -->
+    <section id="simulator" class="glass-card rounded-3xl p-6 sm:p-8 border border-pink-200 shadow-xl space-y-6">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div class="space-y-1">
+          <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#FF2E63] bg-pink-50 px-2.5 py-0.5 rounded-full border border-pink-200">
+            Interactive Tester
+          </span>
+          <h2 class="text-2xl font-black text-slate-900 tracking-tight">
+            Live Simulator: NO &amp; YES Flow (New Arrangement)
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-500 font-medium">
+            Message button ke upar alag se dikhta hai, button par clean "No 💔" rehta hai, aur last message par freeze hota hai!
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="sim-reset-btn" class="px-3 py-1.5 rounded-full bg-white border border-slate-200 text-slate-600 text-xs font-bold hover:bg-slate-50 active:scale-95 transition-all">
+            🔄 Reset Simulator
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-white/70 rounded-2xl p-6 border border-pink-100">
+        <!-- Simulator Phone Screen -->
+        <div class="flex flex-col items-center justify-center">
+          <div class="w-[280px] sm:w-[320px] bg-white rounded-[36px] p-6 shadow-2xl border-4 border-pink-100 text-center space-y-4 min-h-[460px] flex flex-col justify-between relative overflow-hidden">
+            
+            <div class="pt-2">
+              <span id="sim-badge" class="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-600 border border-rose-200">
+                Page 7: Do You Love Me?
+              </span>
+            </div>
+
+            <!-- Active Sticker Preview inside Simulator -->
+            <div class="flex-1 flex flex-col items-center justify-center py-2">
+              <img id="sim-img" src="./stickers/intro_sticker.gif" onerror="this.src = './public/stickers/intro_sticker.gif'" alt="Simulator Sticker" class="w-36 h-36 object-contain rounded-2xl drop-shadow-md transition-all duration-300" />
+              <p id="sim-title" class="text-xs font-bold text-slate-800 mt-2">
+                Initial: Ready
+              </p>
+            </div>
+
+            <!-- Reaction Message in the upper area of the button -->
+            <div class="min-h-[36px] flex items-center justify-center">
+              <span id="sim-upper-msg" class="hidden px-3.5 py-1 rounded-full bg-pink-50 border border-pink-200 text-[#FF2E63] font-black text-xs shadow-2xs tracking-wide">
+                Really?! 😳
+              </span>
+            </div>
+
+            <!-- Action Buttons inside Simulator -->
+            <div class="space-y-2 pt-1">
+              <div class="flex items-center justify-center gap-3">
+                <button id="sim-yes-btn" class="px-6 py-2.5 rounded-full bg-[#FF2E63] text-white font-black text-xs shadow-md shadow-pink-500/30 hover:scale-105 active:scale-95 transition-all">
+                  YES! ❤️
+                </button>
+                <button id="sim-no-btn" class="px-5 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs active:scale-95 transition-all">
+                  No 💔
+                </button>
+              </div>
+              <p id="sim-hint" class="text-[10px] font-semibold text-rose-500 italic">
+                Click "No" to see sticker &amp; upper message progression!
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Simulator Details & Controls -->
+        <div class="space-y-4">
+          <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+            <span>Inspector Data</span>
+            <span id="sim-indicator" class="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold">Waiting for input</span>
+          </h3>
+
+          <div class="space-y-2.5 text-xs">
+            <div class="p-3 rounded-xl bg-pink-50/60 border border-pink-100 flex justify-between items-center">
+              <span class="text-slate-500 font-semibold">Current State:</span>
+              <span id="info-state" class="font-extrabold text-[#FF2E63]">Initial / Page 1 Intro</span>
+            </div>
+            <div class="p-3 rounded-xl bg-pink-50/60 border border-pink-100 flex justify-between items-center">
+              <span class="text-slate-500 font-semibold">Active File Path:</span>
+              <code id="info-file" class="font-mono text-[11px] text-slate-800 bg-white px-2 py-0.5 rounded border border-pink-200">public/stickers/intro_sticker.gif</code>
+            </div>
+            <div class="p-3 rounded-xl bg-pink-50/60 border border-pink-100 flex justify-between items-center">
+              <span class="text-slate-500 font-semibold">Dodge Count / Step:</span>
+              <span id="info-step" class="font-black text-slate-900">0 / 12</span>
+            </div>
+            <div class="p-3 rounded-xl bg-pink-50/60 border border-pink-100 flex justify-between items-center">
+              <span class="text-slate-500 font-semibold">Upper Message:</span>
+              <span id="info-upper-msg" class="font-bold text-[#FF2E63]">None (Initial)</span>
+            </div>
+            <div class="p-3 rounded-xl bg-pink-50/60 border border-pink-100 flex justify-between items-center">
+              <span class="text-slate-500 font-semibold">Sticker Identity / Source:</span>
+              <span id="info-source" class="font-bold text-slate-700">Siyatech Animated Sticker</span>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs space-y-1.5 text-emerald-900">
+            <p class="font-bold flex items-center gap-1.5">
+              <span>✅</span>
+              <span>Updated Logic Implemented:</span>
+            </p>
+            <p class="text-[11px] leading-relaxed text-emerald-800">
+              1. NO button text fixed ("No 💔"), reaction message button ke upar pink pill me aata hai.<br>
+              2. Messages 9th text ("Do you think you can win against me? 😈") ke baad repeat nahi hote, last message par freeze rehte hain.<br>
+              3. NO button har baar random position par nahi bhagta.<br>
+              4. "Sarah, I need to know..." subtitle remove ho chuka hai.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- 1. PAGE 1: WELCOME & TYPING INTRO STICKER                             -->
+    <!-- ===================================================================== -->
+    <section id="page1-flow" class="space-y-4">
+      <div class="flex items-center gap-3">
+        <span class="w-8 h-8 rounded-full badge-number text-white font-black text-sm flex items-center justify-center shadow-md">
+          1
+        </span>
+        <div>
+          <h2 class="text-xl font-black text-slate-900">Page 1: Welcome &amp; Typing Intro Sticker</h2>
+          <p class="text-xs text-slate-500 font-medium">Opening screen par welcome card ke andar dynamic typing text ke upar dikhta hai.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="glass-card rounded-2xl p-5 border border-pink-200 shadow-md flex flex-col justify-between hover:shadow-lg transition-all space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-black uppercase tracking-wider text-pink-600 bg-pink-50 px-2.5 py-0.5 rounded-full border border-pink-200">
+              Intro Sticker
+            </span>
+            <span class="text-[11px] text-slate-400 font-mono">120 x 120 px</span>
+          </div>
+
+          <div class="w-full h-44 bg-pink-50/50 rounded-xl flex items-center justify-center p-3 border border-pink-100">
+            <img src="./stickers/intro_sticker.gif" onerror="this.src = './public/stickers/intro_sticker.gif'" alt="Siyatech Sticker" class="max-h-36 max-w-full object-contain drop-shadow" />
+          </div>
+
+          <div class="space-y-2 text-xs">
+            <p class="font-extrabold text-slate-900 text-sm">Siyatech Sticker</p>
+            <div class="space-y-1 text-slate-600">
+              <p><strong>File:</strong> <code class="text-[11px] bg-slate-100 px-1.5 py-0.5 rounded">public/stickers/intro_sticker.gif</code></p>
+              <p><strong>Source:</strong> Tenor Post ID <code class="text-[11px] bg-slate-100 px-1.5 py-0.5 rounded">13810685012896103860</code></p>
+              <p><strong>Trigger:</strong> Page load hote hi card ke upar sparkling stars ke sath animate hota hai.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- 2. PAGE 7: RUNAWAY "NO" BUTTON REACTIONS (NEW SWAPPED 12 STICKERS)    -->
+    <!-- ===================================================================== -->
+    <section id="page7-flow" class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-full badge-number text-white font-black text-sm flex items-center justify-center shadow-md">
+            7
+          </span>
+          <div>
+            <h2 class="text-xl font-black text-slate-900">Page 7: Runaway "NO" Button Reactions (New Swapped Order)</h2>
+            <p class="text-xs text-slate-500 font-medium">Aapke diye gaye swap rules ke anusaar 1 se 12 reaction stickers ka naya sequence:</p>
+          </div>
+        </div>
+        <span class="text-xs font-bold text-[#FF2E63] bg-pink-50 px-3 py-1 rounded-full border border-pink-200">
+          Total 12 Reactions
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+
+        <!-- Reaction 1 -->
+        <div class="glass-card rounded-2xl p-4 border border-pink-200 shadow-sm flex flex-col justify-between hover:shadow-md hover:border-pink-300 transition-all space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-black text-white bg-[#FF2E63] px-2 py-0.5 rounded-full">
+              #1 NO Click
+            </span>
+            <span class="text-[10px] font-semibold text-slate-400">Tenor 3036969483238356536</span>
+          </div>
+          <div class="w-full h-36 bg-pink-50/40 rounded-xl flex items-center justify-center p-2 border border-pink-100">
+            <img src="./stickers/no1_sticker.gif" onerror="this.src = './public/stickers/no1_sticker.gif'" alt="Kitty Sticker" class="max-h-32 object-contain" />
+          </div>
+          <div class="text-xs space-y-1">
+            <p class="font-extrabold text-slate-900">1. Kitty Sticker</p>
+            <p class="text-slate-500 text-[11px]"><code>public/stickers/no1_sticker.gif</code></p>
+            <p class="text-[11px] text-[#FF2E63] font-semibold italic">Message: "Really?! 😳"</p>
+          </div>
+        </div>
+
+        <!-- Reaction 2 -->
+        <div class="glass-card rounded-2xl p-4 border border-pink-200 shadow-sm flex flex-col justify-between hover:shadow-md hover:border-pink-300 transition-all space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-black text-white bg-[#FF2E63] px-2 py-0.5 rounded-full">
+              #2 NO Click
+            </span>
+            <span class="text-[10px] font-semibold text-slate-400">Tenor 15488998239354870297</span>
+          </div>
+          <div class="w-full h-36 bg-pink-50/40 rounded-xl flex items-center justify-center p-2 border border-pink-100">
+            <img src="./stickers/no2_sticker.gif" onerror="this.src = './public/stickers/no2_sticker.gif'" alt="Cute Pinch GIF" class="max-h-32 object-contain" />
+          </div>
+          <div class="text-xs space-y-1">
+            <p class="font-extrabold text-slate-900">2. Cute Pinch GIF</p>
+            <p class="text-slate-500 text-[11px]"><code>public/stickers/no2_sticker.gif</code></p>
+            <p class="text-[11px] text-[#FF2E63] font-semibold italic">Message: "Are you sure ? 🥺"</p>
+          </div>
+        </div>
+
+        <!-- Reaction 3 (Couple Cat) -->
+        <div class="glass-card rounded-2xl p-4 border border-pink-200 shadow-sm flex flex-col justify-between hover:shadow-md hover:border-pink-300 transition-all space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-black text-white bg-[#FF2E63] px-2 py-0.5 rounded-full">
+              #3 NO Click (Swapped)
+            </span>
+            <span class="text-[10px] font-semibold text-slate-400">Tenor 7246268805405123760</span>
+          </div>
+          <div class="w-full h-36 bg-pink-50/40 rounded-xl flex items-center justify-center p-2 border border-pink-100">
+            <img src="./stickers/no10_sticker.gif" onerror="this.src = './public/stickers/no10_sticker.gif'" alt="Couple Cat GIF" class="max-h-32 object-contain" />
+          </div>
+          <div class="text-xs space-y-1">
+            <p class="font-extrabold text-slate-900">3. Couple Cat GIF</p>
+            <p class="text-slate-500 text-[11px]"><code>public/stickers/no10_sticker.gif</code></p>
+            <p class="text-[11px] text-[#FF2E63] font-semibold italic">Message: "Please........... 🥺"</p>
+          </div>
+        </div>
+
+        <!-- Reaction 4 (Bubu Dudu Cry) -->
+        <div class="glass-card rounded-2xl p-4 border border-pink-200 shadow-sm flex flex-col justify-between hover:shadow-md hover:border-pink-300 transition-all space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-black text-white bg-[#FF2E63] px-2 py-0.5 rounded-full">
+              #4 NO Click (Swapped)
+            </span>
+            <span class="text-[10px] font-semibold text-slate-400">Tenor 3989935455702505955</span>
+          </div>
+          <div class="w-full h-36 bg-pink-50/40 rounded-xl flex items-center justify-center p-2 border border-pink-100">
+            <img src="./stickers/no6_sticker.gif" onerror="this.src = './public/stickers/no6_sticker.gif'" alt="Bubu Dudu Sseeyall" class="max-h-32 object-contain" />
+          </div>
+          <div class="text-xs space-y-1">
+            <p class="font-extrabold text-slate-900">4. Bubu Dudu Cry Sticker</p>
+            <p class="text-slate-500 text-[11px]"><code>public/stickers/no6_sticker.gif</code></p>
+            <p class="text-[11px] text-[#FF2E63] font-semibold italic">Message: "Think Again! 😜"</p>
+          </div>
+        </div>
+
+        <!-- Reaction 5 (Cat Flowers Rose) -->
+        <div class="glass-card rounded-2xl p-4 border border-pink-200 shadow-sm flex flex-col justify-between hover:shadow-md hover:border-pink-300 transition-all space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-black text-white bg-[#FF2E63] px-2 py-0.5 rounded-full">
+              #5 NO Click (Swapped)
+            </span>
+            <span class="text-[10px] font-semibold text-slate-400">Tenor 9659720324626110636</span>
+          </div>
+          <div class="w-full h-36 bg-pink-50/40 rounded-xl flex items-center justify-center p-2 border border-pink-100">
+            <img src="./stickers/no7_sticker.gif" onerror="this.src = './public/stickers/no7_sticker.gif'" alt="Cat Flowers Cat Rose" class="max-h-32 object-contain" />
+          </div>
+          <div class="text-xs space-y-1">
+            <p class="font-extrabold text-slate-900">5. Cat Flowers Rose</p>
+            <p class="text-slate-500 text-[11px]"><code>public/stickers/no7_sticker.gif</code></p>
+            <p class="text-[11px] text-[#FF2E63] font-semibold italic">Message: "Don't do this to me! 😭"</p>
+          </div>
+        </div>
+
+        <!-- Reaction 6 (Peach & Goma Cats) -->
+        <div class="glass-card rounded-2xl p-4 border border-pink-200 shadow-sm flex flex-col justify-between hover:shadow-md hover:border-pink-300 transition-all space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-black text-white bg-[#FF2E63] px-2 py-0.5 rounded-full">
+              #6 NO Click (Swapped)
+            </span>
+            <span class="text-[10px] font-semibold text-slate-400">Tenor 5929299912307890417</span>
+          </div>
+          <div class="w-full h-36 bg-pink-50/40 rounded-xl flex items-center justify-center p-2 border border-pink-100">
+            <img src="./stickers/no9_sticker.gif" onerror="this.src = './public/stickers/no9_sticker.gif'" alt="Peach And Goma Cats" class="max-h-32 object-contain" />
+          </div>
+          <div class="text-xs space-y-1">
+            <p class="font-extrabold text-slate-900">6. Peach &amp; Goma Cats</p>
+            <p class="text-slate-500 text-[11px]"><code>public/stickers/no9_sticker.gif</code></p>
+            <p class="text-[11px] text-[#FF2E63] font-semibold italic">Message: "Come onnnn 😩"</p>
+          </div>
+        </div>
+
+        <!-- Reaction 7 (Goma Peach Bubu) -->
+        <div class="glass-card rounded-2xl p-4 border border-pink-200 shadow-sm flex flex-col justify-between hover:shadow-md hover:border-pink-300 transition-all space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-black text-white bg-[#FF2E63] px-2 py-0.5 rounded-full">
+              #7 NO Click (Swapped)
+            </span>
+            <span class="text-[10px] font-semibold text-slate-400">Tenor 8788320488175901435</span>
+          </div>
+          <div class="w-full h-36 bg-pink-50/40 rounded-xl flex items-center justify-center p-2 border border-pink-100">
+            <img src="./stickers/no8_sticker.gif" onerror="this.src = './public/stickers/no8_sticker.gif'" alt="Goma Peach Bubu" class="max-h-32 object-contain" />
+          </div>
+          <div class="text-xs space-y-1">
+            <p class="font-extrabold text-slate-900">7. Goma Peach Bubu GIF</p>
+            <p class="text-slate-500 text-[11px]"><code>public/stickers/no8_sticker.gif</code></p>
+            <p class="text-[11px] text-[#FF2E63] font-semibold italic">Message: "So you wanna play with me 😏"</p>
+          </div>
+        </div>
+
+        <!-- Reaction 8 (no6.gif) -->
+        <div class="glass-card rounded-2xl p-4 border border-pink-200 shadow-sm flex flex-col justify-between hover:shadow-md hover:border-pink-300 transition-all space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-black text-white bg-[#FF2E63] px-2 py-0.5 rounded-full">
+              #8 NO Click (Swapped)
+            </span>
+            <span class="text-[10px] font-semibold text-slate-400">User Upload (no6.gif)</span>
+          </div>
+          <div class="w-full h-36 bg-pink-50/40 rounded-xl flex items-center justify-center p-2 border border-pink-100">
+            <img src="./stickers/no6.gif" onerror="this.src = './public/stickers/no6.gif'" alt="no6.gif" class="max-h-32 object-contain" />
+          </div>
+          <div class="text-xs space-y-1">
+            <p class="font-extrabold text-slate-900">8. no6.gif</p>
+            <p class="text-slate-500 text-[11px]"><code>public/stickers/no6.gif</code></p>
+            <p class="text-[11px] text-[#FF2E63] font-semibold italic">Message: "Okay watch then me 😎"</p>
+          </div>
+        </div>
+
+        <!-- Reaction 9 (Valgal696) -->
+        <div class="glass-card rounded-2xl p-4 border border-pink-200 shadow-sm flex flex-col justify-between hover:shadow-md hover:border-pink-300 transition-all space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-black text-white bg-[#FF2E63] px-2 py-0.5 rounded-full">
+              #9 NO Click (Swapped)
+            </span>
+            <span class="text-[10px] font-semibold text-slate-400">Tenor 13323615782168966871</span>
+          </div>
+          <div class="w-full h-36 bg-pink-50/40 rounded-xl flex items-center justify-center p-2 border border-pink-100">
+            <img src="./stickers/no3_sticker.gif" onerror="this.src = './public/stickers/no3_sticker.gif'" alt="Valgal696 GIF" class="max-h-32 object-contain" />
+          </div>
+          <div class="text-xs space-y-1">
+            <p class="font-extrabold text-slate-900">9. Valgal696 GIF</p>
+            <p class="text-slate-500 text-[11px]"><code>public/stickers/no3_sticker.gif</code></p>
+            <p class="text-[11px] text-[#FF2E63] font-semibold italic">Message: "Do you think you can win against me? 😈"</p>
+          </div>
+        </div>
+
+        <!-- Reaction 10 (no5.gif) -->
+        <div class="glass-card rounded-2xl p-4 border border-pink-200 shadow-sm flex flex-col justify-between hover:shadow-md hover:border-pink-300 transition-all space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-black text-white bg-[#FF2E63] px-2 py-0.5 rounded-full">
+              #10 NO Click (Swapped)
+            </span>
+            <span class="text-[10px] font-semibold text-slate-400">User Upload (no5.gif)</span>
+          </div>
+          <div class="w-full h-36 bg-pink-50/40 rounded-xl flex items-center justify-center p-2 border border-pink-100">
+            <img src="./stickers/no5.gif" onerror="this.src = './public/stickers/no5.gif'" alt="no5.gif" class="max-h-32 object-contain" />
+          </div>
+          <div class="text-xs space-y-1">
+            <p class="font-extrabold text-slate-900">10. no5.gif</p>
+            <p class="text-slate-500 text-[11px]"><code>public/stickers/no5.gif</code></p>
+            <p class="text-[11px] text-[#FF2E63] font-semibold italic">Message: "Do you think you can win against me? 😈"</p>
+          </div>
+        </div>
+
+        <!-- Reaction 11 (Bangladesh Flag) -->
+        <div class="glass-card rounded-2xl p-4 border border-pink-200 shadow-sm flex flex-col justify-between hover:shadow-md hover:border-pink-300 transition-all space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-black text-white bg-[#FF2E63] px-2 py-0.5 rounded-full">
+              #11 NO Click
+            </span>
+            <span class="text-[10px] font-semibold text-slate-400">Tenor 14752973347294032603</span>
+          </div>
+          <div class="w-full h-36 bg-pink-50/40 rounded-xl flex items-center justify-center p-2 border border-pink-100">
+            <img src="./stickers/no11_sticker.gif" onerror="this.src = './public/stickers/no11_sticker.gif'" alt="Bangladesh Flag GIF" class="max-h-32 object-contain" />
+          </div>
+          <div class="text-xs space-y-1">
+            <p class="font-extrabold text-slate-900">11. Bangladesh Flag GIF</p>
+            <p class="text-slate-500 text-[11px]"><code>public/stickers/no11_sticker.gif</code></p>
+            <p class="text-[11px] text-[#FF2E63] font-semibold italic">Message: "Do you think you can win against me? 😈"</p>
+          </div>
+        </div>
+
+        <!-- Reaction 12 (no4.gif - Last) -->
+        <div class="glass-card rounded-2xl p-4 border-2 border-[#FF2E63] shadow-md flex flex-col justify-between hover:shadow-lg transition-all space-y-3 bg-rose-50/40">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-black text-white bg-slate-900 px-2 py-0.5 rounded-full">
+              #12 LAST STICKER
+            </span>
+            <span class="text-[10px] font-bold text-[#FF2E63]">User Upload (no4.gif)</span>
+          </div>
+          <div class="w-full h-36 bg-white rounded-xl flex items-center justify-center p-2 border border-pink-200">
+            <img src="./stickers/no4.gif" onerror="this.src = './public/stickers/no4.gif'" alt="no4.gif" class="max-h-32 object-contain" />
+          </div>
+          <div class="text-xs space-y-1">
+            <p class="font-extrabold text-slate-900">12. no4.gif (Final Reaction)</p>
+            <p class="text-slate-500 text-[11px]"><code>public/stickers/no4.gif</code></p>
+            <p class="text-[11px] text-[#FF2E63] font-semibold italic">Message: "Do you think you can win against me? 😈"</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- 3. PAGE 8: YES CELEBRATION (2 STAGES SEQUENTIAL)                      -->
+    <!-- ===================================================================== -->
+    <section id="page8-flow" class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-full bg-emerald-500 text-white font-black text-sm flex items-center justify-center shadow-md">
+            8
+          </span>
+          <div>
+            <h2 class="text-xl font-black text-slate-900">Page 8: YES Celebration Sequential Flow</h2>
+            <p class="text-xs text-slate-500 font-medium">Jab user YES dabata hai: Love BGM 02:00 min se bajta hai aur ye 2 GIFs sequential order me aate hain.</p>
+          </div>
+        </div>
+        <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+          2-Stage Celebration
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Stage 1 (yes1.gif for 3 seconds) -->
+        <div class="glass-card rounded-2xl p-6 border-2 border-emerald-200 shadow-md space-y-4 flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 flex items-center gap-1.5">
+              <span>⏱️ Stage 1</span>
+              <span>• Exactly 3 Seconds</span>
+            </span>
+            <span class="text-xs text-slate-400 font-mono">5.0 MB GIF</span>
+          </div>
+
+          <div class="w-full h-52 bg-emerald-50/30 rounded-2xl flex items-center justify-center p-3 border border-emerald-100">
+            <img src="./stickers/yes1.gif" onerror="this.src = './public/stickers/yes1.gif'" alt="yes1.gif" class="max-h-48 max-w-full object-contain drop-shadow-md" />
+          </div>
+
+          <div class="space-y-2 text-xs">
+            <h3 class="text-base font-extrabold text-slate-900">yes1.gif (Celebration Blast)</h3>
+            <div class="space-y-1 text-slate-600">
+              <p><strong>File:</strong> <code class="text-[11px] bg-slate-100 px-1.5 py-0.5 rounded">public/stickers/yes1.gif</code></p>
+              <p><strong>Screen Text:</strong> <span class="text-[#FF2E63] font-bold">"YAAAY! I knew it! 🥰 You love me too ❤️"</span></p>
+              <p><strong>Timer Behavior:</strong> 3 second tak screen par display hota hai, phir sound effect bajta hai aur automatically Stage 2 switch hota hai.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stage 2 (yes2.gif -> Love Letter) -->
+        <div class="glass-card rounded-2xl p-6 border-2 border-pink-200 shadow-md space-y-4 flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-extrabold uppercase tracking-wider text-pink-700 bg-pink-50 px-3 py-1 rounded-full border border-pink-200 flex items-center gap-1.5">
+              <span>✨ Stage 2</span>
+              <span>• Smooth Transition</span>
+            </span>
+            <span class="text-xs text-slate-400 font-mono">897 KB GIF</span>
+          </div>
+
+          <div class="w-full h-52 bg-pink-50/30 rounded-2xl flex items-center justify-center p-3 border border-pink-100">
+            <img src="./stickers/yes2.gif" onerror="this.src = './public/stickers/yes2.gif'" alt="yes2.gif" class="max-h-48 max-w-full object-contain drop-shadow-md" />
+          </div>
+
+          <div class="space-y-2 text-xs">
+            <h3 class="text-base font-extrabold text-slate-900">yes2.gif (Romantic Hold)</h3>
+            <div class="space-y-1 text-slate-600">
+              <p><strong>File:</strong> <code class="text-[11px] bg-slate-100 px-1.5 py-0.5 rounded">public/stickers/yes2.gif</code></p>
+              <p><strong>Screen Text:</strong> <span class="text-[#FF2E63] font-bold">"Forever &amp; Always ❤️"</span></p>
+              <p><strong>Next Transition:</strong> 4.5 seconds baad ya user tap karte hi unseal ho kar Vintage Typewriter Love Letter screen par aata hai.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- JAVASCRIPT LOGIC FOR THE LIVE SIMULATOR                               -->
+  <!-- ===================================================================== -->
+  <script>
+    const noStickers = [
+      { name: "1. Kitty Sticker", file: "./stickers/no1_sticker.gif", altFile: "./public/stickers/no1_sticker.gif", text: "Really?! 😳", source: "Tenor ID 3036969483238356536" },
+      { name: "2. Cute Pinch GIF", file: "./stickers/no2_sticker.gif", altFile: "./public/stickers/no2_sticker.gif", text: "Are you sure ? 🥺", source: "Tenor ID 15488998239354870297" },
+      { name: "3. Couple Cat GIF", file: "./stickers/no10_sticker.gif", altFile: "./public/stickers/no10_sticker.gif", text: "Please........... 🥺", source: "Tenor ID 7246268805405123760" },
+      { name: "4. Bubu Dudu Cry Sticker", file: "./stickers/no6_sticker.gif", altFile: "./public/stickers/no6_sticker.gif", text: "Think Again! 😜", source: "Tenor ID 3989935455702505955" },
+      { name: "5. Cat Flowers Rose", file: "./stickers/no7_sticker.gif", altFile: "./public/stickers/no7_sticker.gif", text: "Don't do this to me! 😭", source: "Tenor ID 9659720324626110636" },
+      { name: "6. Peach & Goma Cats", file: "./stickers/no9_sticker.gif", altFile: "./public/stickers/no9_sticker.gif", text: "Come onnnn 😩", source: "Tenor ID 5929299912307890417" },
+      { name: "7. Goma Peach Bubu", file: "./stickers/no8_sticker.gif", altFile: "./public/stickers/no8_sticker.gif", text: "So you wanna play with me 😏", source: "Tenor ID 8788320488175901435" },
+      { name: "8. User no6.gif", file: "./stickers/no6.gif", altFile: "./public/stickers/no6.gif", text: "Okay watch then me 😎", source: "User Upload no6.gif" },
+      { name: "9. Valgal696 GIF", file: "./stickers/no3_sticker.gif", altFile: "./public/stickers/no3_sticker.gif", text: "Do you think you can win against me? 😈", source: "Tenor ID 13323615782168966871" },
+      { name: "10. User no5.gif", file: "./stickers/no5.gif", altFile: "./public/stickers/no5.gif", text: "Do you think you can win against me? 😈", source: "User Upload no5.gif" },
+      { name: "11. Bangladesh Flag GIF", file: "./stickers/no11_sticker.gif", altFile: "./public/stickers/no11_sticker.gif", text: "Do you think you can win against me? 😈", source: "Tenor ID 14752973347294032603" },
+      { name: "12. User no4.gif (Final)", file: "./stickers/no4.gif", altFile: "./public/stickers/no4.gif", text: "Do you think you can win against me? 😈", source: "User Upload no4.gif (Last)" }
+    ];
+
+    const noMessages = [
+      "Really?! 😳",
+      "Are you sure ? 🥺",
+      "Please........... 🥺",
+      "Think Again! 😜",
+      "Don't do this to me! 😭",
+      "Come onnnn 😩",
+      "So you wanna play with me 😏",
+      "Okay watch then me 😎",
+      "Do you think you can win against me? 😈"
+    ];
+
+    let noCount = 0;
+    let yesTimer = null;
+
+    const simImg = document.getElementById("sim-img");
+    const simTitle = document.getElementById("sim-title");
+    const simUpperMsg = document.getElementById("sim-upper-msg");
+    const simBadge = document.getElementById("sim-badge");
+    const simHint = document.getElementById("sim-hint");
+    const infoState = document.getElementById("info-state");
+    const infoFile = document.getElementById("info-file");
+    const infoStep = document.getElementById("info-step");
+    const infoUpperMsg = document.getElementById("info-upper-msg");
+    const infoSource = document.getElementById("info-source");
+    const simIndicator = document.getElementById("sim-indicator");
+
+    function setSimulatorSticker(filePath, altPath, title, upperMsgText, badgeText, badgeColor, stateText, sourceText) {
+      simImg.onerror = function() {
+        if (altPath) this.src = altPath;
+      };
+      simImg.src = filePath;
+      simTitle.innerText = title;
+      
+      if (upperMsgText) {
+        simUpperMsg.innerText = upperMsgText;
+        simUpperMsg.classList.remove("hidden");
+      } else {
+        simUpperMsg.classList.add("hidden");
+      }
+
+      simBadge.innerText = badgeText;
+      simBadge.className = "text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full " + badgeColor;
+      infoState.innerText = stateText;
+      infoFile.innerText = filePath.replace('./', 'public/');
+      infoUpperMsg.innerText = upperMsgText || "None (Initial)";
+      infoSource.innerText = sourceText;
+    }
+
+    // NO button click handler
+    document.getElementById("sim-no-btn").addEventListener("click", () => {
+      if (yesTimer) clearTimeout(yesTimer);
+      noCount++;
+
+      // Active sticker index (clamps to last sticker)
+      const sIdx = Math.min(noCount - 1, noStickers.length - 1);
+      const stickerItem = noStickers[sIdx];
+
+      // Active message (freezes on 9th last message)
+      const mIdx = Math.min(noCount - 1, noMessages.length - 1);
+      const activeMsg = noMessages[mIdx];
+
+      setSimulatorSticker(
+        stickerItem.file,
+        stickerItem.altFile,
+        stickerItem.name,
+        activeMsg,
+        "Page 7: Reaction #" + (sIdx + 1) + " of 12",
+        "bg-rose-50 text-rose-600 border border-rose-200",
+        "Page 7 (NO Click #" + noCount + ")",
+        stickerItem.source
+      );
+
+      infoStep.innerText = (sIdx + 1) + " / 12 (Sticker) • Msg #" + (mIdx + 1);
+      simIndicator.innerText = "NO clicked " + noCount + "x";
+      simIndicator.className = "text-[10px] px-2 py-0.5 rounded-full bg-rose-100 text-rose-700 font-bold";
+      simHint.innerText = mIdx === noMessages.length - 1 
+        ? 'Last message reached: "' + activeMsg + '" (Froze, will not repeat)' 
+        : 'Upper Message: "' + activeMsg + '"';
+    });
+
+    // YES button click handler
+    document.getElementById("sim-yes-btn").addEventListener("click", () => {
+      if (yesTimer) clearTimeout(yesTimer);
+
+      setSimulatorSticker(
+        "./stickers/yes1.gif",
+        "./public/stickers/yes1.gif",
+        "yes1.gif (Celebration 1)",
+        "YAAAY! I knew it! 🥰",
+        "Page 8: YES Celebration (Stage 1)",
+        "bg-emerald-50 text-emerald-700 border border-emerald-200",
+        "Page 8 Stage 1 (3 seconds hold + Song jumps to 02:00)",
+        "User yes1.gif"
+      );
+
+      infoStep.innerText = "Stage 1 of 2";
+      simIndicator.innerText = "YES Clicked! Playing Stage 1 (3s)...";
+      simIndicator.className = "text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold";
+      simHint.innerText = "Stage 1 active! In 3 seconds, Stage 2 (yes2.gif) will appear...";
+
+      yesTimer = setTimeout(() => {
+        setSimulatorSticker(
+          "./stickers/yes2.gif",
+          "./public/stickers/yes2.gif",
+          "yes2.gif (Celebration 2)",
+          "Forever & Always ❤️",
+          "Page 8: YES Celebration (Stage 2)",
+          "bg-pink-50 text-pink-700 border border-pink-200",
+          "Page 8 Stage 2 (Transition to Love Letter)",
+          "User yes2.gif"
+        );
+        infoStep.innerText = "Stage 2 of 2";
+        simIndicator.innerText = "Stage 2 active! Ready for Love Letter";
+        simIndicator.className = "text-[10px] px-2 py-0.5 rounded-full bg-pink-100 text-pink-800 font-bold";
+        simHint.innerText = "Now ready to open typewriter parchment love letter!";
+      }, 3000);
+    });
+
+    // Reset button
+    document.getElementById("sim-reset-btn").addEventListener("click", () => {
+      if (yesTimer) clearTimeout(yesTimer);
+      noCount = 0;
+      setSimulatorSticker(
+        "./stickers/intro_sticker.gif",
+        "./public/stickers/intro_sticker.gif",
+        "Initial: Ready",
+        null,
+        "Page 7: Do You Love Me?",
+        "bg-rose-50 text-rose-600 border border-rose-200",
+        "Initial / Ready",
+        "Siyatech Sticker"
+      );
+      infoStep.innerText = "0 / 12";
+      simIndicator.innerText = "Waiting for input";
+      simIndicator.className = "text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold";
+      simHint.innerText = 'Click "No" to see sticker & upper message progression!';
+    });
+  </script>
+</body>
+</html>

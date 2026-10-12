@@ -55,6 +55,8 @@ export interface LoveSurpriseData {
   bgMusic: AudioTrackId;
   whatsappNumber?: string;
   whatsappMessage?: string;
+  creatorEmail?: string;
+  recipientEmail?: string;
   isPaid: boolean;
   createdAt: string;
   expiresAt: string;

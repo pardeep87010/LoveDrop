@@ -19,16 +19,44 @@ export default function RecipientView({ data }: RecipientViewProps) {
   const [enteredPin, setEnteredPin] = useState("");
   const [pinError, setPinError] = useState(false);
   const [pinAttempts, setPinAttempts] = useState(0);
+  const [isVerifying, setIsVerifying] = useState(false);
 
   const handleVerifyPin = async () => {
+    if (!enteredPin.trim() || isVerifying) return;
     soundFx.playPop();
     if (pinAttempts >= 5) {
       alert("Too many incorrect attempts. Please ask whoever sent this surprise for the PIN!");
       return;
     }
 
-    const isValid = await verifyPasscode(enteredPin, data.passcodeHash);
-    if (isValid) {
+    setIsVerifying(true);
+    let isSuccess = false;
+
+    // 1. Attempt secure server-side verification with rate limiting
+    try {
+      const res = await fetch(`/api/surprise/${data.slug}/verify-pin`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pin: enteredPin.trim() }),
+      });
+      const resData = await res.json();
+      if (res.ok && resData.success && resData.verified) {
+        isSuccess = true;
+      } else if (res.status === 429) {
+        alert(resData.error || "Too many attempts. Please wait a minute!");
+        setIsVerifying(false);
+        return;
+      }
+    } catch {
+      // If server or network is offline, fallback to client hash check
+      if (data.passcodeHash) {
+        isSuccess = await verifyPasscode(enteredPin, data.passcodeHash);
+      }
+    }
+
+    setIsVerifying(false);
+
+    if (isSuccess) {
       soundFx.playSuccessChime();
       setIsUnlocked(true);
       confetti({ particleCount: 60, spread: 60 });
