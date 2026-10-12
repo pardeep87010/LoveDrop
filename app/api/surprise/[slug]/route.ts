@@ -26,19 +26,14 @@ export async function GET(
       );
     }
 
-    // Atomically increment viewsCount and fetch document
-    const surprise = await Surprise.findOneAndUpdate(
+    // 1. High-speed lean read query (No DB write locking)
+    const surprise = await Surprise.findOne(
       { slug },
-      { $inc: { viewsCount: 1 } },
       {
-        new: true,
-        // Exclude sensitive fields from public response
-        projection: {
-          passcodeHash: 0,
-          creatorEmail: 0,
-          recipientEmail: 0,
-          __v: 0,
-        },
+        passcodeHash: 0,
+        creatorEmail: 0,
+        recipientEmail: 0,
+        __v: 0,
       }
     ).lean();
 
@@ -49,10 +44,24 @@ export async function GET(
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      data: surprise,
-    });
+    // 2. Non-blocking asynchronous view count increment (Zero response delay)
+    Surprise.updateOne({ slug }, { $inc: { viewsCount: 1 } })
+      .exec()
+      .catch((err) => console.warn("[Non-blocking view count update error]:", err?.message));
+
+    // 3. High-performance Edge CDN caching (60s fresh, 5min stale-while-revalidate)
+    return NextResponse.json(
+      {
+        success: true,
+        data: surprise,
+      },
+      {
+        status: 200,
+        headers: {
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+        },
+      }
+    );
   } catch (err: any) {
     console.error("[Get Surprise Error]:", err);
     return NextResponse.json(

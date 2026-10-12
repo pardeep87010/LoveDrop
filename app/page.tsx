@@ -40,10 +40,22 @@ import {
   Palette,
   Share2,
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import Navbar from "@/components/core/Navbar";
 import Footer from "@/components/core/Footer";
 import HeroInteractivePhone from "@/components/experience/HeroInteractivePhone";
-import ExperienceTheMagicSection from "@/components/experience/ExperienceTheMagicSection";
+
+const ExperienceTheMagicSection = dynamic(
+  () => import("@/components/experience/ExperienceTheMagicSection"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full py-16 flex items-center justify-center">
+        <div className="w-8 h-8 border-3 border-rose-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    ),
+  }
+);
 import { soundFx } from "@/lib/soundFx";
 import { usePricing } from "@/lib/pricing";
 import QrCodeSvg from "@/components/ui/QrCodeSvg";

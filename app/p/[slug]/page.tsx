@@ -15,13 +15,39 @@ export default function SurprisePage() {
   useEffect(() => {
     let isMounted = true;
 
-    async function loadSurprise() {
-      setIsLoading(true);
+    // 1. Instant Zero-Latency Demo Mode
+    if (slug === "demo") {
+      setData(DEFAULT_DEMO_SURPRISE);
+      setIsLoading(false);
+      return;
+    }
 
-      // 1. Try fetching from MongoDB API backend first
+    // 2. High-Speed Cache First: Check memory/sessionStorage/localStorage
+    const cacheKey = `lovedrop_cache_${slug}`;
+    let cachedData: LoveSurpriseData | null = null;
+    try {
+      const stored = sessionStorage.getItem(cacheKey);
+      if (stored) {
+        cachedData = JSON.parse(stored);
+      }
+    } catch {}
+
+    if (!cachedData) {
+      cachedData = getSurpriseData(slug);
+    }
+
+    // If cache hit, render IMMEDIATELY (0ms perceived latency)
+    if (cachedData && isMounted) {
+      setData(cachedData);
+      setIsLoading(false);
+    }
+
+    // 3. Background Asynchronous Revalidation (SWR Pattern)
+    async function revalidateSurprise() {
       try {
         const res = await fetch(`/api/surprise/${encodeURIComponent(slug)}`, {
-          cache: "no-store",
+          // Allow Edge CDN to serve cached representation
+          next: { revalidate: 60 },
         });
 
         if (res.ok) {
@@ -29,24 +55,25 @@ export default function SurprisePage() {
           if (resData.success && resData.data && isMounted) {
             setData(resData.data);
             setIsLoading(false);
+            try {
+              sessionStorage.setItem(cacheKey, JSON.stringify(resData.data));
+            } catch {}
             return;
           }
         }
       } catch (err) {
-        console.warn("[MongoDB fetch warning, checking client storage]:", err);
+        console.warn("[Background revalidation notice]:", err);
       }
 
-      // 2. Fallback to localStorage or demo template if MongoDB is offline or slug is demo
-      if (isMounted) {
-        const localSite = getSurpriseData(slug);
-        setData(localSite || DEFAULT_DEMO_SURPRISE);
+      // If network failed and no cached data was previously set, use local fallback
+      if (isMounted && !cachedData) {
+        const fallback = getSurpriseData(slug) || DEFAULT_DEMO_SURPRISE;
+        setData(fallback);
         setIsLoading(false);
       }
     }
 
-    if (slug) {
-      loadSurprise();
-    }
+    revalidateSurprise();
 
     return () => {
       isMounted = false;

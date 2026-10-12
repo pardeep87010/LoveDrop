@@ -4,10 +4,22 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 import { Lock } from "lucide-react";
+import dynamic from "next/dynamic";
 import { LoveSurpriseData } from "@/lib/types";
 import { soundFx } from "@/lib/soundFx";
 import { verifyPasscode } from "@/lib/security";
-import LoveSurpriseTemplate from "@/components/experience/LoveSurpriseTemplate";
+
+const LoveSurpriseTemplate = dynamic(() => import("@/components/experience/LoveSurpriseTemplate"), {
+  ssr: false,
+  loading: () => (
+    <div className="min-h-[100dvh] flex flex-col items-center justify-center bg-gradient-to-b from-[#FDF3F8] via-[#FEFAFC] to-[#FFFDFE] space-y-3">
+      <div className="w-8 h-8 border-3 border-[#FF2E63] border-t-transparent rounded-full animate-spin" />
+      <p className="text-xs font-bold text-pink-500 animate-pulse tracking-wide">
+        Opening your love letter... 💖
+      </p>
+    </div>
+  ),
+});
 
 interface RecipientViewProps {
   data: LoveSurpriseData;
