@@ -892,20 +892,20 @@ export default function LoveSurpriseTemplate({
           "Do you think you can win against me? 😈",
         ];
 
-  // List of 12 stickers for runaway NO button reactions (New Swapped Order)
+  // List of 12 stickers for runaway NO button reactions (Optimized WebP)
   const NO_STICKERS = [
-    "/stickers/no1_sticker.gif", // 1. Kitty Sticker
-    "/stickers/no2_sticker.gif", // 2. Cute Pinch GIF
-    "/stickers/no10_sticker.gif",// 3. Couple Cat GIF
-    "/stickers/no6_sticker.gif", // 4. Bubu Dudu Sseeyall Sticker
-    "/stickers/no7_sticker.gif", // 5. Cat Flowers Cat Rose Sticker
-    "/stickers/no9_sticker.gif", // 6. Peach And Goma White Cat GIF
-    "/stickers/no8_sticker.gif", // 7. Goma Peach Bubu GIF
-    "/stickers/no6.gif",         // 8. no6.gif
-    "/stickers/no3_sticker.gif", // 9. Valgal696 GIF
-    "/stickers/no5.gif",         // 10. no5.gif
-    "/stickers/no11_sticker.gif",// 11. Bangladesh Flag GIF
-    "/stickers/no4.gif",         // 12. Last - no4.gif (this is the last sticker in the no.)
+    "/stickers/no1_sticker.webp", // 1. Kitty Sticker
+    "/stickers/no2_sticker.webp", // 2. Cute Pinch
+    "/stickers/no10_sticker.webp",// 3. Couple Cat
+    "/stickers/no6_sticker.webp", // 4. Bubu Dudu Sseeyall
+    "/stickers/no7_sticker.webp", // 5. Cat Flowers Cat Rose
+    "/stickers/no9_sticker.webp", // 6. Peach And Goma White Cat
+    "/stickers/no8_sticker.webp", // 7. Goma Peach Bubu
+    "/stickers/no6.webp",         // 8. no6
+    "/stickers/no3_sticker.webp", // 9. Valgal696
+    "/stickers/no5.gif",          // 10. no5
+    "/stickers/no11_sticker.webp",// 11. Flag
+    "/stickers/no4.gif",          // 12. Last
   ];
 
   const lastDodgeTimeRef = useRef<number>(0);
@@ -1411,7 +1411,7 @@ export default function LoveSurpriseTemplate({
                   <div className="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src="/stickers/intro_sticker.gif"
+                      src="/stickers/intro_sticker.webp"
                       alt="Siyatech Sticker"
                       className="w-full h-full object-contain pointer-events-none drop-shadow-sm select-none"
                     />
@@ -2403,7 +2403,7 @@ export default function LoveSurpriseTemplate({
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/stickers/yes1.gif"
+                src="/stickers/yes1.webp"
                 alt="Yes Celebration 1"
                 className="w-44 h-44 sm:w-48 sm:h-48 object-contain rounded-2xl drop-shadow-md select-none pointer-events-none"
               />
@@ -2432,7 +2432,7 @@ export default function LoveSurpriseTemplate({
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/stickers/yes2.gif"
+                src="/stickers/yes2.webp"
                 alt="Yes Celebration 2"
                 className="w-44 h-44 sm:w-48 sm:h-48 object-contain rounded-2xl drop-shadow-md select-none pointer-events-none"
               />
