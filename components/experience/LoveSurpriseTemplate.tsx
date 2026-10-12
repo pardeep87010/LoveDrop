@@ -425,6 +425,7 @@ export default function LoveSurpriseTemplate({
 
   useEffect(() => {
     const audio = new Audio(musicTrackSrc);
+    audio.preload = "none";
     audio.loop = true;
     audio.volume = 0.65;
     audioRef.current = audio;

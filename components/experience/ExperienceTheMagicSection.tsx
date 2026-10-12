@@ -2,9 +2,21 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import dynamic from "next/dynamic";
 import { Play, ArrowRight } from "lucide-react";
-import LoveSurpriseTemplate from "./LoveSurpriseTemplate";
 import { soundFx } from "@/lib/soundFx";
+
+const LoveSurpriseTemplate = dynamic(() => import("./LoveSurpriseTemplate"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex-1 w-full min-h-[480px] flex flex-col items-center justify-center bg-gradient-to-b from-[#FDF3F8] to-[#FFFDFE] space-y-3">
+      <div className="w-8 h-8 border-3 border-rose-500 border-t-transparent rounded-full animate-spin" />
+      <p className="text-xs font-bold text-rose-500 animate-pulse tracking-wide">
+        Loading Romantic Experience... 💌
+      </p>
+    </div>
+  ),
+});
 
 interface ExperienceTheMagicSectionProps {
   recipientName?: string;

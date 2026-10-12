@@ -46,6 +46,7 @@ import HeroInteractivePhone from "@/components/experience/HeroInteractivePhone";
 import ExperienceTheMagicSection from "@/components/experience/ExperienceTheMagicSection";
 import { soundFx } from "@/lib/soundFx";
 import { usePricing } from "@/lib/pricing";
+import QrCodeSvg from "@/components/ui/QrCodeSvg";
 
 export default function HomePage() {
   // FAQ accordion state
@@ -868,18 +869,13 @@ export default function HomePage() {
                         <Heart className="w-3.5 h-3.5 fill-rose-500 text-rose-500" />
                       </p>
                       <p className="text-[11px] font-medium text-slate-400">
-                        ourlove.in/p/sarah-love
+                        lovedrop.online/p/sarah-love
                       </p>
                     </div>
 
                     {/* QR Code Container with Centered Heart Emblem */}
                     <div className="relative mx-auto w-48 h-48 bg-[#FDFBF7] p-3 rounded-2xl border border-slate-100 flex items-center justify-center shadow-inner">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fourlove.in%2Fcreate"
-                        alt="LoveLink QR Code"
-                        className="w-full h-full object-contain"
-                      />
+                      <QrCodeSvg className="w-full h-full object-contain" />
                       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                         <div className="w-10 h-10 rounded-xl bg-white p-1 shadow-md flex items-center justify-center">
                           <div className="w-full h-full rounded-lg bg-rose-600 flex items-center justify-center">
@@ -1313,12 +1309,7 @@ export default function HomePage() {
               {/* Scannable Phone QR Code */}
               <div className="flex flex-col items-center gap-1">
                 <div className="p-1.5 sm:p-2 rounded-xl sm:rounded-2xl bg-white shadow-md">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https%3A%2F%2Fourlove.in%2Fcreate"
-                    alt="Scan with phone"
-                    className="w-12 h-12 sm:w-16 sm:h-16 object-contain"
-                  />
+                  <QrCodeSvg className="w-12 h-12 sm:w-16 sm:h-16 object-contain" size={64} />
                 </div>
                 <span className="text-[9px] sm:text-[10px] font-bold text-white/90">Or scan with your phone</span>
               </div>

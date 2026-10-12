@@ -1,21 +1,19 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
 import { Camera, Sparkles, MessageCircleHeart } from "lucide-react";
 
 export default function HeroInteractivePhone() {
   return (
     <div className="relative w-full max-w-sm mx-auto flex flex-col items-center select-none">
       {/* =================================================================== */}
-      {/* 3 FLOATING CALLOUT BADGES (Matching media_1791140351860.png)       */}
+      {/* 3 HARDWARE-ACCELERATED CALLOUT BADGES (60FPS Pure CSS)             */}
       {/* =================================================================== */}
 
       {/* Badge 1: Top-Left (Photo Gallery) */}
-      <motion.div
-        animate={{ y: [0, -6, 0] }}
-        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-        className="absolute -top-3 -left-6 sm:-left-12 z-30 p-2.5 sm:p-3 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-100 shadow-xl shadow-slate-900/5 flex items-center gap-2.5 max-w-[170px]"
+      <div
+        className="absolute -top-3 -left-6 sm:-left-12 z-30 p-2.5 sm:p-3 rounded-2xl bg-white border border-slate-100 shadow-xl shadow-slate-900/5 flex items-center gap-2.5 max-w-[170px] will-change-transform pointer-events-none"
+        style={{ animation: "badgeFloat1 4s ease-in-out infinite" }}
       >
         <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
           <Camera className="w-4 h-4 text-purple-600" />
@@ -24,13 +22,12 @@ export default function HeroInteractivePhone() {
           <p className="text-xs font-extrabold text-slate-900 leading-tight">Photo Gallery</p>
           <p className="text-[10px] text-slate-400 font-semibold leading-tight mt-0.5">Your memories</p>
         </div>
-      </motion.div>
+      </div>
 
       {/* Badge 2: Top-Right (Animations) */}
-      <motion.div
-        animate={{ y: [0, 6, 0] }}
-        transition={{ repeat: Infinity, duration: 4.5, delay: 0.6, ease: "easeInOut" }}
-        className="absolute top-36 -right-6 sm:-right-12 z-30 p-2.5 sm:p-3 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-100 shadow-xl shadow-slate-900/5 flex items-center gap-2.5 max-w-[175px]"
+      <div
+        className="absolute top-36 -right-6 sm:-right-12 z-30 p-2.5 sm:p-3 rounded-2xl bg-white border border-slate-100 shadow-xl shadow-slate-900/5 flex items-center gap-2.5 max-w-[175px] will-change-transform pointer-events-none"
+        style={{ animation: "badgeFloat2 4.5s ease-in-out infinite 0.6s" }}
       >
         <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center shrink-0">
           <Sparkles className="w-4 h-4 text-amber-500" />
@@ -39,13 +36,12 @@ export default function HeroInteractivePhone() {
           <p className="text-xs font-extrabold text-slate-900 leading-tight">Animations</p>
           <p className="text-[10px] text-slate-400 font-semibold leading-tight mt-0.5">Beautiful effects</p>
         </div>
-      </motion.div>
+      </div>
 
       {/* Badge 3: Bottom-Left (Love Quiz) */}
-      <motion.div
-        animate={{ y: [0, -5, 0] }}
-        transition={{ repeat: Infinity, duration: 3.8, delay: 1, ease: "easeInOut" }}
-        className="absolute bottom-24 -left-6 sm:-left-12 z-30 p-2.5 sm:p-3 rounded-2xl bg-white/95 backdrop-blur-md border border-slate-100 shadow-xl shadow-slate-900/5 flex items-center gap-2.5 max-w-[180px]"
+      <div
+        className="absolute bottom-24 -left-6 sm:-left-12 z-30 p-2.5 sm:p-3 rounded-2xl bg-white border border-slate-100 shadow-xl shadow-slate-900/5 flex items-center gap-2.5 max-w-[180px] will-change-transform pointer-events-none"
+        style={{ animation: "badgeFloat1 3.8s ease-in-out infinite 1s" }}
       >
         <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
           <MessageCircleHeart className="w-4 h-4 text-emerald-600" />
@@ -54,7 +50,7 @@ export default function HeroInteractivePhone() {
           <p className="text-xs font-extrabold text-slate-900 leading-tight">Love Quiz</p>
           <p className="text-[10px] text-slate-400 font-semibold leading-tight mt-0.5">Test their knowledge</p>
         </div>
-      </motion.div>
+      </div>
 
       {/* =================================================================== */}
       {/* STATIC IPHONE HARDWARE FRAME (Matching media_1791140351860.png)    */}
@@ -71,15 +67,12 @@ export default function HeroInteractivePhone() {
         <div className="relative w-full h-full rounded-[38px] bg-gradient-to-b from-[#FFF2F5] via-[#FFF0F4] to-[#FDF0F4] overflow-hidden flex flex-col justify-between p-5 pt-12 pb-6 text-center shadow-inner">
           {/* Ambient Hearts in Background (Matching screenshot) */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            {/* Top-left pair of hearts */}
             <span className="absolute top-7 left-6 text-pink-500 text-lg opacity-90 drop-shadow-xs">
               💕
             </span>
-            {/* Top-right sparkle heart */}
             <span className="absolute top-12 right-7 text-rose-500 text-base opacity-90 drop-shadow-xs">
               💖✨
             </span>
-            {/* Bottom-left glowing heart */}
             <span className="absolute bottom-16 left-8 text-pink-400 text-base opacity-80">
               💗
             </span>
@@ -116,6 +109,17 @@ export default function HeroInteractivePhone() {
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes badgeFloat1 {
+          0%, 100% { transform: translate3d(0, 0, 0); }
+          50% { transform: translate3d(0, -6px, 0); }
+        }
+        @keyframes badgeFloat2 {
+          0%, 100% { transform: translate3d(0, 0, 0); }
+          50% { transform: translate3d(0, 6px, 0); }
+        }
+      `}</style>
     </div>
   );
 }

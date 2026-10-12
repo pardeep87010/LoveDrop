@@ -9,10 +9,17 @@
   --primary-hover: #BE123C;
 }
 
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('/PlusJakartaSans.ttf') format('truetype');
+  font-weight: 400 800;
+  font-display: swap;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -34,62 +41,21 @@ body {
 }
 
 /* =================================================================== */
-/* UNIVERSAL SCROLLBAR ELIMINATION                                     */
-/* Completely removes native scrollbars while preserving full scroll   */
-/* functionality across Windows Chrome, Edge, Firefox, and Safari.     */
+/* UNIVERSAL SCROLLBAR ELIMINATION (HIGH PERFORMANCE)                  */
 /* =================================================================== */
-*,
-*::before,
-*::after {
-  scrollbar-width: none !important;
-  -ms-overflow-style: none !important;
-}
-
-::-webkit-scrollbar {
-  display: none !important;
-  width: 0px !important;
-  height: 0px !important;
-  background: transparent !important;
-}
-
-::-webkit-scrollbar-thumb,
-::-webkit-scrollbar-track,
-::-webkit-scrollbar-corner {
-  display: none !important;
-  background: transparent !important;
-}
-
 html,
 body,
-textarea,
-input,
-div,
-section,
-main,
-article,
-aside,
-pre {
+.no-scrollbar {
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
 }
 
 html::-webkit-scrollbar,
 body::-webkit-scrollbar,
-textarea::-webkit-scrollbar,
-input::-webkit-scrollbar,
-div::-webkit-scrollbar {
+.no-scrollbar::-webkit-scrollbar {
   display: none !important;
   width: 0px !important;
   height: 0px !important;
   background: transparent !important;
-}
-
-.no-scrollbar::-webkit-scrollbar {
-  display: none !important;
-}
-
-.no-scrollbar {
-  -ms-overflow-style: none !important;
-  scrollbar-width: none !important;
 }
 
