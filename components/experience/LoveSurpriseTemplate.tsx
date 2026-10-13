@@ -118,13 +118,8 @@ const DEFAULT_FORTUNE_QUOTES = [
   "Love is the answer to every question",
 ];
 
-const DEFAULT_LUCKY_NUMBERS = [
-  "7 • 14 • 21 • 77",
-  "3 • 11 • 18 • 88",
-  "5 • 12 • 25 • 99",
-  "9 • 16 • 24 • 100",
-  "2 • 8 • 20 • 365",
-];
+// Natural slight rotation angles for authentic fortune paper notes
+const COOKIE_TILT_ANGLES = [-2.2, 1.8, -1.6, 2.4, -1.9];
 
 // Realistic 3D Baked Fortune Cookie SVG Illustration
 function FortuneCookieIllustration({
@@ -1646,8 +1641,8 @@ export default function LoveSurpriseTemplate({
                 </div>
               </div>
 
-              {/* 3x3 Grid of 9 3D Flip Cards (Compact & Fits on Screen) */}
-              <div className="grid grid-cols-3 gap-2 max-w-[280px] sm:max-w-[310px] mx-auto pt-0.5">
+              {/* 3x3 Grid of 9 3D Flip Cards (Enlarged & Comfortable on Mobile) */}
+              <div className="grid grid-cols-3 gap-2.5 sm:gap-3.5 max-w-[340px] sm:max-w-[380px] mx-auto pt-1">
                 {dynamicReasons.map((item) => {
                   const isFlipped = revealedReasons.includes(item.id);
 
@@ -1656,34 +1651,34 @@ export default function LoveSurpriseTemplate({
                       key={item.id}
                       id={`card-flip-${item.id}`}
                       onClick={() => toggleReasonFlip(item.id)}
-                      className="aspect-square cursor-pointer"
+                      className="aspect-square cursor-pointer group"
                       style={{ perspective: "1000px" }}
                     >
                       <motion.div
-                        className="relative w-full h-full rounded-2xl shadow-xs transition-transform duration-500"
+                        className="relative w-full h-full rounded-2xl sm:rounded-3xl shadow-xs transition-transform duration-500"
                         style={{
                           transformStyle: "preserve-3d",
                           transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
                         }}
                       >
-                        {/* FRONT FACE (Unrevealed: White card with pink heart outline) */}
+                        {/* FRONT FACE (Unrevealed: Crisp white card with generous pink heart outline) */}
                         <div
-                          className="absolute inset-0 rounded-2xl bg-white border border-pink-100 flex items-center justify-center shadow-xs hover:border-pink-300 transition-colors"
+                          className="absolute inset-0 rounded-2xl sm:rounded-3xl bg-white border border-pink-100 flex items-center justify-center shadow-xs hover:border-pink-300 transition-colors group-hover:scale-[1.02]"
                           style={{ backfaceVisibility: "hidden" }}
                         >
-                          <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-pink-300 stroke-[1.8]" />
+                          <Heart className="w-7 h-7 sm:w-8 sm:h-8 text-pink-300 stroke-[1.8] group-hover:text-pink-400 transition-colors" />
                         </div>
 
-                        {/* BACK FACE (Revealed: Soft pink background with emoji and reason text) */}
+                        {/* BACK FACE (Revealed: Soft pink background with large emoji and clear reason text) */}
                         <div
-                          className="absolute inset-0 rounded-2xl bg-[#FFF0F3] border border-pink-200 p-1.5 flex flex-col items-center justify-center text-center shadow-xs"
+                          className="absolute inset-0 rounded-2xl sm:rounded-3xl bg-gradient-to-b from-[#FFF5F8] to-[#FFEBF0] border-2 border-pink-200/90 p-2 sm:p-2.5 flex flex-col items-center justify-center text-center shadow-xs"
                           style={{
                             backfaceVisibility: "hidden",
                             transform: "rotateY(180deg)",
                           }}
                         >
-                          <span className="text-base sm:text-lg mb-0.5">{item.emoji}</span>
-                          <span className="text-[10px] sm:text-[11px] font-extrabold text-slate-800 leading-tight">
+                          <span className="text-xl sm:text-2xl mb-1 select-none">{item.emoji}</span>
+                          <span className="text-[11px] sm:text-xs font-black text-slate-800 leading-snug px-0.5">
                             {item.title}
                           </span>
                         </div>
@@ -1693,27 +1688,27 @@ export default function LoveSurpriseTemplate({
                 })}
               </div>
 
-              {/* Bottom Revealed Reasons Tray (Compact with scrollable tag list) */}
-              <div className="p-2 sm:p-2.5 rounded-xl bg-white/90 border border-pink-100/70 text-left max-w-[280px] sm:max-w-[310px] mx-auto space-y-1 shadow-2xs">
+              {/* Bottom Revealed Reasons Tray (Spacious and clear) */}
+              <div className="p-2.5 sm:p-3 rounded-2xl bg-white/95 border border-pink-100/80 text-left max-w-[340px] sm:max-w-[380px] mx-auto space-y-1.5 shadow-2xs">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                  <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
                     Reasons revealed:
                   </span>
-                  <span className="text-[10px] font-black text-[#FF2E63]">
+                  <span className="text-[11px] sm:text-xs font-black text-[#FF2E63]">
                     {revealedReasons.length}/9
                   </span>
                 </div>
                 {revealedReasons.length === 0 ? (
-                  <p className="text-[10px] text-slate-400 italic">Tap any card above to reveal</p>
+                  <p className="text-[11px] text-slate-400 italic">Tap any card above to reveal</p>
                 ) : (
-                  <div className="flex flex-wrap gap-1 max-h-12 overflow-y-auto no-scrollbar">
+                  <div className="flex flex-wrap gap-1 max-h-14 overflow-y-auto no-scrollbar">
                     {revealedReasons.map((id) => {
                       const reason = NINE_REASONS.find((r) => r.id === id);
                       if (!reason) return null;
                       return (
                         <span
                           key={id}
-                          className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-pink-50 border border-pink-200 text-[9px] font-bold text-[#FF2E63]"
+                          className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-pink-50 border border-pink-200 text-[10px] sm:text-[11px] font-bold text-[#FF2E63]"
                         >
                           <span>{reason.emoji}</span>
                           <span>{reason.title}</span>
@@ -1725,7 +1720,7 @@ export default function LoveSurpriseTemplate({
               </div>
 
               {/* Bottom Action Button (Directly visible) */}
-              <div className="pt-1">
+              <div className="pt-1.5">
                 {revealedReasons.length < 5 ? (
                   <button
                     type="button"
@@ -1748,7 +1743,7 @@ export default function LoveSurpriseTemplate({
                       });
                       setStep(getNextStep(3));
                     }}
-                    className="px-8 py-3 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-xs sm:text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
+                    className="px-9 py-3.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm sm:text-base shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
                   >
                     <span>Continue to Our Story</span>
                     <ArrowRight className="w-4 h-4" />
@@ -2059,10 +2054,10 @@ export default function LoveSurpriseTemplate({
                 </p>
               </div>
 
-              {/* 5 Realistic Fortune Cookies Grid: 3 on Top Row, 2 on Bottom Row */}
-              <div className="flex flex-col items-center gap-2 pt-1 w-full">
+              {/* 5 Realistic Fortune Cookies Grid: 3 on Top Row, 2 on Bottom Row (Enlarged size={84}) */}
+              <div className="flex flex-col items-center gap-2.5 pt-1 w-full">
                 {/* Row 1: 3 Cookies */}
-                <div className="flex items-center justify-center gap-2.5 sm:gap-4">
+                <div className="flex items-center justify-center gap-3 sm:gap-5">
                   {[0, 1, 2].map((idx) => {
                     const isOpened = openedCookies.includes(idx);
                     const isSelected = activeCookieIdx === idx;
@@ -2072,23 +2067,23 @@ export default function LoveSurpriseTemplate({
                         id={`cookie-btn-${idx}`}
                         type="button"
                         onClick={() => handleCookieClick(idx)}
-                        className={`p-1 sm:p-1.5 rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 relative group focus:outline-none ${
+                        className={`p-1.5 sm:p-2 rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 relative group focus:outline-none ${
                           isSelected
                             ? "bg-amber-100/90 ring-2 ring-rose-400 ring-offset-2 ring-offset-pink-50 shadow-md"
                             : isOpened
                             ? "bg-amber-50/50 hover:bg-amber-100/60 shadow-xs"
                             : "bg-white/40 hover:bg-white/80 shadow-xs hover:shadow-md"
                         }`}
-                        title={isOpened ? `Fortune #${idx + 1} (Click to re-read)` : `Cookie #${idx + 1} (Tap to crack!)`}
+                        title={isOpened ? `Fortune #${idx + 1} (Tap to view)` : `Cookie #${idx + 1} (Tap to crack!)`}
                       >
                         <FortuneCookieIllustration
                           index={idx}
                           isOpened={isOpened}
                           isSelected={isSelected}
-                          size={70}
+                          size={84}
                         />
                         <span
-                          className={`text-[10px] font-bold tracking-tight mt-0.5 transition-colors ${
+                          className={`text-[11px] font-bold tracking-tight mt-1 transition-colors ${
                             isSelected
                               ? "text-rose-600 font-black"
                               : isOpened
@@ -2096,7 +2091,7 @@ export default function LoveSurpriseTemplate({
                               : "text-slate-500 group-hover:text-amber-700"
                           }`}
                         >
-                          {isOpened ? `Fortune #${idx + 1}` : `Cookie #${idx + 1}`}
+                          {isOpened ? `Fortune #${idx + 1} ✓` : `Cookie #${idx + 1}`}
                         </span>
                       </button>
                     );
@@ -2104,7 +2099,7 @@ export default function LoveSurpriseTemplate({
                 </div>
 
                 {/* Row 2: 2 Cookies */}
-                <div className="flex items-center justify-center gap-2.5 sm:gap-4">
+                <div className="flex items-center justify-center gap-3 sm:gap-5">
                   {[3, 4].map((idx) => {
                     const isOpened = openedCookies.includes(idx);
                     const isSelected = activeCookieIdx === idx;
@@ -2114,23 +2109,23 @@ export default function LoveSurpriseTemplate({
                         id={`cookie-btn-${idx}`}
                         type="button"
                         onClick={() => handleCookieClick(idx)}
-                        className={`p-1 sm:p-1.5 rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 relative group focus:outline-none ${
+                        className={`p-1.5 sm:p-2 rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 relative group focus:outline-none ${
                           isSelected
                             ? "bg-amber-100/90 ring-2 ring-rose-400 ring-offset-2 ring-offset-pink-50 shadow-md"
                             : isOpened
                             ? "bg-amber-50/50 hover:bg-amber-100/60 shadow-xs"
                             : "bg-white/40 hover:bg-white/80 shadow-xs hover:shadow-md"
                         }`}
-                        title={isOpened ? `Fortune #${idx + 1} (Click to re-read)` : `Cookie #${idx + 1} (Tap to crack!)`}
+                        title={isOpened ? `Fortune #${idx + 1} (Tap to view)` : `Cookie #${idx + 1} (Tap to crack!)`}
                       >
                         <FortuneCookieIllustration
                           index={idx}
                           isOpened={isOpened}
                           isSelected={isSelected}
-                          size={70}
+                          size={84}
                         />
                         <span
-                          className={`text-[10px] font-bold tracking-tight mt-0.5 transition-colors ${
+                          className={`text-[11px] font-bold tracking-tight mt-1 transition-colors ${
                             isSelected
                               ? "text-rose-600 font-black"
                               : isOpened
@@ -2138,7 +2133,7 @@ export default function LoveSurpriseTemplate({
                               : "text-slate-500 group-hover:text-amber-700"
                           }`}
                         >
-                          {isOpened ? `Fortune #${idx + 1}` : `Cookie #${idx + 1}`}
+                          {isOpened ? `Fortune #${idx + 1} ✓` : `Cookie #${idx + 1}`}
                         </span>
                       </button>
                     );
@@ -2184,98 +2179,106 @@ export default function LoveSurpriseTemplate({
                 </div>
               </div>
 
-              {/* Authentic Romantic Fortune Paper Slip */}
-              <AnimatePresence mode="wait">
-                {activeCookieQuote ? (
-                  <motion.div
-                    key={`fortune-${activeCookieIdx ?? 0}`}
-                    initial={{ opacity: 0, y: 12, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                    transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 25 }}
-                    className="w-full max-w-sm sm:max-w-md mx-auto relative group"
-                  >
-                    {/* Luxury Parchment Paper Slip */}
-                    <div className="relative rounded-2xl bg-gradient-to-b from-[#FFFDF9] via-[#FAF6F0] to-[#F5EFE6] p-1.5 shadow-xl shadow-amber-950/10 border border-amber-200/90 ring-1 ring-amber-100/50">
-                      {/* Inner Traditional Crimson Dashed Frame */}
-                      <div className="rounded-xl border border-dashed border-rose-300/80 bg-white/75 backdrop-blur-xs p-5 sm:p-6 flex flex-col items-center text-center space-y-2.5 relative overflow-hidden">
-                        {/* Top Chinese / Romantic Fortune Header */}
-                        <div className="flex items-center justify-center gap-2">
-                          <span className="text-xs">🏮</span>
-                          <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.22em] text-rose-600 font-sans">
-                            Eternal Love Prophecy #{((activeCookieIdx ?? 0) + 1)}
+              {/* All Cracked Fortune Slips Stacked Vertically with Individual Tilt Angles */}
+              {openedCookies.length > 0 ? (
+                <div className="w-full max-w-sm sm:max-w-md mx-auto space-y-3.5 pt-2">
+                  {openedCookies.map((idx) => {
+                    const quote =
+                      dynamicFortunes[idx] || DEFAULT_FORTUNE_QUOTES[idx % DEFAULT_FORTUNE_QUOTES.length];
+                    const tilt = COOKIE_TILT_ANGLES[idx % COOKIE_TILT_ANGLES.length];
+                    const isLatest = activeCookieIdx === idx;
+
+                    return (
+                      <motion.div
+                        key={`fortune-slip-${idx}`}
+                        initial={{ opacity: 0, scale: 0.88, y: 14 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        transition={{
+                          duration: 0.35,
+                          type: "spring",
+                          stiffness: 300,
+                          damping: 24,
+                        }}
+                        className={`w-full relative rounded-2xl bg-[#FFFDF9] p-4 sm:p-5 text-center transition-all ${
+                          isLatest
+                            ? "border-2 border-rose-400 ring-4 ring-rose-400/15 shadow-md shadow-rose-950/5"
+                            : "border border-amber-200/80 shadow-xs"
+                        }`}
+                        style={{
+                          transform: `rotate(${tilt}deg)`,
+                        }}
+                      >
+                        {/* Washi tape pin accent */}
+                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-9 h-3.5 bg-rose-200/70 border border-rose-300/40 rounded-xs -rotate-1 shadow-2xs" />
+
+                        {/* Fortune Header */}
+                        <div className="flex items-center justify-between text-xs font-bold text-rose-500 mb-1.5">
+                          <span className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-rose-600">
+                            <span>🥠</span>
+                            <span>Fortune #{idx + 1}</span>
                           </span>
-                          <span className="text-xs">🏮</span>
+                          <span className="text-amber-400 text-xs">✨</span>
                         </div>
 
-                        <div className="w-16 h-[1px] bg-gradient-to-r from-transparent via-rose-300 to-transparent" />
+                        {/* Romantic Quote in Serif Italic */}
+                        <p className="font-serif italic text-sm sm:text-base text-slate-800 leading-relaxed font-semibold px-2 py-1">
+                          &ldquo;{quote}&rdquo;
+                        </p>
 
-                        {/* The Romantic Fortune Quote in Beautiful Serif */}
-                        <div className="relative px-2 sm:px-4 py-1">
-                          <span className="absolute -top-3 -left-1 text-2xl font-serif text-rose-300/60 select-none">“</span>
-                          <p className="font-serif italic text-base sm:text-lg text-slate-800 leading-relaxed font-semibold">
-                            {activeCookieQuote}
-                          </p>
-                          <span className="absolute -bottom-4 -right-1 text-2xl font-serif text-rose-300/60 select-none">”</span>
+                        {/* Clean Romantic Footer without lucky numbers */}
+                        <div className="mt-2 pt-2 border-t border-dashed border-rose-200/70 flex items-center justify-center text-[10px] sm:text-[11px] text-pink-500 font-semibold">
+                          <span>💕 Destined for {recipientName}</span>
                         </div>
-
-                        {/* Divider */}
-                        <div className="w-32 h-[1px] bg-gradient-to-r from-transparent via-amber-300 to-transparent pt-0.5" />
-
-                        {/* Lucky Numbers & Romantic Destiny Footer */}
-                        <div className="space-y-1 pt-0.5">
-                          <div className="text-[10px] sm:text-[11px] font-bold text-amber-900/85 tracking-wider flex items-center justify-center gap-1.5">
-                            <span className="text-amber-500">✨</span>
-                            <span>Lucky Numbers: {DEFAULT_LUCKY_NUMBERS[(activeCookieIdx ?? 0) % DEFAULT_LUCKY_NUMBERS.length]}</span>
-                            <span className="text-rose-500">✦</span>
-                            <span>Destiny: 100% ❤️</span>
-                          </div>
-                          <p className="text-[9px] sm:text-[10px] font-medium text-slate-400 italic">
-                            Destined for {recipientName} • Sealed with love by {senderName}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="w-full max-w-sm sm:max-w-md mx-auto p-1.5 rounded-2xl bg-gradient-to-b from-amber-50/70 via-pink-50/40 to-white border border-amber-200/60 shadow-sm"
-                  >
-                    <div className="rounded-xl border border-dashed border-pink-200/80 bg-white/70 p-4 sm:p-5 flex flex-col items-center text-center space-y-1.5">
-                      <div className="flex items-center gap-1.5 text-amber-500 text-sm animate-bounce">
-                        <span>✨</span>
-                        <span>🥠</span>
-                        <span>✨</span>
-                      </div>
-                      <h4 className="text-xs sm:text-sm font-bold text-slate-800">
-                        Tap any golden cookie to crack open your fortunes!
-                      </h4>
-                      <p className="text-[11px] text-slate-500">
-                        5 sweet love prophecies are hidden inside just for you, {recipientName} 💕
-                      </p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="w-full max-w-sm sm:max-w-md mx-auto p-4 rounded-2xl bg-white/80 border border-pink-100/90 shadow-2xs text-center space-y-1.5"
+                >
+                  <div className="text-2xl animate-bounce">🥠</div>
+                  <h4 className="text-xs sm:text-sm font-bold text-slate-800">
+                    Tap any golden cookie to crack open your fortunes!
+                  </h4>
+                  <p className="text-[11px] text-slate-500">
+                    5 sweet love prophecies are hidden inside just for you, {recipientName} 💕
+                  </p>
+                </motion.div>
+              )}
 
               {/* Action Button: Continue to Finale */}
-              <div className="pt-2">
+              <div className="pt-2.5">
                 {openedCookies.length < 5 ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const remaining = [0, 1, 2, 3, 4].filter((i) => !openedCookies.includes(i));
-                      if (remaining.length > 0) {
-                        handleCookieClick(remaining[0]);
-                      }
-                    }}
-                    className="px-6 py-2.5 rounded-full bg-pink-100 hover:bg-pink-200/80 text-pink-600 font-bold text-xs transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-xs active:scale-95"
-                  >
-                    <span>Crack Next Fortune ({openedCookies.length}/5)</span>
-                    <span>✨</span>
-                  </button>
+                  <div className="flex flex-col items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const remaining = [0, 1, 2, 3, 4].filter((i) => !openedCookies.includes(i));
+                        if (remaining.length > 0) {
+                          handleCookieClick(remaining[0]);
+                        }
+                      }}
+                      className="px-7 py-3 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-xs sm:text-sm transition-all cursor-pointer inline-flex items-center gap-2 shadow-md shadow-pink-500/25 active:scale-95"
+                    >
+                      <span>Crack Next Fortune ({openedCookies.length}/5)</span>
+                      <span>✨</span>
+                    </button>
+                    {openedCookies.length >= 2 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          soundFx.playSuccessChime();
+                          setStep(getNextStep(6));
+                        }}
+                        className="text-[11px] font-bold text-pink-500 hover:text-pink-600 underline cursor-pointer"
+                      >
+                        Continue to The Big Question ❤️
+                      </button>
+                    )}
+                  </div>
                 ) : (
                   <button
                     id="finish-fortune-btn"
@@ -2290,7 +2293,7 @@ export default function LoveSurpriseTemplate({
                       });
                       setStep(getNextStep(6));
                     }}
-                    className="px-8 py-3 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2 animate-pulse"
+                    className="px-9 py-3.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm sm:text-base shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2 animate-pulse"
                   >
                     <span>The Big Question... ❤️</span>
                     <Heart className="w-4 h-4 fill-white text-white" />
