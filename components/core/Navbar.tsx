@@ -15,15 +15,18 @@ export default function Navbar() {
           onClick={() => soundFx.playPop()}
           className="flex items-center gap-2.5 group"
         >
-          <div className="w-9 h-9 rounded-xl bg-rose-600 flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
-            <Heart className="w-4 h-4 fill-white" />
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="font-extrabold text-xl text-slate-900 tracking-tight leading-none">
-              Love<span className="text-rose-600">Link</span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/icon.png"
+            alt="LoveDrop Logo"
+            className="w-8 h-8 sm:w-9 sm:h-9 object-contain group-hover:scale-105 transition-transform"
+          />
+          <div className="flex items-center gap-1">
+            <span className="font-black text-xl text-slate-900 tracking-tight leading-none">
+              Love<span className="text-rose-600">Drop</span>
             </span>
-            <span className="text-[10px] font-black uppercase tracking-wider bg-rose-50 text-rose-600 border border-rose-200 px-2 py-0.5 rounded-full">
-              PRO 2.0
+            <span className="text-[11px] font-bold text-slate-400">
+              .online
             </span>
           </div>
         </Link>

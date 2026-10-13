@@ -138,12 +138,36 @@ export default function CreatorWizard({
   // ===================================================================
   // STAGE 1 (PAGE 1): WELCOME & INTRO TYPING
   // ===================================================================
-  const [recipientName, setRecipientName] = useState("Sarah");
-  const [senderName, setSenderName] = useState("Michael");
+  const [recipientName, setRecipientName] = useState("");
+  const [senderName, setSenderName] = useState("");
   const [typingWord1, setTypingWord1] = useState("Hello");
   const [typingWord2, setTypingWord2] = useState("Yes, You");
   const [buttonText, setButtonText] = useState("Let's Go");
   const [theme, setTheme] = useState(initialTheme);
+
+  // Helper to dynamically sync recipient name into love letter
+  const handleRecipientNameChange = (newName: string) => {
+    const oldName = recipientName.trim();
+    setRecipientName(newName);
+    setLetterText((prev) => {
+      if (oldName && prev.includes(`My dearest ${oldName}`)) {
+        return prev.replace(`My dearest ${oldName}`, `My dearest ${newName.trim() || "My Love"}`);
+      }
+      return prev.replace(/^My dearest (?:Sarah|Love|My Love|[^\n,]+)/, `My dearest ${newName.trim() || "My Love"}`);
+    });
+  };
+
+  // Helper to dynamically sync sender name into love letter
+  const handleSenderNameChange = (newName: string) => {
+    const oldName = senderName.trim();
+    setSenderName(newName);
+    setLetterText((prev) => {
+      if (oldName && prev.includes(oldName)) {
+        return prev.replace(new RegExp(`Forever yours,\\s*${oldName}`, "i"), `Forever yours,\n${newName.trim() || "Always"}`);
+      }
+      return prev.replace(/Forever yours,\s*(?:Michael|Always|[^\n💕]+)/i, `Forever yours,\n${newName.trim() || "Always"}`);
+    });
+  };
 
   // ===================================================================
   // STAGE 2 (PAGE 2): THE QUESTION & RUNAWAY NO
@@ -167,7 +191,7 @@ export default function CreatorWizard({
   // STAGE 3 (PAGE 3): HEARTFELT LOVE LETTER
   // ===================================================================
   const [letterText, setLetterText] = useState(
-    "My dearest Sarah,\n\nFrom the moment I met you, my life changed in ways I never expected. Your smile has become my favorite sight, your laugh my favorite sound.\n\nEvery day with you feels like an adventure, and I can't imagine my life without you by my side. You make the ordinary extraordinary.\n\nI love you more than words could ever express, but I'm going to try anyway through this letter.\n\nForever yours,\nMichael 💕"
+    "My dearest Love,\n\nFrom the moment I met you, my life changed in ways I never expected. Your smile has become my favorite sight, your laugh my favorite sound.\n\nEvery day with you feels like an adventure, and I can't imagine my life without you by my side. You make the ordinary extraordinary.\n\nI love you more than words could ever express, but I'm going to try anyway through this letter.\n\nForever yours,\nAlways 💕"
   );
   const [waxSealEmoji, setWaxSealEmoji] = useState("💌");
 
@@ -479,16 +503,18 @@ export default function CreatorWizard({
         slug: secureSlug,
         occasion: initialOccasion,
         relation: "Partner",
-        recipientName: sanitizeInput(recipientName.trim() || "Sarah"),
-        senderName: sanitizeInput(senderName.trim() || "Michael"),
+        recipientName: sanitizeInput(recipientName.trim() || "My Love"),
+        senderName: sanitizeInput(senderName.trim() || "Me"),
         question: sanitizeInput(question.trim() || "do you love me ??"),
         subheading: "A special romantic surprise made just for you",
         reasons: reasons.slice(0, 3).map((r) => r.title),
-        letterContent: letterText,
+        letterContent: letterText
+          .replace(/\bSarah\b/g, recipientName.trim() || "My Love")
+          .replace(/\bMichael\b/g, senderName.trim() || "Me"),
         photos: photos.map((p) => p.image),
         theme: theme,
         enabledPages: enabledPages,
-        typingIntroWords: [typingWord1, typingWord2, recipientName],
+        typingIntroWords: [typingWord1, typingWord2, recipientName.trim() || "My Love"],
         buttonText: buttonText,
         yesButtonText: yesButtonText,
         dodgePhrases: dodgePhrases,
@@ -518,7 +544,7 @@ export default function CreatorWizard({
       soundFx.playSuccessChime();
 
       // Persist to MongoDB backend and dispatch transactional emails
-      const targetSiteUrl = `${typeof window !== "undefined" ? window.location.origin : "https://ourlove.in"}/p/${secureSlug}`;
+      const targetSiteUrl = `${typeof window !== "undefined" ? window.location.origin : "https://lovedrop.online"}/p/${secureSlug}`;
       if (creatorEmail.trim() || (sendToPartnerEmail && partnerEmail.trim())) {
         setEmailSendStatus("sending");
       }
@@ -716,19 +742,19 @@ export default function CreatorWizard({
                       <input
                         type="text"
                         value={recipientName}
-                        onChange={(e) => setRecipientName(e.target.value)}
-                        placeholder="e.g. Sarah, Babe, Honey..."
+                        onChange={(e) => handleRecipientNameChange(e.target.value)}
+                        placeholder="e.g. My Love, Priya, Alex, Babe..."
                         className="w-full px-4 py-3 rounded-2xl border border-pink-200 focus:border-[#FF2E63] focus:ring-2 focus:ring-pink-100 outline-none text-sm font-semibold text-slate-800 bg-pink-50/20"
                       />
                       {/* Quick Presets */}
                       <div className="flex flex-wrap gap-1.5 pt-2">
-                        {["Sarah", "My Love", "Babe", "Honey", "Sweetheart", "Darling"].map((p) => (
+                        {["My Love", "Babe", "Honey", "Sweetheart", "Darling"].map((p) => (
                           <button
                             key={p}
                             type="button"
                             onClick={() => {
                               soundFx.playPop();
-                              setRecipientName(p);
+                              handleRecipientNameChange(p);
                             }}
                             className={`px-2.5 py-1 rounded-full text-[11px] font-bold border transition-all cursor-pointer ${
                               recipientName === p
@@ -750,8 +776,8 @@ export default function CreatorWizard({
                       <input
                         type="text"
                         value={senderName}
-                        onChange={(e) => setSenderName(e.target.value)}
-                        placeholder="e.g. Michael, Me, Your Soulmate..."
+                        onChange={(e) => handleSenderNameChange(e.target.value)}
+                        placeholder="e.g. Michael, Naveen, Alex, Your Soulmate..."
                         className="w-full px-4 py-3 rounded-2xl border border-pink-200 focus:border-[#FF2E63] focus:ring-2 focus:ring-pink-100 outline-none text-sm font-semibold text-slate-800 bg-pink-50/20"
                       />
                     </div>
@@ -2294,7 +2320,7 @@ export default function CreatorWizard({
                             </div>
                           </div>
                           <p className="text-[11px] text-slate-500 leading-tight">
-                            Receive your private LoveLink, secret PIN, and website backup directly in your inbox.
+                            Receive your private Lovedrop link, secret PIN, and website backup directly in your inbox.
                           </p>
 
                           <div>
@@ -2454,7 +2480,7 @@ export default function CreatorWizard({
                         <div className="rounded-3xl overflow-hidden shadow-xl border border-pink-100 bg-white">
                           <div className="bg-gradient-to-r from-[#FF007A] via-[#FF2E63] to-[#FF4D79] text-white p-6 sm:p-7 text-center space-y-1">
                             <p className="text-xs font-semibold text-white/95">
-                              Imagine {recipientName || "Sarah"}&apos;s face when they open this
+                              Imagine {recipientName ? `${recipientName}'s` : "their"} face when they open this
                             </p>
                             <h3 className="text-4xl font-black text-white">
                               {currentPlan.priceFormatted}
@@ -2484,7 +2510,7 @@ export default function CreatorWizard({
                               {isProcessingPay ? (
                                 <>
                                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                  <span>Publishing your LoveLink...</span>
+                                  <span>Publishing your Lovedrop surprise...</span>
                                 </>
                               ) : (
                                 <>
@@ -2505,10 +2531,10 @@ export default function CreatorWizard({
                       </div>
 
                       <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900">
-                        Your LoveLink is Ready to Send! 💖
+                        Your Lovedrop is Ready to Send! 💖
                       </h3>
                       <p className="text-xs sm:text-sm text-slate-500">
-                        Send the link directly to {recipientName} or surprise them with a printable QR
+                        Send the link directly to {recipientName || "them"} or surprise them with a printable QR
                         gift card.
                       </p>
 

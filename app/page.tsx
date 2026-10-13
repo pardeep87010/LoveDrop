@@ -355,7 +355,7 @@ export default function HomePage() {
               {/* Subheading & Description */}
               <div className="space-y-2 max-w-xl text-slate-600 text-sm sm:text-base leading-relaxed">
                 <p className="font-semibold text-slate-800">
-                  LoveLink transforms your words into a magical interactive journey.
+                  LoveDrop transforms your words into a magical interactive journey.
                 </p>
                 <p className="text-slate-500 font-medium text-xs sm:text-sm">
                   Create a personalized digital experience with animated wax-seal love letters,
@@ -516,12 +516,12 @@ export default function HomePage() {
                 15 Magical Stages Include
               </h2>
               <p className="text-sm text-slate-500 font-medium">
-                Every LoveLink surprise is packed with delightful micro-interactions designed to make them smile, blush, and say yes.
+                Every Lovedrop surprise is packed with delightful micro-interactions designed to make them smile, blush, and say yes.
               </p>
             </div>
 
-            {/* 15 Cards Grid: 3 rows of 5 */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+            {/* 15 Cards Grid: 3 columns on mobile (5 compact rows), 4 on tablet, 5 on desktop */}
+            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3">
               {stages.map((stg) => {
                 const isActive = activeStage === stg.id;
                 return (
@@ -531,20 +531,20 @@ export default function HomePage() {
                       soundFx.playPop();
                       setActiveStage(stg.id);
                     }}
-                    className={`p-4 sm:p-5 rounded-2xl text-center flex flex-col items-center justify-center gap-2 transition-all cursor-pointer group relative ${
+                    className={`p-2.5 sm:p-4 rounded-xl sm:rounded-2xl text-center flex flex-col items-center justify-center gap-1.5 transition-all cursor-pointer group relative ${
                       isActive
                         ? "bg-[#FFF0F3] border-2 border-rose-500 shadow-sm scale-[1.02]"
                         : "bg-white border border-rose-100 hover:border-rose-300 hover:shadow-xs hover:-translate-y-0.5"
                     }`}
                   >
-                    <span className="text-2xl sm:text-3xl select-none group-hover:scale-110 transition-transform">
+                    <span className="text-xl sm:text-2xl select-none group-hover:scale-110 transition-transform">
                       {stg.emoji}
                     </span>
-                    <span className="font-bold text-xs sm:text-sm text-slate-800 group-hover:text-rose-600 transition-colors">
+                    <span className="font-bold text-[11px] sm:text-xs text-slate-800 group-hover:text-rose-600 transition-colors line-clamp-2 leading-tight">
                       {stg.title}
                     </span>
                     {isActive && (
-                      <span className="absolute -top-2 right-2 px-1.5 py-0.5 rounded-full bg-rose-600 text-[9px] font-extrabold text-white uppercase tracking-wider">
+                      <span className="absolute -top-1.5 right-1.5 px-1.5 py-0.5 rounded-full bg-rose-600 text-[8px] sm:text-[9px] font-extrabold text-white uppercase tracking-wider">
                         Active
                       </span>
                     )}
@@ -605,17 +605,17 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
               {/* Card 1 */}
-              <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
-                <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
-                  <Mail className="w-6 h-6" />
+              <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-rose-100 shadow-xs sm:shadow-sm space-y-2.5 sm:space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                  <Mail className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div>
                   <span className="text-[10px] font-extrabold text-rose-600 uppercase tracking-wider">
                     Chapter 1
                   </span>
-                  <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
+                  <h3 className="font-extrabold text-sm sm:text-base text-slate-900 mt-0.5">
                     The Sealed Wax Envelope
                   </h3>
                   <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
@@ -625,15 +625,15 @@ export default function HomePage() {
               </div>
 
               {/* Card 2 - Polaroid Photo Memories */}
-              <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
-                <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center">
-                  <Camera className="w-6 h-6" />
+              <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-rose-100 shadow-xs sm:shadow-sm space-y-2.5 sm:space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                  <Camera className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div>
                   <span className="text-[10px] font-extrabold text-purple-600 uppercase tracking-wider">
                     Chapter 2
                   </span>
-                  <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
+                  <h3 className="font-extrabold text-sm sm:text-base text-slate-900 mt-0.5">
                     Polaroid Photo Memories
                   </h3>
                   <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
@@ -643,15 +643,15 @@ export default function HomePage() {
               </div>
 
               {/* Card 3 - 9 Sweet Reasons Why */}
-              <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                  <Sparkles className="w-6 h-6" />
+              <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-rose-100 shadow-xs sm:shadow-sm space-y-2.5 sm:space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div>
                   <span className="text-[10px] font-extrabold text-emerald-600 uppercase tracking-wider">
                     Chapter 3
                   </span>
-                  <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
+                  <h3 className="font-extrabold text-sm sm:text-base text-slate-900 mt-0.5">
                     9 Sweet Reasons Why
                   </h3>
                   <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
@@ -661,15 +661,15 @@ export default function HomePage() {
               </div>
 
               {/* Card 4 - Our Story Milestones */}
-              <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
-                <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                  <Clock className="w-6 h-6" />
+              <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-rose-100 shadow-xs sm:shadow-sm space-y-2.5 sm:space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                  <Clock className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div>
                   <span className="text-[10px] font-extrabold text-blue-600 uppercase tracking-wider">
                     Chapter 4
                   </span>
-                  <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
+                  <h3 className="font-extrabold text-sm sm:text-base text-slate-900 mt-0.5">
                     Our Story Milestones
                   </h3>
                   <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
@@ -679,15 +679,15 @@ export default function HomePage() {
               </div>
 
               {/* Card 5 - Couple Trivia Quiz */}
-              <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
-                <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                  <Gamepad2 className="w-6 h-6" />
+              <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-rose-100 shadow-xs sm:shadow-sm space-y-2.5 sm:space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                  <Gamepad2 className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div>
                   <span className="text-[10px] font-extrabold text-indigo-600 uppercase tracking-wider">
                     Chapter 5
                   </span>
-                  <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
+                  <h3 className="font-extrabold text-sm sm:text-base text-slate-900 mt-0.5">
                     Couple Trivia Quiz
                   </h3>
                   <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
@@ -697,15 +697,15 @@ export default function HomePage() {
               </div>
 
               {/* Card 6 - Romantic Fortune Quotes */}
-              <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
-                <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
-                  <Cookie className="w-6 h-6" />
+              <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-rose-100 shadow-xs sm:shadow-sm space-y-2.5 sm:space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                  <Cookie className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div>
                   <span className="text-[10px] font-extrabold text-amber-600 uppercase tracking-wider">
                     Chapter 6
                   </span>
-                  <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
+                  <h3 className="font-extrabold text-sm sm:text-base text-slate-900 mt-0.5">
                     Romantic Fortune Quotes
                   </h3>
                   <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
@@ -715,15 +715,15 @@ export default function HomePage() {
               </div>
 
               {/* Card 7 - The Runaway "NO" Button */}
-              <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
-                <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
-                  <Zap className="w-6 h-6 fill-amber-500 text-amber-500" />
+              <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-rose-100 shadow-xs sm:shadow-sm space-y-2.5 sm:space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                  <Zap className="w-5 h-5 sm:w-6 sm:h-6 fill-amber-500 text-amber-500" />
                 </div>
                 <div>
                   <span className="text-[10px] font-extrabold text-amber-600 uppercase tracking-wider">
                     Chapter 7
                   </span>
-                  <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
+                  <h3 className="font-extrabold text-sm sm:text-base text-slate-900 mt-0.5">
                     The Runaway &quot;NO&quot; Button
                   </h3>
                   <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
@@ -733,15 +733,15 @@ export default function HomePage() {
               </div>
 
               {/* Card 8 - The Sealed Handwritten Letter */}
-              <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
-                <div className="w-12 h-12 rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center">
-                  <Heart className="w-6 h-6 fill-pink-500 text-pink-500" />
+              <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-rose-100 shadow-xs sm:shadow-sm space-y-2.5 sm:space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center">
+                  <Heart className="w-5 h-5 sm:w-6 sm:h-6 fill-pink-500 text-pink-500" />
                 </div>
                 <div>
                   <span className="text-[10px] font-extrabold text-pink-600 uppercase tracking-wider">
                     Chapter 8
                   </span>
-                  <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
+                  <h3 className="font-extrabold text-sm sm:text-base text-slate-900 mt-0.5">
                     The Sealed Handwritten Letter
                   </h3>
                   <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
@@ -751,15 +751,15 @@ export default function HomePage() {
               </div>
 
               {/* Card 9 */}
-              <div className="p-6 rounded-3xl bg-white border border-rose-100 shadow-sm space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
-                <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
-                  <PartyPopper className="w-6 h-6" />
+              <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-rose-100 shadow-xs sm:shadow-sm space-y-2.5 sm:space-y-3 flex flex-col justify-between hover:border-rose-300 transition-colors">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
+                  <PartyPopper className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
                 <div>
                   <span className="text-[10px] font-extrabold text-rose-600 uppercase tracking-wider">
                     Chapter 9
                   </span>
-                  <h3 className="font-extrabold text-base text-slate-900 mt-0.5">
+                  <h3 className="font-extrabold text-sm sm:text-base text-slate-900 mt-0.5">
                     Grand Finale &amp; WhatsApp Alert
                   </h3>
                   <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
@@ -791,7 +791,7 @@ export default function HomePage() {
             </div>
 
             {/* 6 Template Cards (Matching Image 5) */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-4">
               {styles.map((stl) => {
                 const isSelected = selectedStyle === stl.id;
                 return (
@@ -802,7 +802,7 @@ export default function HomePage() {
                       setSelectedStyle(stl.id);
                       setModalTheme(stl);
                     }}
-                    className={`h-72 rounded-3xl ${stl.bgColor} border transition-all flex flex-col justify-between p-4 cursor-pointer relative group overflow-hidden ${
+                    className={`h-48 sm:h-64 rounded-2xl sm:rounded-3xl ${stl.bgColor} border transition-all flex flex-col justify-between p-3 sm:p-4 cursor-pointer relative group overflow-hidden ${
                       isSelected
                         ? "border-rose-500 shadow-md ring-2 ring-rose-500/50 scale-[1.02]"
                         : "border-slate-200/80 hover:border-rose-300 hover:shadow-sm"
@@ -810,28 +810,28 @@ export default function HomePage() {
                   >
                     {/* Top status indicator if selected */}
                     {isSelected && (
-                      <span className="absolute top-3 right-3 w-5 h-5 rounded-full bg-rose-600 text-white flex items-center justify-center text-[10px] font-bold shadow-xs">
+                      <span className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-rose-600 text-white flex items-center justify-center text-[10px] font-bold shadow-xs">
                         ✓
                       </span>
                     )}
 
                     {/* Central Glowing Icon Emblem with decorative lines */}
-                    <div className="flex-1 flex flex-col items-center justify-center space-y-3">
+                    <div className="flex-1 flex flex-col items-center justify-center space-y-2 sm:space-y-3">
                       <div
-                        className={`w-14 h-14 rounded-full ${stl.badgeColor} text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform`}
+                        className={`w-11 h-11 sm:w-14 sm:h-14 rounded-full ${stl.badgeColor} text-white flex items-center justify-center shadow-md group-hover:scale-110 transition-transform`}
                       >
-                        <Sparkles className="w-7 h-7" />
+                        <Sparkles className="w-5 h-5 sm:w-7 sm:h-7" />
                       </div>
                       {/* Subtle decorative horizontal bars */}
-                      <div className="space-y-1 w-12 flex flex-col items-center opacity-40">
-                        <div className="w-10 h-1 rounded-full bg-slate-400" />
-                        <div className="w-6 h-1 rounded-full bg-slate-300" />
+                      <div className="space-y-1 w-10 sm:w-12 flex flex-col items-center opacity-40">
+                        <div className="w-8 sm:w-10 h-1 rounded-full bg-slate-400" />
+                        <div className="w-5 sm:w-6 h-1 rounded-full bg-slate-300" />
                       </div>
                     </div>
 
                     {/* Bottom Title Pill */}
-                    <div className="bg-white/95 backdrop-blur-xs py-2.5 px-3 rounded-2xl border border-white text-center shadow-xs">
-                      <p className="font-extrabold text-xs text-slate-800 leading-tight">
+                    <div className="bg-white/95 backdrop-blur-xs py-1.5 sm:py-2.5 px-2 sm:px-3 rounded-xl sm:rounded-2xl border border-white text-center shadow-xs">
+                      <p className="font-extrabold text-[11px] sm:text-xs text-slate-800 leading-tight">
                         {stl.title}
                       </p>
                     </div>
@@ -995,7 +995,7 @@ export default function HomePage() {
                 The Real Difference
               </span>
               <h2 className="font-extrabold text-3xl sm:text-4xl text-slate-900 tracking-tight">
-                Why LoveLink Beats Boring Gifts
+                Why LoveDrop Beats Boring Gifts
               </h2>
               <p className="text-sm text-slate-500 font-medium">
                 Most gifts are forgotten in 48 hours. An interactive digital surprise lasts forever.
@@ -1006,7 +1006,7 @@ export default function HomePage() {
               <div className="grid grid-cols-3 text-xs sm:text-sm font-bold border-b border-rose-100 bg-rose-50/50 p-4">
                 <span className="text-slate-500">Feature</span>
                 <span className="text-slate-500 text-center">Boring WhatsApp Text / Flowers</span>
-                <span className="text-rose-600 text-center font-extrabold">LoveLink 2.0 Website</span>
+                <span className="text-rose-600 text-center font-extrabold">Lovedrop.online Website</span>
               </div>
 
               <div className="divide-y divide-slate-100 text-xs sm:text-sm text-slate-700">
@@ -1161,13 +1161,13 @@ export default function HomePage() {
             </div>
 
             {/* 3 Pricing Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto items-stretch pt-2">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto items-stretch pt-2">
               {plans.map((p) => {
                 const isPopular = p.popular;
                 return (
                   <div
                     key={p.id}
-                    className={"rounded-3xl p-6 sm:p-8 flex flex-col justify-between transition-all relative " + (
+                    className={"rounded-3xl p-5 sm:p-8 flex flex-col justify-between transition-all relative " + (
                       isPopular
                         ? "bg-white border-2 border-rose-500 shadow-xl ring-4 ring-rose-500/10 md:-translate-y-2 z-10"
                         : "bg-white border border-rose-100 shadow-sm hover:border-rose-300 hover:shadow-md"
@@ -1179,24 +1179,24 @@ export default function HomePage() {
                       </span>
                     )}
 
-                    <div className="space-y-5">
-                      <div className="text-center space-y-1">
-                        <h3 className="font-extrabold text-xl text-slate-900">{p.name}</h3>
-                        <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">
+                    <div className="space-y-4 sm:space-y-5">
+                      <div className="text-center space-y-0.5 sm:space-y-1">
+                        <h3 className="font-extrabold text-lg sm:text-xl text-slate-900">{p.name}</h3>
+                        <p className="text-[11px] sm:text-xs text-slate-400 font-semibold uppercase tracking-wider">
                           {p.duration}
                         </p>
                       </div>
 
                       <div className="text-center py-2 border-y border-slate-100/80">
                         <div className="flex items-center justify-center gap-2">
-                          <span className="text-slate-400 line-through text-base font-bold">
+                          <span className="text-slate-400 line-through text-sm sm:text-base font-bold">
                             {p.originalPriceFormatted}
                           </span>
-                          <span className="text-4xl sm:text-5xl font-black text-slate-900">
+                          <span className="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900">
                             {p.priceFormatted}
                           </span>
                         </div>
-                        <p className="text-[11px] font-semibold text-slate-400 mt-1">
+                        <p className="text-[10px] sm:text-[11px] font-semibold text-slate-400 mt-1">
                           One-time payment • {p.periodText}
                         </p>
                       </div>
@@ -1206,9 +1206,9 @@ export default function HomePage() {
                       </p>
 
                       {/* Feature Checklist */}
-                      <div className="space-y-2.5 text-xs font-semibold text-slate-700 pt-2">
+                      <div className="space-y-2 text-xs font-semibold text-slate-700 pt-1 sm:pt-2">
                         {p.features.map((feat, idx) => (
-                          <div key={idx} className="flex items-start gap-2.5">
+                          <div key={idx} className="flex items-start gap-2">
                             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                             <span>{feat}</span>
                           </div>
@@ -1216,11 +1216,11 @@ export default function HomePage() {
                       </div>
                     </div>
 
-                    <div className="pt-6">
+                    <div className="pt-5 sm:pt-6">
                       <Link
                         href={"/create?plan=" + p.id}
                         onClick={() => soundFx.playPop()}
-                        className={"w-full py-3.5 rounded-2xl font-extrabold text-sm shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 " + (
+                        className={"w-full py-3 sm:py-3.5 rounded-2xl font-extrabold text-sm shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98 " + (
                           isPopular
                             ? "bg-rose-600 hover:bg-rose-700 text-white shadow-rose-500/25"
                             : "bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200"
@@ -1236,14 +1236,14 @@ export default function HomePage() {
             </div>
 
             {/* Trust Footer */}
-            <div className="flex items-center justify-center gap-6 text-xs font-semibold text-slate-400 text-center">
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-6 text-[11px] sm:text-xs font-semibold text-slate-400 text-center">
               <span className="flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-emerald-600" />
                 <span>Instant delivery via UPI / Stripe</span>
               </span>
-              <span>•</span>
+              <span className="hidden sm:inline">•</span>
               <span>🔒 256-bit Bank Grade Security</span>
-              <span>•</span>
+              <span className="hidden sm:inline">•</span>
               <span>💯 100% Satisfaction Guarantee</span>
             </div>
           </div>
@@ -1305,7 +1305,7 @@ export default function HomePage() {
             className="max-w-4xl mx-auto rounded-[38px] text-white text-center shadow-2xl shadow-rose-500/25 relative overflow-hidden bg-cover bg-top bg-no-repeat bg-[#FF5369] min-h-[580px] sm:min-h-[600px] md:min-h-[660px] flex flex-col justify-end items-center pb-6 sm:pb-10 px-4 sm:px-8"
             style={{ backgroundImage: "url('/images/grand-cta-bg.jpg')" }}
           >
-            <h2 className="sr-only">Create Your LoveLink Website - Their reaction will be worth every second</h2>
+            <h2 className="sr-only">Create Your Lovedrop Website - Their reaction will be worth every second</h2>
 
             {/* Action Buttons & QR Code Matching Reference Image */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-8">
@@ -1314,7 +1314,7 @@ export default function HomePage() {
                 onClick={() => soundFx.playPop()}
                 className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-white hover:bg-rose-50 text-[#FF4D63] font-extrabold text-sm sm:text-base shadow-lg transition-all active:scale-95 flex items-center gap-2 cursor-pointer group"
               >
-                <span>Create Your LoveLink Website ✨</span>
+                <span>Create Your Lovedrop Website ✨</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
 

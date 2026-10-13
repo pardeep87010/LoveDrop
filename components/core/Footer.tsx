@@ -12,13 +12,21 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-10 border-b border-rose-100/60">
           {/* Col 1: Brand */}
           <div className="md:col-span-1 space-y-3">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-rose-600 flex items-center justify-center text-white shadow-xs">
-                <Heart className="w-4 h-4 fill-white" />
+            <Link href="/" className="flex items-center gap-2 group">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/icon.png"
+                alt="LoveDrop Logo"
+                className="w-8 h-8 object-contain group-hover:scale-105 transition-transform"
+              />
+              <div className="flex items-center gap-1">
+                <span className="font-extrabold text-lg text-slate-900 tracking-tight">
+                  Love<span className="text-rose-600">Drop</span>
+                </span>
+                <span className="text-[10px] font-bold text-slate-400">
+                  .online
+                </span>
               </div>
-              <span className="font-extrabold text-lg text-slate-900 tracking-tight">
-                Love<span className="text-rose-600">Link</span>
-              </span>
             </Link>
             <p className="text-xs text-slate-500 leading-relaxed font-medium">
               Transform your feelings into a personal interactive website with runaway buttons, sealed envelopes, and real-time WhatsApp alerts.
@@ -70,7 +78,7 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-3">
-          <p>© 2026 LoveLink Studio. Crafted for romantic souls worldwide.</p>
+          <p>© 2026 Lovedrop.online. Crafted for romantic souls worldwide.</p>
           <div className="flex items-center gap-4 text-[11px]">
             <span>1-Click UPI Payment</span>
             <span>•</span>

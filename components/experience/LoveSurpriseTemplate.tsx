@@ -343,14 +343,18 @@ export default function LoveSurpriseTemplate({
   onToggleFullscreen,
   isFullscreen = false,
 }: LoveSurpriseTemplateProps) {
-  const recipientName = data?.recipientName || "Sarah";
+  const recipientName = data?.recipientName || "My Love";
   const senderName = data?.senderName || "Your Love";
   const customQuestion = data?.question || "Do you love me?";
 
-  const letterFullText =
+  const rawLetter =
     data?.letterContent ||
     data?.letterText ||
     `My dearest ${recipientName},\n\nFrom the moment I met you, my life changed in ways I never expected. Your smile has become my favorite sight, your laugh my favorite sound.\n\nEvery day with you feels like an adventure, and I can't imagine my life without you by my side. You make the ordinary extraordinary.\n\nI love you more than words could ever express, but I'm going to try anyway through this letter.\n\nForever yours,\n${senderName} 💕`;
+
+  const letterFullText = rawLetter
+    .replace(/\bSarah\b/g, recipientName)
+    .replace(/\bMichael\b/g, senderName);
 
   // Step state (1 to 9 complete experience)
   const [step, setStep] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9>(1);
@@ -1399,18 +1403,18 @@ export default function LoveSurpriseTemplate({
       {/* =============================================================== */}
       {/* MAIN CARD STAGE CONTAINER */}
       {/* =============================================================== */}
-      <div className="relative z-10 flex-1 flex flex-col items-center justify-start sm:justify-center w-full max-w-xl mx-auto py-2 sm:py-3">
+      <div className="relative z-10 flex-1 flex flex-col items-center justify-center w-full max-w-xl mx-auto py-2 sm:py-4 my-auto">
         <AnimatePresence mode="wait">
           {/* =========================================================== */}
           {/* PAGE 1: WELCOME CARD & TYPING INTRO (media_1791134834458.png) */}
           {/* =========================================================== */}
           {step === 1 && (
-            <div key="step-1" className="w-full max-w-md mx-auto">
+            <div key="step-1" className="w-full max-w-md mx-auto my-auto">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.35, ease: "easeOut" }}
-                className="relative bg-white rounded-[28px] sm:rounded-[32px] p-6 sm:p-9 shadow-xl shadow-pink-900/5 border border-pink-100/70 text-center space-y-4 min-h-[440px] flex flex-col justify-center"
+                className="relative bg-white rounded-[28px] sm:rounded-[32px] p-6 sm:p-9 shadow-xl shadow-pink-900/5 border border-pink-100/70 text-center space-y-4 min-h-[390px] sm:min-h-[440px] flex flex-col justify-center"
               >
                 {/* Top Golden Badge: Special! */}
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-amber-400 to-yellow-400 text-slate-900 font-extrabold text-[11px] shadow-sm flex items-center gap-1.5 whitespace-nowrap">
@@ -1422,12 +1426,12 @@ export default function LoveSurpriseTemplate({
                 {/* Siyatech Animated Sticker */}
                 <div className="pt-2 flex items-center justify-center gap-2">
                   <span className="text-amber-400 text-base font-bold animate-pulse">✨</span>
-                  <div className="flex items-center justify-center min-h-[96px] sm:min-h-[112px]">
+                  <div className="flex items-center justify-center min-h-[105px] sm:min-h-[125px]">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src="/stickers/intro_sticker.webp"
                       alt="Siyatech Sticker"
-                      className="max-h-24 sm:max-h-28 max-w-[160px] w-auto h-auto object-contain pointer-events-none select-none mix-blend-multiply"
+                      className="max-h-28 sm:max-h-36 max-w-[190px] w-auto h-auto object-contain pointer-events-none select-none mix-blend-multiply"
                       loading="eager"
                     />
                   </div>
@@ -1513,7 +1517,7 @@ export default function LoveSurpriseTemplate({
               {/* Watermark matching media_1791139618461.png */}
               {isEmbedded && (
                 <p className="text-[10px] sm:text-[11px] font-semibold text-pink-400/80 text-center pt-3 tracking-wide select-none">
-                  ♥ Made with LoveLink ♥
+                  ♥ Made with Lovedrop.online ♥
                 </p>
               )}
             </div>
@@ -1529,7 +1533,7 @@ export default function LoveSurpriseTemplate({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -16 }}
               transition={{ duration: 0.35 }}
-              className="w-full max-w-xl mx-auto space-y-4 text-center"
+              className="w-full max-w-xl mx-auto space-y-4 text-center my-auto py-2"
             >
               {/* Title & Subtitle */}
               <div className="space-y-1">
@@ -1623,7 +1627,7 @@ export default function LoveSurpriseTemplate({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -16 }}
               transition={{ duration: 0.35 }}
-              className="w-full max-w-xl mx-auto space-y-2.5 text-center pb-8 sm:pb-12"
+              className="w-full max-w-xl mx-auto space-y-2.5 text-center my-auto py-2"
             >
               {/* Header */}
               <div className="space-y-0.5">
@@ -1764,7 +1768,7 @@ export default function LoveSurpriseTemplate({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.3 }}
-              className="w-full max-w-md mx-auto flex flex-col items-center text-center space-y-5"
+              className="w-full max-w-md mx-auto flex flex-col items-center text-center space-y-4 my-auto py-2"
             >
               {/* Header Title & Subtitle */}
               <div className="space-y-1">
@@ -1906,7 +1910,7 @@ export default function LoveSurpriseTemplate({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.3 }}
-              className="w-full max-w-md mx-auto flex flex-col items-center text-center space-y-4"
+              className="w-full max-w-md mx-auto flex flex-col items-center text-center space-y-4 my-auto py-2"
             >
               {!quizShowComplete ? (
                 <div className="w-full bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-xl shadow-pink-950/5 border border-pink-100/70 flex flex-col items-center text-center space-y-5">
@@ -2039,7 +2043,7 @@ export default function LoveSurpriseTemplate({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.3 }}
-              className="w-full max-w-md mx-auto flex flex-col items-center text-center space-y-4 pb-20 sm:pb-24"
+              className="w-full max-w-md mx-auto flex flex-col items-center text-center space-y-4 my-auto py-2"
             >
               {/* Header Title & Subtitle */}
               <div className="space-y-1">
@@ -2306,7 +2310,7 @@ export default function LoveSurpriseTemplate({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.94 }}
               transition={{ duration: 0.35 }}
-              className="w-full max-w-md mx-auto bg-white rounded-[32px] p-6 sm:p-10 shadow-xl shadow-pink-900/5 border border-pink-100/70 text-center space-y-4 min-h-[460px] flex flex-col justify-center"
+              className="w-full max-w-md mx-auto bg-white rounded-[32px] p-6 sm:p-10 shadow-xl shadow-pink-900/5 border border-pink-100/70 text-center space-y-4 min-h-[420px] sm:min-h-[460px] flex flex-col justify-center my-auto py-2"
             >
               {/* Sticker Reaction Display (Cycles through 12 stickers on NO click/dodge) */}
               <div className="flex items-center justify-center min-h-[148px] sm:min-h-[160px] pt-1">
@@ -2415,7 +2419,7 @@ export default function LoveSurpriseTemplate({
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.05 }}
               transition={{ duration: 0.35 }}
-              className="w-full max-w-sm mx-auto bg-white rounded-[32px] p-6 sm:p-8 shadow-xl shadow-pink-900/5 border border-pink-100 text-center space-y-4 min-h-[420px] flex flex-col justify-center items-center"
+              className="w-full max-w-sm mx-auto bg-white rounded-[32px] p-6 sm:p-8 shadow-xl shadow-pink-900/5 border border-pink-100 text-center space-y-4 min-h-[420px] flex flex-col justify-center items-center my-auto py-2"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -2445,7 +2449,7 @@ export default function LoveSurpriseTemplate({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -16 }}
               transition={{ duration: 0.35 }}
-              className="relative w-full max-w-lg mx-auto"
+              className="relative w-full max-w-lg mx-auto my-auto py-2"
             >
               {/* VINTAGE STATIONERY LETTER CARD (Always rendered in background once yes2 is reached) */}
               <div
@@ -2672,12 +2676,12 @@ export default function LoveSurpriseTemplate({
                 </button>
               </div>
 
-              {/* Watermark Card: Made with LoveLink - only when embedded */}
+              {/* Watermark Card: Made with Lovedrop.online - only when embedded */}
               {isEmbedded && (
                 <div className="rounded-2xl bg-white/80 border border-pink-100/80 px-4 py-2 shadow-2xs max-w-[240px] mx-auto text-center space-y-0.5">
                   <p className="text-xs font-extrabold text-[#FF2E63] flex items-center justify-center gap-1">
                     <span>💖</span>
-                    <span>Made with LoveLink</span>
+                    <span>Made with Lovedrop.online</span>
                     <span>💖</span>
                   </p>
                   <p className="text-[10px] text-slate-500 font-medium">
@@ -2702,7 +2706,7 @@ export default function LoveSurpriseTemplate({
       ) : (
         <footer className="relative z-20 w-full max-w-xl mx-auto flex items-center justify-between px-3 py-1.5 text-[11px] text-pink-400/80 font-medium">
           <span className="select-none font-semibold tracking-wide flex items-center gap-1 text-pink-400">
-            <span>♥</span> Made with LoveLink
+            <span>♥</span> Made with Lovedrop.online
           </span>
           <span className="font-bold text-pink-500 bg-white/90 px-2.5 py-0.5 rounded-full border border-pink-100 shadow-2xs">
             {step} / 9
