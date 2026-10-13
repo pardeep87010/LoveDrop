@@ -622,7 +622,7 @@ export default function CreatorWizard({
   const siteUrl =
     typeof window !== "undefined"
       ? `${window.location.origin}/p/${createdSlug}`
-      : `https://ourlove.in/p/${createdSlug}`;
+      : `https://lovedrop.online/p/${createdSlug}`;
 
   const stepTitles = [
     "Welcome",
