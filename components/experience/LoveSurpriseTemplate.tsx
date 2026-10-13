@@ -903,10 +903,24 @@ export default function LoveSurpriseTemplate({
     "/stickers/no8_sticker.webp", // 7. Goma Peach Bubu
     "/stickers/no6.webp",         // 8. no6
     "/stickers/no3_sticker.webp", // 9. Valgal696
-    "/stickers/no5.gif",          // 10. no5
+    "/stickers/no5.webp",         // 10. no5
     "/stickers/no11_sticker.webp",// 11. Flag
-    "/stickers/no4.gif",          // 12. Last
+    "/stickers/no4.webp",         // 12. Last
   ];
+
+  // Preload all reaction and celebration stickers into memory for instant transitions with 0ms delay
+  useEffect(() => {
+    const allStickers = [
+      "/stickers/intro_sticker.webp",
+      ...NO_STICKERS,
+      "/stickers/yes1.webp",
+      "/stickers/yes2.webp",
+    ];
+    allStickers.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
 
   const lastDodgeTimeRef = useRef<number>(0);
 
@@ -1408,12 +1422,13 @@ export default function LoveSurpriseTemplate({
                 {/* Siyatech Animated Sticker */}
                 <div className="pt-2 flex items-center justify-center gap-2">
                   <span className="text-amber-400 text-base font-bold animate-pulse">✨</span>
-                  <div className="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center">
+                  <div className="flex items-center justify-center min-h-[96px] sm:min-h-[112px]">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src="/stickers/intro_sticker.webp"
                       alt="Siyatech Sticker"
-                      className="w-full h-full object-contain pointer-events-none drop-shadow-sm select-none"
+                      className="max-h-24 sm:max-h-28 max-w-[160px] w-auto h-auto object-contain pointer-events-none select-none mix-blend-multiply"
+                      loading="eager"
                     />
                   </div>
                   <span className="text-amber-400 text-base font-bold animate-pulse">✨</span>
@@ -2294,20 +2309,22 @@ export default function LoveSurpriseTemplate({
               className="w-full max-w-md mx-auto bg-white rounded-[32px] p-6 sm:p-10 shadow-xl shadow-pink-900/5 border border-pink-100/70 text-center space-y-4 min-h-[460px] flex flex-col justify-center"
             >
               {/* Sticker Reaction Display (Cycles through 12 stickers on NO click/dodge) */}
-              <div className="flex items-center justify-center min-h-[140px] pt-1">
+              <div className="flex items-center justify-center min-h-[148px] sm:min-h-[160px] pt-1">
                 <motion.div
                   key={noAttempts > 0 ? NO_STICKERS[Math.min(noAttempts - 1, NO_STICKERS.length - 1)] : "initial-heart"}
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: "spring", stiffness: 350, damping: 20 }}
-                  className="relative"
+                  initial={{ scale: 0.94 }}
+                  animate={{ scale: [0.94, 1.05, 1] }}
+                  transition={{ duration: 0.28, ease: "easeOut" }}
+                  className="relative flex items-center justify-center"
                 >
                   {noAttempts > 0 ? (
                     /* eslint-disable-next-line @next/next/no-img-element */
                     <img
                       src={NO_STICKERS[Math.min(noAttempts - 1, NO_STICKERS.length - 1)]}
                       alt={`Reaction sticker ${noAttempts}`}
-                      className="w-32 h-32 sm:w-36 sm:h-36 object-contain rounded-2xl drop-shadow-md select-none pointer-events-none"
+                      className="max-h-36 sm:max-h-40 max-w-[190px] w-auto h-auto object-contain select-none pointer-events-none mix-blend-multiply"
+                      loading="eager"
+                      decoding="async"
                     />
                   ) : (
                     <div className="w-20 h-20 rounded-3xl bg-pink-50 text-[#FF2E63] flex items-center justify-center mx-auto shadow-sm border border-pink-100/80">
@@ -2329,9 +2346,9 @@ export default function LoveSurpriseTemplate({
                 {noAttempts > 0 && (
                   <motion.div
                     key={Math.min(noAttempts, noPhrases.length)}
-                    initial={{ opacity: 0, y: -6, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ type: "spring", stiffness: 350, damping: 20 }}
+                    initial={{ opacity: 0.85, scale: 0.96 }}
+                    animate={{ opacity: 1, scale: [0.96, 1.03, 1] }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
                   >
                     <span className="inline-block px-4 py-1.5 rounded-full bg-pink-50 border border-pink-200 text-[#FF2E63] font-black text-xs sm:text-sm shadow-xs tracking-wide">
                       {noPhrases[Math.min(noAttempts - 1, noPhrases.length - 1)]}
@@ -2372,7 +2389,6 @@ export default function LoveSurpriseTemplate({
                     damping: 26,
                   }}
                   onMouseEnter={() => handleNoInteraction("hover")}
-                  onTouchStart={() => handleNoInteraction("hover")}
                   onClick={() => handleNoInteraction("click")}
                   style={{ zIndex: 30 }}
                   className="px-6 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm border border-slate-200/80 shadow-md cursor-pointer select-none whitespace-nowrap transition-colors relative z-30 active:scale-95"
@@ -2405,7 +2421,8 @@ export default function LoveSurpriseTemplate({
               <img
                 src="/stickers/yes1.webp"
                 alt="Yes Celebration 1"
-                className="w-44 h-44 sm:w-48 sm:h-48 object-contain rounded-2xl drop-shadow-md select-none pointer-events-none"
+                className="max-h-44 sm:max-h-48 max-w-[220px] w-auto h-auto object-contain select-none pointer-events-none mix-blend-multiply"
+                loading="eager"
               />
               <div className="space-y-1">
                 <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
@@ -2434,7 +2451,8 @@ export default function LoveSurpriseTemplate({
               <img
                 src="/stickers/yes2.webp"
                 alt="Yes Celebration 2"
-                className="w-44 h-44 sm:w-48 sm:h-48 object-contain rounded-2xl drop-shadow-md select-none pointer-events-none"
+                className="max-h-44 sm:max-h-48 max-w-[220px] w-auto h-auto object-contain select-none pointer-events-none mix-blend-multiply"
+                loading="eager"
               />
               <div className="space-y-1">
                 <h2 className="text-2xl sm:text-3xl font-black text-slate-900">

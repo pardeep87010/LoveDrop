@@ -53,7 +53,12 @@ export default function SurprisePage() {
         if (res.ok) {
           const resData = await res.json();
           if (resData.success && resData.data && isMounted) {
-            setData(resData.data);
+            const hasDataChanged =
+              !cachedData ||
+              JSON.stringify(resData.data) !== JSON.stringify(cachedData);
+            if (hasDataChanged) {
+              setData(resData.data);
+            }
             setIsLoading(false);
             try {
               sessionStorage.setItem(cacheKey, JSON.stringify(resData.data));
