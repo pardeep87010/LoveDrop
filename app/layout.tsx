@@ -40,6 +40,15 @@ export const metadata: Metadata = {
     title: "LoveDrop • Interactive Romantic Surprises",
     description: "Create unforgettable romantic websites in minutes.",
   },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", type: "image/png", sizes: "512x512" },
+    ],
+    apple: [
+      { url: "/icon.png", sizes: "512x512" },
+    ],
+  },
 };
 
 export default function RootLayout({

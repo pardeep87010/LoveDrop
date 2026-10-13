@@ -396,7 +396,7 @@ export default function CreatorWizard({
   const [bgMusic, setBgMusic] = useState<AudioTrackId>("romantic-lofi");
   const [enablePin, setEnablePin] = useState(false);
   const [secretPin, setSecretPin] = useState("");
-  const [whatsappNumber, setWhatsappNumber] = useState("+91 98765 43210");
+  const [whatsappNumber, setWhatsappNumber] = useState("0000000000");
   // Resend Email States
   const [creatorEmail, setCreatorEmail] = useState("");
   const [sendToPartnerEmail, setSendToPartnerEmail] = useState(false);
@@ -2205,7 +2205,7 @@ export default function CreatorWizard({
                               type="text"
                               value={whatsappNumber}
                               onChange={(e) => setWhatsappNumber(e.target.value)}
-                              placeholder="+91 98765 43210"
+                              placeholder="0000000000"
                               className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 outline-none focus:border-pink-400 bg-white"
                             />
                           </div>

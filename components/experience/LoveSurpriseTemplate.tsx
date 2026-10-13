@@ -780,7 +780,7 @@ export default function LoveSurpriseTemplate({
     soundFx.playPop();
     confetti({ particleCount: 50, spread: 60 });
 
-    const rawPhone = data?.whatsappNumber || "+91 98765 43210";
+    const rawPhone = data?.whatsappNumber || "0000000000";
     const cleanPhone = rawPhone.replace(/\D/g, "");
 
     const predefinedMsg =
@@ -2438,67 +2438,32 @@ export default function LoveSurpriseTemplate({
             </motion.div>
           )}
 
-          {step === 8 && step3SubStep === "yes2" && (
+          {step === 8 && (step3SubStep === "yes2" || step3SubStep === "letter") && (
             <motion.div
-              key="step-8-yes2"
-              initial={{ opacity: 0, scale: 0.88 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.05 }}
-              transition={{ duration: 0.35 }}
-              className="w-full max-w-sm mx-auto bg-white rounded-[32px] p-6 sm:p-8 shadow-xl shadow-pink-900/5 border border-pink-100 text-center space-y-4 min-h-[420px] flex flex-col justify-center items-center"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/stickers/yes2.webp"
-                alt="Yes Celebration 2"
-                className="max-h-44 sm:max-h-48 max-w-[220px] w-auto h-auto object-contain select-none pointer-events-none mix-blend-multiply"
-                loading="eager"
-              />
-              <div className="space-y-1">
-                <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
-                  Forever &amp; Always ❤️
-                </h2>
-                <p className="text-xs sm:text-sm font-semibold text-slate-600">
-                  I wrote a special love letter just for you, {recipientName}
-                </p>
-              </div>
-              <button
-                id="open-letter-btn"
-                type="button"
-                onClick={() => {
-                  soundFx.playPop();
-                  setStep3SubStep("letter");
-                  setLetterTypedLength(0);
-                  setIsTypingLetter(true);
-                }}
-                className="px-7 py-3 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-xs sm:text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
-              >
-                <span>Open My Love Letter 💌</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </motion.div>
-          )}
-
-          {step === 8 && step3SubStep === "letter" && (
-            <motion.div
-              key="step-8-letter"
+              key="step-8-celebration-letter"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -16 }}
               transition={{ duration: 0.35 }}
-              className="w-full max-w-lg mx-auto space-y-5"
+              className="relative w-full max-w-lg mx-auto"
             >
-              {/* Vintage Stationery Letter Card */}
-              <div className="relative bg-[#FFFEF7] rounded-[32px] p-7 sm:p-9 shadow-xl shadow-pink-900/5 border border-pink-200/60 text-left space-y-4">
+              {/* VINTAGE STATIONERY LETTER CARD (Always rendered in background once yes2 is reached) */}
+              <div
+                className={`relative bg-[#FFFEF7] rounded-[32px] p-6 sm:p-9 shadow-xl shadow-pink-900/5 border border-pink-200/60 text-left space-y-4 transition-all duration-500 ${
+                  step3SubStep === "yes2"
+                    ? "opacity-40 blur-[2px] pointer-events-none select-none scale-95"
+                    : "opacity-100 blur-0 scale-100"
+                }`}
+              >
                 {/* Letter Header with Skip Typing Button */}
                 <div className="flex items-center justify-between border-b border-pink-100 pb-3">
                   <div className="flex items-center gap-1.5 text-xs font-bold text-[#FF2E63] mx-auto sm:mx-0">
                     <span>💕</span>
-                    <span>Love Letter</span>
+                    <span>Love Letter for {recipientName}</span>
                     <span>💕</span>
                   </div>
 
-                  {isTypingLetter && (
+                  {isTypingLetter && step3SubStep === "letter" && (
                     <button
                       id="skip-typing-btn"
                       type="button"
@@ -2511,10 +2476,23 @@ export default function LoveSurpriseTemplate({
                   )}
                 </div>
 
+                {/* 2nd Sticker (yes2) Featured Sweetly on the Letter */}
+                <div className="flex items-center justify-center pt-1 pb-1">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/stickers/yes2.webp"
+                    alt="Yes Celebration 2"
+                    className="max-h-24 sm:max-h-28 max-w-[160px] w-auto h-auto object-contain select-none pointer-events-none mix-blend-multiply"
+                    loading="eager"
+                  />
+                </div>
+
                 {/* Typewritten Text Content */}
                 <div className="text-xs sm:text-sm text-slate-700 font-serif leading-relaxed whitespace-pre-line min-h-[160px]">
-                  {letterFullText.slice(0, letterTypedLength)}
-                  {isTypingLetter && (
+                  {step3SubStep === "yes2"
+                    ? letterFullText.slice(0, 200) + "..."
+                    : letterFullText.slice(0, letterTypedLength)}
+                  {isTypingLetter && step3SubStep === "letter" && (
                     <span className="inline-block w-0.5 h-4 bg-[#FF2E63] ml-0.5 animate-pulse" />
                   )}
                 </div>
@@ -2527,20 +2505,68 @@ export default function LoveSurpriseTemplate({
                 </div>
               </div>
 
-              {/* Continue Button */}
-              <div className="text-center pt-2">
-                <button
-                  id="continue-letter-btn"
-                  type="button"
-                  onClick={() => {
-                    soundFx.playPop();
-                    setStep(getNextStep(8));
-                  }}
-                  className="px-10 py-3.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
-                >
-                  <span>Continue to Finale 🎉</span> <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
+              {/* 2ND STICKER OVERLAY MODAL (Foreground Card with 'Continue with Next Page' button) */}
+              <AnimatePresence>
+                {step3SubStep === "yes2" && (
+                  <motion.div
+                    key="step-8-yes2-modal"
+                    initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
+                    className="absolute inset-0 z-20 flex items-center justify-center p-3"
+                  >
+                    <div className="w-full max-w-sm bg-white/95 backdrop-blur-md rounded-[32px] p-6 sm:p-7 shadow-2xl border border-pink-200/80 text-center space-y-4 flex flex-col justify-center items-center">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src="/stickers/yes2.webp"
+                        alt="Yes Celebration 2"
+                        className="max-h-40 sm:max-h-44 max-w-[200px] w-auto h-auto object-contain select-none pointer-events-none mix-blend-multiply"
+                        loading="eager"
+                      />
+                      <div className="space-y-1">
+                        <h2 className="text-2xl sm:text-3xl font-black text-slate-900">
+                          Forever &amp; Always ❤️
+                        </h2>
+                        <p className="text-xs sm:text-sm font-semibold text-slate-600">
+                          I wrote a special love letter just for you, {recipientName}
+                        </p>
+                      </div>
+                      <button
+                        id="open-letter-btn"
+                        type="button"
+                        onClick={() => {
+                          soundFx.playPop();
+                          setStep3SubStep("letter");
+                          setLetterTypedLength(0);
+                          setIsTypingLetter(true);
+                        }}
+                        className="px-8 py-3 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-xs sm:text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
+                      >
+                        <span>Continue with Next Page 💌</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Continue Button to Next Page (Shown once letter is active) */}
+              {step3SubStep === "letter" && (
+                <div className="text-center pt-3">
+                  <button
+                    id="continue-letter-btn"
+                    type="button"
+                    onClick={() => {
+                      soundFx.playPop();
+                      setStep(getNextStep(8));
+                    }}
+                    className="px-10 py-3.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
+                  >
+                    <span>Continue to Finale 🎉</span> <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
             </motion.div>
           )}
 
