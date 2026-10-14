@@ -42,6 +42,14 @@ import { usePricing } from "@/lib/pricing";
 import PagePreviewCard from "@/components/creator/PagePreviewCard";
 import { compressImageToBlob } from "@/lib/imageCompress";
 
+export const MAX_LIMITS = {
+  PHOTOS: 10,
+  QUIZ_QUESTIONS: 5,
+  MILESTONES: 6,
+  REASONS: 9,
+  FORTUNES: 5,
+} as const;
+
 interface CreatorWizardProps {
   initialOccasion?: OccasionType;
   initialTheme?: string;
@@ -223,6 +231,12 @@ export default function CreatorWizard({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (photos.length >= MAX_LIMITS.PHOTOS) {
+      alert(`Maximum ${MAX_LIMITS.PHOTOS} photos allowed! Please remove an existing photo first.`);
+      if (photoFileInputRef.current) photoFileInputRef.current.value = "";
+      return;
+    }
+
     // 1. Strict Image Type Validation
     if (!file.type.startsWith("image/")) {
       alert("Only image files (JPEG, PNG, WEBP, GIF, HEIC) are allowed!");
@@ -278,6 +292,10 @@ export default function CreatorWizard({
   };
 
   const handleAddPhotoSubmit = () => {
+    if (photos.length >= MAX_LIMITS.PHOTOS) {
+      alert(`Maximum ${MAX_LIMITS.PHOTOS} photos allowed! Please remove an existing photo first.`);
+      return;
+    }
     if (newPhotoUrl.trim()) {
       soundFx.playPop();
       confetti({ particleCount: 25, spread: 45 });
@@ -375,6 +393,12 @@ export default function CreatorWizard({
   const [quizValidationError, setQuizValidationError] = useState("");
 
   const handleAddQuizQuestion = () => {
+    if (quizQuestions.length >= MAX_LIMITS.QUIZ_QUESTIONS) {
+      soundFx.playPop();
+      setQuizValidationError(`Maximum ${MAX_LIMITS.QUIZ_QUESTIONS} quiz questions allowed!`);
+      return;
+    }
+
     const validOptions = newQuizOpts.map((o) => o.trim()).filter(Boolean);
     if (validOptions.length < 2) {
       soundFx.playPop();
@@ -956,72 +980,88 @@ export default function CreatorWizard({
                       </div>
 
                       {/* Add new photo input */}
-                      {/* Add new photo input */}
                       <div className="pt-2 border-t border-slate-100 space-y-3">
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-bold text-slate-700">Add Another Memory</span>
-                          <span className="text-[11px] text-pink-500 font-semibold">
-                            {photos.length} photos added
+                          <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+                            photos.length >= MAX_LIMITS.PHOTOS
+                              ? "bg-amber-100 text-amber-700 font-bold"
+                              : "bg-pink-50 text-pink-600"
+                          }`}>
+                            {photos.length} / {MAX_LIMITS.PHOTOS} Max Photos
                           </span>
                         </div>
 
-                        {/* Hidden File Picker Input */}
-                        <input
-                          ref={photoFileInputRef}
-                          type="file"
-                          accept="image/png, image/jpeg, image/jpg, image/webp, image/gif, image/heic"
-                          onChange={handlePhotoFileSelect}
-                          className="hidden"
-                        />
-
-                        {/* Direct Device Upload Button */}
-                        <button
-                          type="button"
-                          disabled={isUploadingPhoto}
-                          onClick={() => photoFileInputRef.current?.click()}
-                          className="w-full py-3.5 px-4 rounded-2xl border-2 border-dashed border-pink-300 hover:border-[#FF2E63] bg-pink-50/50 hover:bg-pink-50 text-pink-700 font-bold text-xs flex items-center justify-center gap-2.5 transition-all cursor-pointer group shadow-2xs active:scale-[0.99]"
-                        >
-                          <div className="w-8 h-8 rounded-full bg-pink-100 group-hover:bg-pink-200 flex items-center justify-center text-pink-600 transition-colors">
-                            <Upload className="w-4 h-4" />
+                        {photos.length >= MAX_LIMITS.PHOTOS ? (
+                          <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200 text-center">
+                            <p className="text-xs font-bold text-amber-800">
+                              📸 Maximum limit of {MAX_LIMITS.PHOTOS} photos reached!
+                            </p>
+                            <p className="text-[11px] text-amber-600 font-medium mt-0.5">
+                              Please delete any existing photo above if you want to upload a new one. (On certificate, 3 random photos will be stylishly showcased).
+                            </p>
                           </div>
-                          <span>
-                            {isUploadingPhoto
-                              ? "Compressing & Encrypting Photo..."
-                              : "📁 Choose Photo from Device (Max 20MB • Auto-Compressed)"}
-                          </span>
-                        </button>
+                        ) : (
+                          <>
+                            {/* Hidden File Picker Input */}
+                            <input
+                              ref={photoFileInputRef}
+                              type="file"
+                              accept="image/png, image/jpeg, image/jpg, image/webp, image/gif, image/heic"
+                              onChange={handlePhotoFileSelect}
+                              className="hidden"
+                            />
 
-                        <div className="text-[10px] text-slate-400 font-semibold text-center flex items-center gap-2">
-                          <span className="h-[1px] flex-1 bg-slate-100" />
-                          <span>OR PASTE IMAGE URL WITH CAPTION</span>
-                          <span className="h-[1px] flex-1 bg-slate-100" />
-                        </div>
+                            {/* Direct Device Upload Button */}
+                            <button
+                              type="button"
+                              disabled={isUploadingPhoto || photos.length >= MAX_LIMITS.PHOTOS}
+                              onClick={() => photoFileInputRef.current?.click()}
+                              className="w-full py-3.5 px-4 rounded-2xl border-2 border-dashed border-pink-300 hover:border-[#FF2E63] bg-pink-50/50 hover:bg-pink-50 text-pink-700 font-bold text-xs flex items-center justify-center gap-2.5 transition-all cursor-pointer group shadow-2xs active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <div className="w-8 h-8 rounded-full bg-pink-100 group-hover:bg-pink-200 flex items-center justify-center text-pink-600 transition-colors">
+                                <Upload className="w-4 h-4" />
+                              </div>
+                              <span>
+                                {isUploadingPhoto
+                                  ? "Compressing & Encrypting Photo..."
+                                  : "📁 Choose Photo from Device (Max 20MB • Auto-Compressed)"}
+                              </span>
+                            </button>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                          <input
-                            type="text"
-                            value={newPhotoUrl}
-                            onChange={(e) => setNewPhotoUrl(e.target.value)}
-                            placeholder="Image URL (optional if uploading)..."
-                            className="px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-pink-400 bg-white"
-                          />
-                          <input
-                            type="text"
-                            value={newPhotoCaption}
-                            onChange={(e) => setNewPhotoCaption(e.target.value)}
-                            placeholder="Caption (e.g. That magical evening...)"
-                            className="px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-pink-400 bg-white"
-                          />
-                        </div>
+                            <div className="text-[10px] text-slate-400 font-semibold text-center flex items-center gap-2">
+                              <span className="h-[1px] flex-1 bg-slate-100" />
+                              <span>OR PASTE IMAGE URL WITH CAPTION</span>
+                              <span className="h-[1px] flex-1 bg-slate-100" />
+                            </div>
 
-                        <button
-                          type="button"
-                          onClick={handleAddPhotoSubmit}
-                          className="w-full py-2.5 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95 transition-all"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          <span>{newPhotoUrl.trim() ? "Add Photo from URL" : "Open File Picker to Add Photo"}</span>
-                        </button>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              <input
+                                type="text"
+                                value={newPhotoUrl}
+                                onChange={(e) => setNewPhotoUrl(e.target.value)}
+                                placeholder="Image URL (optional if uploading)..."
+                                className="px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-pink-400 bg-white"
+                              />
+                              <input
+                                type="text"
+                                value={newPhotoCaption}
+                                onChange={(e) => setNewPhotoCaption(e.target.value)}
+                                placeholder="Caption (e.g. That magical evening...)"
+                                className="px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-pink-400 bg-white"
+                              />
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={handleAddPhotoSubmit}
+                              className="w-full py-2.5 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95 transition-all"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              <span>{newPhotoUrl.trim() ? "Add Photo from URL" : "Open File Picker to Add Photo"}</span>
+                            </button>
+                          </>
+                        )}
                       </div>
                     </div>
                   ) : (
@@ -1140,40 +1180,67 @@ export default function CreatorWizard({
                       </div>
 
                       {/* Add New Reason */}
-                      <div className="pt-2 border-t border-slate-100 flex gap-2">
-                        <input
-                          type="text"
-                          value={newReasonEmoji}
-                          onChange={(e) => setNewReasonEmoji(e.target.value)}
-                          className="w-10 h-10 rounded-xl border border-slate-200 text-center text-lg outline-none"
-                        />
-                        <input
-                          type="text"
-                          value={newReasonTitle}
-                          onChange={(e) => setNewReasonTitle(e.target.value)}
-                          placeholder="Add new reason..."
-                          className="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-pink-400"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (newReasonTitle.trim()) {
-                              soundFx.playPop();
-                              setReasons([
-                                ...reasons,
-                                {
-                                  id: Date.now(),
-                                  emoji: newReasonEmoji || "💖",
-                                  title: newReasonTitle.trim(),
-                                },
-                              ]);
-                              setNewReasonTitle("");
-                            }
-                          }}
-                          className="px-4 py-2 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs cursor-pointer"
-                        >
-                          Add
-                        </button>
+                      <div className="pt-2 border-t border-slate-100 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-slate-700">Add Another Reason</span>
+                          <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+                            reasons.length >= MAX_LIMITS.REASONS
+                              ? "bg-amber-100 text-amber-700 font-bold"
+                              : "bg-pink-50 text-pink-600"
+                          }`}>
+                            {reasons.length} / {MAX_LIMITS.REASONS} Max Reasons
+                          </span>
+                        </div>
+                        {reasons.length >= MAX_LIMITS.REASONS ? (
+                          <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200 text-center">
+                            <p className="text-xs font-bold text-amber-800">
+                              💖 Maximum limit of {MAX_LIMITS.REASONS} reasons reached!
+                            </p>
+                            <p className="text-[11px] text-amber-600 font-medium mt-0.5">
+                              The 9 reasons match perfectly with the 3×3 interactive flip card grid.
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={newReasonEmoji}
+                              onChange={(e) => setNewReasonEmoji(e.target.value)}
+                              className="w-10 h-10 rounded-xl border border-slate-200 text-center text-lg outline-none"
+                            />
+                            <input
+                              type="text"
+                              value={newReasonTitle}
+                              onChange={(e) => setNewReasonTitle(e.target.value)}
+                              placeholder="Add new reason..."
+                              className="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-pink-400"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (reasons.length >= MAX_LIMITS.REASONS) {
+                                  alert(`Maximum ${MAX_LIMITS.REASONS} reasons allowed!`);
+                                  return;
+                                }
+                                if (newReasonTitle.trim()) {
+                                  soundFx.playPop();
+                                  setReasons([
+                                    ...reasons,
+                                    {
+                                      id: Date.now(),
+                                      emoji: newReasonEmoji || "💖",
+                                      title: newReasonTitle.trim(),
+                                    },
+                                  ]);
+                                  setNewReasonTitle("");
+                                }
+                              }}
+                              className="px-4 py-2 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs cursor-pointer shadow-xs active:scale-95 transition-all"
+                            >
+                              Add
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ) : (
@@ -1321,63 +1388,89 @@ export default function CreatorWizard({
 
                       {/* Add new milestone */}
                       <div className="pt-2 border-t border-slate-100 space-y-2">
-                        <span className="text-xs font-bold text-slate-700">Add Milestone</span>
-                        <div className="grid grid-cols-3 gap-2">
-                          <input
-                            type="text"
-                            value={newMilestoneIcon}
-                            onChange={(e) => setNewMilestoneIcon(e.target.value)}
-                            placeholder="Icon"
-                            className="px-3 py-2 rounded-xl border border-slate-200 text-xs text-center outline-none"
-                          />
-                          <input
-                            type="text"
-                            value={newMilestoneTitle}
-                            onChange={(e) => setNewMilestoneTitle(e.target.value)}
-                            placeholder="Title (e.g. First Trip)"
-                            className="col-span-2 px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-pink-400"
-                          />
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-slate-700">Add Milestone</span>
+                          <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+                            milestones.length >= MAX_LIMITS.MILESTONES
+                              ? "bg-amber-100 text-amber-700 font-bold"
+                              : "bg-pink-50 text-pink-600"
+                          }`}>
+                            {milestones.length} / {MAX_LIMITS.MILESTONES} Max Milestones
+                          </span>
                         </div>
-                        <div className="grid grid-cols-3 gap-2">
-                          <input
-                            type="text"
-                            value={newMilestoneDate}
-                            onChange={(e) => setNewMilestoneDate(e.target.value)}
-                            placeholder="Date (e.g. 2024 • Jan)"
-                            className="px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-pink-400"
-                          />
-                          <input
-                            type="text"
-                            value={newMilestoneDesc}
-                            onChange={(e) => setNewMilestoneDesc(e.target.value)}
-                            placeholder="Description..."
-                            className="col-span-2 px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-pink-400"
-                          />
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (newMilestoneTitle.trim()) {
-                              soundFx.playPop();
-                              setMilestones([
-                                ...milestones,
-                                {
-                                  icon: newMilestoneIcon || "💖",
-                                  title: newMilestoneTitle.trim(),
-                                  date: newMilestoneDate.trim() || "2024",
-                                  description: newMilestoneDesc.trim() || "A wonderful memory",
-                                },
-                              ]);
-                              setNewMilestoneTitle("");
-                              setNewMilestoneDesc("");
-                              setNewMilestoneDate("");
-                            }
-                          }}
-                          className="w-full py-2.5 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          <span>Add Milestone</span>
-                        </button>
+                        {milestones.length >= MAX_LIMITS.MILESTONES ? (
+                          <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200 text-center">
+                            <p className="text-xs font-bold text-amber-800">
+                              ⏳ Maximum limit of {MAX_LIMITS.MILESTONES} milestones reached!
+                            </p>
+                            <p className="text-[11px] text-amber-600 font-medium mt-0.5">
+                              Please remove any milestone above to add a new chapter to your love journey.
+                            </p>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="grid grid-cols-3 gap-2">
+                              <input
+                                type="text"
+                                value={newMilestoneIcon}
+                                onChange={(e) => setNewMilestoneIcon(e.target.value)}
+                                placeholder="Icon"
+                                className="px-3 py-2 rounded-xl border border-slate-200 text-xs text-center outline-none"
+                              />
+                              <input
+                                type="text"
+                                value={newMilestoneTitle}
+                                onChange={(e) => setNewMilestoneTitle(e.target.value)}
+                                placeholder="Title (e.g. First Trip)"
+                                className="col-span-2 px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-pink-400"
+                              />
+                            </div>
+                            <div className="grid grid-cols-3 gap-2">
+                              <input
+                                type="text"
+                                value={newMilestoneDate}
+                                onChange={(e) => setNewMilestoneDate(e.target.value)}
+                                placeholder="Date (e.g. 2024 • Jan)"
+                                className="px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-pink-400"
+                              />
+                              <input
+                                type="text"
+                                value={newMilestoneDesc}
+                                onChange={(e) => setNewMilestoneDesc(e.target.value)}
+                                placeholder="Description..."
+                                className="col-span-2 px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-pink-400"
+                              />
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (milestones.length >= MAX_LIMITS.MILESTONES) {
+                                  alert(`Maximum ${MAX_LIMITS.MILESTONES} milestones allowed!`);
+                                  return;
+                                }
+                                if (newMilestoneTitle.trim()) {
+                                  soundFx.playPop();
+                                  setMilestones([
+                                    ...milestones,
+                                    {
+                                      icon: newMilestoneIcon || "💖",
+                                      title: newMilestoneTitle.trim(),
+                                      date: newMilestoneDate.trim() || "2024",
+                                      description: newMilestoneDesc.trim() || "A wonderful memory",
+                                    },
+                                  ]);
+                                  setNewMilestoneTitle("");
+                                  setNewMilestoneDesc("");
+                                  setNewMilestoneDate("");
+                                }
+                              }}
+                              className="w-full py-2.5 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95 transition-all"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              <span>Add Milestone</span>
+                            </button>
+                          </>
+                        )}
                       </div>
                     </div>
                   ) : (
@@ -1546,76 +1639,96 @@ export default function CreatorWizard({
                       <div className="pt-2 border-t border-slate-100 space-y-2.5">
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-bold text-slate-700">Add New Quiz Question</span>
-                          <span className="text-[10px] text-slate-400">
-                            Tap the circle to mark correct answer
+                          <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+                            quizQuestions.length >= MAX_LIMITS.QUIZ_QUESTIONS
+                              ? "bg-amber-100 text-amber-700 font-bold"
+                              : "bg-pink-50 text-pink-600"
+                          }`}>
+                            {quizQuestions.length} / {MAX_LIMITS.QUIZ_QUESTIONS} Max Questions
                           </span>
                         </div>
-                        <input
-                          type="text"
-                          value={newQuizQ}
-                          onChange={(e) => {
-                            setNewQuizQ(e.target.value);
-                            if (quizValidationError) setQuizValidationError("");
-                          }}
-                          placeholder={`Question #${quizQuestions.length + 1} (e.g. Where did we first travel together?)`}
-                          className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-pink-400 bg-white placeholder:text-slate-400 font-medium"
-                        />
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                          {[0, 1, 2, 3].map((i) => {
-                            const isSelectedCorrect = newQuizCorrectIdx === i;
-                            return (
-                              <div
-                                key={i}
-                                className={`flex items-center gap-2 p-2 rounded-xl border transition-all ${
-                                  isSelectedCorrect
-                                    ? "bg-emerald-50/80 border-emerald-300 text-emerald-800"
-                                    : "bg-white border-slate-200 text-slate-700"
-                                }`}
-                              >
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    soundFx.playPop();
-                                    setNewQuizCorrectIdx(i);
-                                  }}
-                                  title="Click to mark this option as correct answer"
-                                  className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 cursor-pointer ${
-                                    isSelectedCorrect
-                                      ? "border-emerald-600 bg-emerald-600 text-white"
-                                      : "border-slate-300 hover:border-emerald-400"
-                                  }`}
-                                >
-                                  {isSelectedCorrect && <Check className="w-3 h-3 stroke-[3]" />}
-                                </button>
-                                <input
-                                  type="text"
-                                  value={newQuizOpts[i]}
-                                  onChange={(e) => {
-                                    const updated = [...newQuizOpts];
-                                    updated[i] = e.target.value;
-                                    setNewQuizOpts(updated);
-                                    if (quizValidationError) setQuizValidationError("");
-                                  }}
-                                  placeholder={`Option ${i + 1}${i === 0 ? " (Correct by default)" : ""}`}
-                                  className="w-full text-xs font-semibold bg-transparent outline-none placeholder:text-slate-400"
-                                />
-                              </div>
-                            );
-                          })}
-                        </div>
-                        {quizValidationError && (
-                          <p className="text-xs font-bold text-rose-500 bg-rose-50 border border-rose-200 rounded-lg py-1 px-2.5 text-center">
-                            ⚠️ {quizValidationError}
-                          </p>
+                        {quizQuestions.length >= MAX_LIMITS.QUIZ_QUESTIONS ? (
+                          <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200 text-center">
+                            <p className="text-xs font-bold text-amber-800">
+                              🎯 Maximum limit of {MAX_LIMITS.QUIZ_QUESTIONS} quiz questions reached!
+                            </p>
+                            <p className="text-[11px] text-amber-600 font-medium mt-0.5">
+                              5 questions keep the quiz engaging, fun and quick for your partner!
+                            </p>
+                          </div>
+                        ) : (
+                          <>
+                            <p className="text-[10px] text-slate-400">
+                              Tap the circle to mark correct answer
+                            </p>
+                            <input
+                              type="text"
+                              value={newQuizQ}
+                              onChange={(e) => {
+                                setNewQuizQ(e.target.value);
+                                if (quizValidationError) setQuizValidationError("");
+                              }}
+                              placeholder={`Question #${quizQuestions.length + 1} (e.g. Where did we first travel together?)`}
+                              className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-pink-400 bg-white placeholder:text-slate-400 font-medium"
+                            />
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              {[0, 1, 2, 3].map((i) => {
+                                const isSelectedCorrect = newQuizCorrectIdx === i;
+                                return (
+                                  <div
+                                    key={i}
+                                    className={`flex items-center gap-2 p-2 rounded-xl border transition-all ${
+                                      isSelectedCorrect
+                                        ? "bg-emerald-50/80 border-emerald-300 text-emerald-800"
+                                        : "bg-white border-slate-200 text-slate-700"
+                                    }`}
+                                  >
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        soundFx.playPop();
+                                        setNewQuizCorrectIdx(i);
+                                      }}
+                                      title="Click to mark this option as correct answer"
+                                      className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 cursor-pointer ${
+                                        isSelectedCorrect
+                                          ? "border-emerald-600 bg-emerald-600 text-white"
+                                          : "border-slate-300 hover:border-emerald-400"
+                                      }`}
+                                    >
+                                      {isSelectedCorrect && <Check className="w-3 h-3 stroke-[3]" />}
+                                    </button>
+                                    <input
+                                      type="text"
+                                      value={newQuizOpts[i]}
+                                      onChange={(e) => {
+                                        const updated = [...newQuizOpts];
+                                        updated[i] = e.target.value;
+                                        setNewQuizOpts(updated);
+                                        if (quizValidationError) setQuizValidationError("");
+                                      }}
+                                      placeholder={`Option ${i + 1}${i === 0 ? " (Correct by default)" : ""}`}
+                                      className="w-full text-xs font-semibold bg-transparent outline-none placeholder:text-slate-400"
+                                    />
+                                  </div>
+                                );
+                              })}
+                            </div>
+                            {quizValidationError && (
+                              <p className="text-xs font-bold text-rose-500 bg-rose-50 border border-rose-200 rounded-lg py-1 px-2.5 text-center">
+                                ⚠️ {quizValidationError}
+                              </p>
+                            )}
+                            <button
+                              type="button"
+                              onClick={handleAddQuizQuestion}
+                              className="w-full py-2.5 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95 transition-all"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              <span>Add Quiz Question</span>
+                            </button>
+                          </>
                         )}
-                        <button
-                          type="button"
-                          onClick={handleAddQuizQuestion}
-                          className="w-full py-2.5 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-xs active:scale-95 transition-all"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          <span>Add Quiz Question</span>
-                        </button>
                       </div>
                     </div>
                   ) : (
@@ -1725,27 +1838,54 @@ export default function CreatorWizard({
                       </div>
 
                       {/* Add new quote */}
-                      <div className="pt-2 border-t border-slate-100 flex gap-2">
-                        <input
-                          type="text"
-                          value={newFortuneInput}
-                          onChange={(e) => setNewFortuneInput(e.target.value)}
-                          placeholder="Add new love prophecy..."
-                          className="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-pink-400"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (newFortuneInput.trim()) {
-                              soundFx.playPop();
-                              setFortuneQuotes([...fortuneQuotes, newFortuneInput.trim()]);
-                              setNewFortuneInput("");
-                            }
-                          }}
-                          className="px-4 py-2 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs cursor-pointer"
-                        >
-                          Add
-                        </button>
+                      <div className="pt-2 border-t border-slate-100 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold text-slate-700">Add Love Prophecy</span>
+                          <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+                            fortuneQuotes.length >= MAX_LIMITS.FORTUNES
+                              ? "bg-amber-100 text-amber-700 font-bold"
+                              : "bg-pink-50 text-pink-600"
+                          }`}>
+                            {fortuneQuotes.length} / {MAX_LIMITS.FORTUNES} Max Fortunes
+                          </span>
+                        </div>
+                        {fortuneQuotes.length >= MAX_LIMITS.FORTUNES ? (
+                          <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200 text-center">
+                            <p className="text-xs font-bold text-amber-800">
+                              🥠 Maximum limit of {MAX_LIMITS.FORTUNES} fortune cookies reached!
+                            </p>
+                            <p className="text-[11px] text-amber-600 font-medium mt-0.5">
+                              Matches the 5 interactive crackable fortune cookies perfectly.
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={newFortuneInput}
+                              onChange={(e) => setNewFortuneInput(e.target.value)}
+                              placeholder="Add new love prophecy..."
+                              className="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-xs outline-none focus:border-pink-400"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (fortuneQuotes.length >= MAX_LIMITS.FORTUNES) {
+                                  alert(`Maximum ${MAX_LIMITS.FORTUNES} fortune quotes allowed!`);
+                                  return;
+                                }
+                                if (newFortuneInput.trim()) {
+                                  soundFx.playPop();
+                                  setFortuneQuotes([...fortuneQuotes, newFortuneInput.trim()]);
+                                  setNewFortuneInput("");
+                                }
+                              }}
+                              className="px-4 py-2 rounded-xl bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs cursor-pointer shadow-xs active:scale-95 transition-all"
+                            >
+                              Add
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ) : (

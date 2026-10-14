@@ -417,6 +417,7 @@ export default function LoveSurpriseTemplate({
     (data?.bgMusic as AudioTrackId) || "romantic-lofi"
   );
   const [showSongPicker, setShowSongPicker] = useState(false);
+  const [isGeneratingCert, setIsGeneratingCert] = useState(false);
 
   const musicTrackSrc =
     selectedTrack === "summer-guitar"
@@ -493,32 +494,90 @@ export default function LoveSurpriseTemplate({
     setShowSongPicker(false);
   };
 
-  // Certificate Download Handler (Luxury Royal Premium Design)
-  const handleDownloadCertificate = () => {
+  // Certificate Download Handler (Luxury Royal Premium Design with 3 Tilted Polaroid Photos)
+  const handleDownloadCertificate = async () => {
+    if (isGeneratingCert) return;
+    setIsGeneratingCert(true);
     soundFx.playSuccessChime();
     confetti({ particleCount: 120, spread: 90, origin: { y: 0.6 } });
 
+    // Helper: Safely load image for canvas with CORS fallback
+    const loadCanvasImage = (src: string): Promise<HTMLImageElement | null> => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => resolve(img);
+        img.onerror = () => {
+          // Retry without crossOrigin (for data URIs or local assets)
+          const fallback = new Image();
+          fallback.onload = () => resolve(fallback);
+          fallback.onerror = () => resolve(null);
+          fallback.src = src;
+        };
+        img.src = src;
+      });
+    };
+
+    // 1. Collect all candidate photos from user's surprise
+    const candidatePhotos: string[] = [];
+    if (Array.isArray(data?.photos) && data.photos.length > 0) {
+      candidatePhotos.push(...data.photos.filter((p): p is string => Boolean(p && typeof p === "string")));
+    }
+    if (Array.isArray(data?.photoMemories) && data.photoMemories.length > 0) {
+      candidatePhotos.push(
+        ...data.photoMemories
+          .map((m) => m?.image)
+          .filter((p): p is string => Boolean(p && typeof p === "string"))
+      );
+    }
+    if (candidatePhotos.length === 0) {
+      candidatePhotos.push(
+        "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=800&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=800&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=800&auto=format&fit=crop&q=80"
+      );
+    }
+
+    // Pick 3 random photos (User request: "jitnni bhi photo user dale lekin show only random 3 photo")
+    const uniquePool = Array.from(new Set(candidatePhotos));
+    const shuffled = [...uniquePool].sort(() => Math.random() - 0.5);
+    const chosen3Urls: string[] = [];
+    for (let i = 0; i < 3; i++) {
+      chosen3Urls.push(shuffled[i % shuffled.length]);
+    }
+
+    // Pre-load all 3 images asynchronously
+    let loadedImgs: (HTMLImageElement | null)[] = [];
+    try {
+      loadedImgs = await Promise.all(chosen3Urls.map((url) => loadCanvasImage(url)));
+    } catch {
+      loadedImgs = [null, null, null];
+    }
+
     const canvas = document.createElement("canvas");
     canvas.width = 1200;
-    canvas.height = 850;
+    canvas.height = 1060;
     const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    if (!ctx) {
+      setIsGeneratingCert(false);
+      return;
+    }
 
     // 1. Rich Vintage Parchment Background
-    const bgGrad = ctx.createRadialGradient(600, 425, 100, 600, 425, 750);
+    const bgGrad = ctx.createRadialGradient(600, 530, 100, 600, 530, 850);
     bgGrad.addColorStop(0, "#FFFFFF");
     bgGrad.addColorStop(0.5, "#FFFBF7");
     bgGrad.addColorStop(0.85, "#FFF5F7");
     bgGrad.addColorStop(1, "#FAECF2");
     ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, 1200, 850);
+    ctx.fillRect(0, 0, 1200, 1060);
 
     // Subtle luxury vignette tint at corners
     ctx.fillStyle = "rgba(212, 175, 55, 0.03)";
-    ctx.fillRect(0, 0, 1200, 850);
+    ctx.fillRect(0, 0, 1200, 1060);
 
     // 2. Outer Ornate Gold Foil Border (Gradient Stroke)
-    const goldGrad = ctx.createLinearGradient(0, 0, 1200, 850);
+    const goldGrad = ctx.createLinearGradient(0, 0, 1200, 1060);
     goldGrad.addColorStop(0, "#B8860B");
     goldGrad.addColorStop(0.2, "#E5C158");
     goldGrad.addColorStop(0.4, "#FDF3D0");
@@ -528,17 +587,17 @@ export default function LoveSurpriseTemplate({
 
     ctx.strokeStyle = goldGrad;
     ctx.lineWidth = 14;
-    ctx.strokeRect(28, 28, 1144, 794);
+    ctx.strokeRect(28, 28, 1144, 1004);
 
     // Inner fine gold hairline
     ctx.strokeStyle = "#C5A059";
     ctx.lineWidth = 1.5;
-    ctx.strokeRect(42, 42, 1116, 766);
+    ctx.strokeRect(42, 42, 1116, 976);
 
     // Inner Royal Rose Accent Border
     ctx.strokeStyle = "#9F1239";
     ctx.lineWidth = 2.5;
-    ctx.strokeRect(52, 52, 1096, 746);
+    ctx.strokeRect(52, 52, 1096, 956);
 
     // 3. Baroque Corner Filigree Flourishes
     const drawCornerFlourish = (cx: number, cy: number, flipX: number, flipY: number) => {
@@ -567,48 +626,48 @@ export default function LoveSurpriseTemplate({
 
     drawCornerFlourish(52, 52, 1, 1);
     drawCornerFlourish(1148, 52, -1, 1);
-    drawCornerFlourish(52, 798, 1, -1);
-    drawCornerFlourish(1148, 798, -1, -1);
+    drawCornerFlourish(52, 1008, 1, -1);
+    drawCornerFlourish(1148, 1008, -1, -1);
 
     // 4. Header Top Crest Emblem
     ctx.textAlign = "center";
     ctx.fillStyle = "#D4AF37";
     ctx.font = "26px serif";
-    ctx.fillText("👑   ✦   💖   ✦   👑", 600, 95);
+    ctx.fillText("👑   ✦   💖   ✦   👑", 600, 92);
 
     // Grand Title
     ctx.fillStyle = "#0F172A";
-    ctx.font = "bold 40px 'Playfair Display', 'Cinzel', Georgia, serif";
-    ctx.fillText("CERTIFICATE OF ETERNAL LOVE", 600, 145);
+    ctx.font = "bold 38px 'Playfair Display', 'Cinzel', Georgia, serif";
+    ctx.fillText("CERTIFICATE OF ETERNAL LOVE", 600, 138);
 
     // Subheader Ribbon Badge
     ctx.fillStyle = "#BE123C";
-    ctx.font = "bold 14px 'Montserrat', sans-serif";
-    ctx.fillText("✦  OFFICIAL & UNBREAKABLE BOND OF DEVOTION  ✦", 600, 182);
+    ctx.font = "bold 13px 'Montserrat', sans-serif";
+    ctx.fillText("✦  OFFICIAL & UNBREAKABLE BOND OF DEVOTION  ✦", 600, 170);
 
     // Ornate Divider Line
     ctx.strokeStyle = "#CBD5E1";
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(340, 204);
-    ctx.lineTo(540, 204);
-    ctx.moveTo(660, 204);
-    ctx.lineTo(860, 204);
+    ctx.moveTo(340, 190);
+    ctx.lineTo(540, 190);
+    ctx.moveTo(660, 190);
+    ctx.lineTo(860, 190);
     ctx.stroke();
 
     ctx.fillStyle = "#B8860B";
     ctx.font = "bold 18px serif";
-    ctx.fillText("❦", 600, 210);
+    ctx.fillText("❦", 600, 196);
 
     // 5. Body Presentation Text
     ctx.fillStyle = "#64748B";
-    ctx.font = "italic 20px Georgia, serif";
-    ctx.fillText("This is to proudly & solemnly certify that", 600, 252);
+    ctx.font = "italic 18px Georgia, serif";
+    ctx.fillText("This is to proudly & solemnly certify that", 600, 228);
 
     // Recipient Name
     ctx.fillStyle = "#E11D48";
-    ctx.font = "bold 54px 'Playfair Display', Georgia, serif";
-    ctx.fillText(recipientName, 600, 318);
+    ctx.font = "bold 46px 'Playfair Display', Georgia, serif";
+    ctx.fillText(recipientName, 600, 280);
 
     // Golden Accent Line below recipient name
     const nameWidth = ctx.measureText(recipientName).width;
@@ -616,27 +675,126 @@ export default function LoveSurpriseTemplate({
     ctx.strokeStyle = "#F59E0B";
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(600 - lineHalf, 332);
-    ctx.lineTo(600 + lineHalf, 332);
+    ctx.moveTo(600 - lineHalf, 292);
+    ctx.lineTo(600 + lineHalf, 292);
     ctx.stroke();
 
     ctx.fillStyle = "#64748B";
-    ctx.font = "italic 19px Georgia, serif";
-    ctx.fillText("holds the eternal key to the heart & soul of", 600, 375);
+    ctx.font = "italic 17px Georgia, serif";
+    ctx.fillText("holds the eternal key to the heart & soul of", 600, 326);
 
     // Sender Name
     ctx.fillStyle = "#0F172A";
-    ctx.font = "bold 44px 'Playfair Display', Georgia, serif";
-    ctx.fillText(senderName, 600, 432);
+    ctx.font = "bold 38px 'Playfair Display', Georgia, serif";
+    ctx.fillText(senderName, 600, 370);
 
-    // 6. The Vows Quote Plaque Box
+    // 6. THE 3 TILTED POLAROID PHOTOS (Exact match to user's reference image!)
+    const drawPolaroidCard = (
+      cx: number,
+      cy: number,
+      angleRad: number,
+      img: HTMLImageElement | null,
+      isTop: boolean
+    ) => {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(angleRad);
+
+      const cardW = 216;
+      const cardH = 236;
+      const borderSide = 10;
+      const borderBottom = 26;
+
+      // Realistic soft shadow
+      ctx.shadowColor = isTop ? "rgba(0, 0, 0, 0.32)" : "rgba(0, 0, 0, 0.20)";
+      ctx.shadowBlur = isTop ? 26 : 18;
+      ctx.shadowOffsetX = 4;
+      ctx.shadowOffsetY = isTop ? 12 : 8;
+
+      // White Polaroid frame
+      ctx.fillStyle = "#FFFFFF";
+      ctx.beginPath();
+      ctx.roundRect(-cardW / 2, -cardH / 2, cardW, cardH, 4);
+      ctx.fill();
+
+      // Reset shadow for crisp inner photo
+      ctx.shadowColor = "transparent";
+
+      // Subtle hairline stroke around card
+      ctx.strokeStyle = "rgba(0, 0, 0, 0.08)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Inner Photo
+      const imgX = -cardW / 2 + borderSide;
+      const imgY = -cardH / 2 + borderSide;
+      const imgW = cardW - borderSide * 2;
+      const imgH = cardH - borderSide - borderBottom;
+
+      if (img && img.naturalWidth > 0 && img.naturalHeight > 0) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect(imgX, imgY, imgW, imgH, 2);
+        ctx.clip();
+
+        // Object-fit: cover
+        const imgRatio = img.naturalWidth / img.naturalHeight;
+        const targetRatio = imgW / imgH;
+        let sx = 0,
+          sy = 0,
+          sw = img.naturalWidth,
+          sh = img.naturalHeight;
+
+        if (imgRatio > targetRatio) {
+          sw = img.naturalHeight * targetRatio;
+          sx = (img.naturalWidth - sw) / 2;
+        } else {
+          sh = img.naturalWidth / targetRatio;
+          sy = (img.naturalHeight - sh) / 2;
+        }
+
+        ctx.drawImage(img, sx, sy, sw, sh, imgX, imgY, imgW, imgH);
+        ctx.restore();
+
+        // Photo inner border
+        ctx.strokeStyle = "rgba(0, 0, 0, 0.08)";
+        ctx.lineWidth = 1;
+        ctx.strokeRect(imgX, imgY, imgW, imgH);
+      } else {
+        // Fallback placeholder
+        ctx.fillStyle = "#FFF0F4";
+        ctx.fillRect(imgX, imgY, imgW, imgH);
+        ctx.fillStyle = "#FF2E63";
+        ctx.font = "32px serif";
+        ctx.textAlign = "center";
+        ctx.fillText("💖", 0, imgY + imgH / 2 + 10);
+      }
+
+      // Polaroid bottom caption badge
+      ctx.fillStyle = "rgba(225, 29, 72, 0.35)";
+      ctx.font = "bold 9px 'Montserrat', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("♥ FOREVER MEMORY ♥", 0, cardH / 2 - 9);
+
+      ctx.restore();
+    };
+
+    // Draw Left photo (-6.5° tilt)
+    drawPolaroidCard(405, 520, -0.11, loadedImgs[0], false);
+    // Draw Right photo (+5.5° tilt)
+    drawPolaroidCard(795, 520, 0.09, loadedImgs[2], false);
+    // Draw Center photo (drawn LAST so it overlaps both left & right on top!)
+    drawPolaroidCard(600, 505, 0.035, loadedImgs[1], true);
+
+    // 7. The Vows Quote Plaque Box
+    ctx.textAlign = "center";
     ctx.fillStyle = "#FFF7FA";
     ctx.strokeStyle = "#FCE7F3";
     ctx.lineWidth = 1.5;
     const qx = 210;
-    const qy = 470;
+    const qy = 670;
     const qw = 780;
-    const qh = 88;
+    const qh = 80;
     ctx.beginPath();
     ctx.roundRect(qx, qy, qw, qh, 16);
     ctx.fill();
@@ -644,49 +802,48 @@ export default function LoveSurpriseTemplate({
 
     // Decorative Quote text
     ctx.fillStyle = "#BE123C";
-    ctx.font = "bold 32px serif";
-    ctx.fillText("“", qx + 35, qy + 40);
-    ctx.fillText("”", qx + qw - 35, qy + 68);
+    ctx.font = "bold 30px serif";
+    ctx.fillText("“", qx + 35, qy + 36);
+    ctx.fillText("”", qx + qw - 35, qy + 62);
 
     ctx.fillStyle = "#334155";
-    ctx.font = "italic 18px Georgia, serif";
+    ctx.font = "italic 16px Georgia, serif";
     ctx.fillText(
       "Love is not about how many days, months, or years you have been together.",
       600,
-      qy + 36
+      qy + 33
     );
     ctx.fillText(
       "Love is about how much you love each other every single day.",
       600,
-      qy + 64
+      qy + 59
     );
 
-    // 7. BOTTOM SECTION: NO COLLISIONS (100% Separated Columns)
-    // 7a. Center Royal Seal Medallion with Ribbon
+    // 8. BOTTOM SECTION: NO COLLISIONS (100% Separated Columns)
     const sealX = 600;
-    const sealY = 675;
+    const sealY = 865;
 
     // Silk Ribbon Tails
     ctx.fillStyle = "#9F1239";
     ctx.beginPath();
     ctx.moveTo(sealX - 18, sealY + 25);
-    ctx.lineTo(sealX - 34, sealY + 80);
-    ctx.lineTo(sealX - 22, sealY + 74);
-    ctx.lineTo(sealX - 10, sealY + 80);
+    ctx.lineTo(sealX - 34, sealY + 76);
+    ctx.lineTo(sealX - 22, sealY + 70);
+    ctx.lineTo(sealX - 10, sealY + 76);
     ctx.lineTo(sealX - 6, sealY + 25);
     ctx.closePath();
     ctx.fill();
 
     ctx.beginPath();
     ctx.moveTo(sealX + 6, sealY + 25);
-    ctx.lineTo(sealX + 10, sealY + 80);
-    ctx.lineTo(sealX + 22, sealY + 74);
-    ctx.lineTo(sealX + 34, sealY + 80);
+    ctx.lineTo(sealX + 10, sealY + 76);
+    ctx.lineTo(sealX + 22, sealY + 70);
+    ctx.lineTo(sealX + 34, sealY + 76);
     ctx.lineTo(sealX + 18, sealY + 25);
     ctx.closePath();
     ctx.fill();
 
-    // Outer Scalloped Sunburst Gold Medallion
+    // Outer Scalloped Gold Medallion
     ctx.fillStyle = goldGrad;
     ctx.beginPath();
     ctx.arc(sealX, sealY, 44, 0, Math.PI * 2);
@@ -714,7 +871,7 @@ export default function LoveSurpriseTemplate({
     ctx.font = "bold 8px 'Montserrat', sans-serif";
     ctx.fillText("★ SEALED WITH LOVE ★", sealX, sealY + 24);
 
-    // 7b. Left Box: Date of Issuance
+    // Left Box: Date of Issuance
     const dateStr = new Date().toLocaleDateString("en-US", {
       month: "long",
       day: "numeric",
@@ -725,54 +882,60 @@ export default function LoveSurpriseTemplate({
     ctx.strokeStyle = "#D4AF37";
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(110, 690);
-    ctx.lineTo(370, 690);
+    ctx.moveTo(110, 880);
+    ctx.lineTo(370, 880);
     ctx.stroke();
 
     ctx.fillStyle = "#94A3B8";
     ctx.font = "bold 12px sans-serif";
-    ctx.fillText("DATE OF ISSUANCE", 110, 712);
+    ctx.fillText("DATE OF ISSUANCE", 110, 904);
 
     ctx.fillStyle = "#1E293B";
-    ctx.font = "bold 17px Georgia, serif";
-    ctx.fillText(dateStr, 110, 735);
+    ctx.font = "bold 16px Georgia, serif";
+    ctx.fillText(dateStr, 110, 928);
 
-    // 7c. Right Box: Solemn Signature
+    // Right Box: Solemn Signature
     ctx.textAlign = "right";
     ctx.strokeStyle = "#D4AF37";
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(830, 690);
-    ctx.lineTo(1090, 690);
+    ctx.moveTo(830, 880);
+    ctx.lineTo(1090, 880);
     ctx.stroke();
 
     ctx.fillStyle = "#BE123C";
     ctx.font = "italic bold 22px 'Brush Script MT', 'Playfair Display', cursive";
-    ctx.fillText(senderName, 1090, 680);
+    ctx.fillText(senderName, 1090, 870);
 
     ctx.fillStyle = "#94A3B8";
     ctx.font = "bold 12px sans-serif";
-    ctx.fillText("PLEDGED & SIGNED WITH LOVE", 1090, 712);
+    ctx.fillText("PLEDGED & SIGNED WITH LOVE", 1090, 904);
 
     ctx.fillStyle = "#E11D48";
     ctx.font = "bold 13px sans-serif";
-    ctx.fillText(`By: ${senderName} ❤️`, 1090, 735);
+    ctx.fillText(`By: ${senderName} ❤️`, 1090, 928);
 
-    // 8. Bottom Serial Verification
+    // 9. Bottom Serial Verification
     ctx.textAlign = "center";
     ctx.fillStyle = "#94A3B8";
     ctx.font = "11px sans-serif";
     ctx.fillText(
       `Registry No: LOVE-8842-FOREVER  •  Official Certificate of Endless Devotion`,
       600,
-      812
+      1020
     );
 
     // Trigger Download
-    const link = document.createElement("a");
-    link.download = `Certificate_of_Love_${recipientName}_and_${senderName}.png`;
-    link.href = canvas.toDataURL("image/png");
-    link.click();
+    try {
+      const link = document.createElement("a");
+      link.download = `Certificate_of_Love_${recipientName}_and_${senderName}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    } catch (exportErr) {
+      console.warn("Canvas export fallback:", exportErr);
+    } finally {
+      setIsGeneratingCert(false);
+    }
   };
 
   // WhatsApp Reply Action Handler
@@ -2643,12 +2806,14 @@ export default function LoveSurpriseTemplate({
                   </p>
                 </div>
                 <button
+                  id="download-certificate-btn"
                   type="button"
+                  disabled={isGeneratingCert}
                   onClick={handleDownloadCertificate}
-                  className="w-full py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white font-extrabold text-xs shadow-md shadow-amber-500/20 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full py-2.5 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:from-amber-600 hover:to-amber-800 disabled:opacity-75 text-white font-extrabold text-xs shadow-md shadow-amber-500/20 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
                 >
-                  <Download className="w-4 h-4 text-white" />
-                  <span>Download Certificate of Love 📜</span>
+                  <Download className={`w-4 h-4 text-white ${isGeneratingCert ? "animate-bounce" : ""}`} />
+                  <span>{isGeneratingCert ? "Styling & Rendering 3 Photos..." : "Download Certificate of Love 📜"}</span>
                 </button>
               </div>
 
