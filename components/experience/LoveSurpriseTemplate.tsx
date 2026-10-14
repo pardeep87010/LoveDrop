@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import {
@@ -2679,6 +2680,21 @@ export default function LoveSurpriseTemplate({
                 </button>
               </div>
 
+              {/* Viral Loop CTA: Surprise them back */}
+              {!isEmbedded && (
+                <div className="pt-2 text-center">
+                  <Link
+                    href="/create"
+                    target="_blank"
+                    className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-gradient-to-r from-pink-500/10 via-rose-500/10 to-pink-500/10 hover:from-pink-500/20 hover:to-rose-500/20 border border-pink-200 text-pink-700 text-xs font-bold transition-all shadow-2xs hover:scale-105 active:scale-95"
+                  >
+                    <span>✨</span>
+                    <span>Want to surprise someone special? Create Yours</span>
+                    <span>→</span>
+                  </Link>
+                </div>
+              )}
+
               {/* Watermark Card: Made with Lovedrop.online - only when embedded */}
               {isEmbedded && (
                 <div className="rounded-2xl bg-white/80 border border-pink-100/80 px-4 py-2 shadow-2xs max-w-[240px] mx-auto text-center space-y-0.5">
@@ -2708,9 +2724,13 @@ export default function LoveSurpriseTemplate({
         </div>
       ) : (
         <footer className="relative z-20 w-full max-w-xl mx-auto flex items-center justify-between px-3 py-1.5 text-[11px] text-pink-400/80 font-medium">
-          <span className="select-none font-semibold tracking-wide flex items-center gap-1 text-pink-400">
-            <span>♥</span> Made with Lovedrop.online
-          </span>
+          <Link
+            href="/"
+            target="_blank"
+            className="font-semibold tracking-wide flex items-center gap-1 text-pink-400 hover:text-[#FF2E63] transition-colors"
+          >
+            <span>♥</span> Made with Lovedrop.online • Make Yours ✨
+          </Link>
           <span className="font-bold text-pink-500 bg-white/90 px-2.5 py-0.5 rounded-full border border-pink-100 shadow-2xs">
             {step} / 9
           </span>
