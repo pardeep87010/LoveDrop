@@ -63,27 +63,35 @@ export function sanitizeInput(input: string): string {
 }
 
 /**
- * Generate a clean, URL-safe secure slug from recipient and sender names
+ * Generate a clean, URL-safe romantic slug from recipient and sender names
  */
 export function generateSecureSlug(
   recipientName: string,
   senderName: string
 ): string {
-  const cleanRecipient = recipientName
+  const cleanRecipient = (recipientName || "")
     .toLowerCase()
     .trim()
     .replace(/[^a-z0-9]/g, "-")
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
 
-  const cleanSender = senderName
+  const cleanSender = (senderName || "")
     .toLowerCase()
     .trim()
     .replace(/[^a-z0-9]/g, "-")
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
 
-  const randomSuffix = Math.random().toString(36).substring(2, 6);
-  const base = `${cleanRecipient || "love"}-${cleanSender || "you"}-${randomSuffix}`;
-  return base;
+  // If sender is empty, "me", or "you", create a clean recipient slug
+  if (!cleanSender || cleanSender === "me" || cleanSender === "you") {
+    return cleanRecipient || "special-someone";
+  }
+
+  // If both names provided
+  if (cleanRecipient && cleanSender) {
+    return `${cleanRecipient}-and-${cleanSender}`;
+  }
+
+  return cleanRecipient || cleanSender || "special-someone";
 }

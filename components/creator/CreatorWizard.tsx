@@ -31,6 +31,8 @@ import {
   Send,
   Upload,
   Image as ImageIcon,
+  Globe,
+  Copy,
 } from "lucide-react";
 import { soundFx } from "@/lib/soundFx";
 import { LoveSurpriseData, OccasionType, AudioTrackId } from "@/lib/types";
@@ -437,6 +439,8 @@ export default function CreatorWizard({
   const [isProcessingPay, setIsProcessingPay] = useState(false);
   const [isCreated, setIsCreated] = useState(false);
   const [createdSlug, setCreatedSlug] = useState("");
+  const [customSlug, setCustomSlug] = useState("");
+  const [isCustomSlugEdited, setIsCustomSlugEdited] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [showQrModal, setShowQrModal] = useState(false);
   const [showMobilePreviewModal, setShowMobilePreviewModal] = useState(false);
@@ -495,12 +499,21 @@ export default function CreatorWizard({
       pinHash = await hashPasscode(secretPin);
     }
 
-    const secureSlug = generateSecureSlug(recipientName || "My Love", senderName || "Me");
+    const rawCandidateSlug = (
+      (isCustomSlugEdited && customSlug.trim() ? customSlug.trim() : "") ||
+      generateSecureSlug(recipientName || "My Love", senderName || "Me")
+    );
+    const finalSlug = rawCandidateSlug
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9-]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "") || "my-love";
 
     setTimeout(() => {
       const siteData: LoveSurpriseData = {
         id: "love-" + Date.now(),
-        slug: secureSlug,
+        slug: finalSlug,
         occasion: initialOccasion,
         relation: "Partner",
         recipientName: sanitizeInput(recipientName.trim() || "My Love"),
@@ -538,13 +551,13 @@ export default function CreatorWizard({
       };
 
       saveSurpriseData(siteData);
-      setCreatedSlug(secureSlug);
+      setCreatedSlug(finalSlug);
       setIsProcessingPay(false);
       setIsCreated(true);
       soundFx.playSuccessChime();
 
       // Persist to MongoDB backend and dispatch transactional emails
-      const targetSiteUrl = `${typeof window !== "undefined" ? window.location.origin : "https://lovedrop.online"}/p/${secureSlug}`;
+      const targetSiteUrl = `${typeof window !== "undefined" ? window.location.origin : "https://lovedrop.online"}/p/${finalSlug}`;
       if (creatorEmail.trim() || (sendToPartnerEmail && partnerEmail.trim())) {
         setEmailSendStatus("sending");
       }
@@ -561,7 +574,7 @@ export default function CreatorWizard({
         .then((res) => res.json())
         .then((data) => {
           if (data.success) {
-            if (data.slug && data.slug !== secureSlug) {
+            if (data.slug && data.slug !== finalSlug) {
               setCreatedSlug(data.slug);
             }
             if (creatorEmail.trim() || (sendToPartnerEmail && partnerEmail.trim())) {
@@ -2172,6 +2185,47 @@ export default function CreatorWizard({
                     <div className="space-y-6">
                       {/* Audio & Security Settings */}
                       <div className="bg-white rounded-3xl p-5 border border-pink-100 shadow-sm space-y-4">
+                        {/* Custom Surprise Web Link */}
+                        <div className="p-4 rounded-2xl bg-gradient-to-r from-pink-50/70 to-rose-50/60 border border-pink-200/90 space-y-2">
+                          <div className="flex items-center justify-between">
+                            <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                              <Globe className="w-3.5 h-3.5 text-[#FF2E63]" />
+                              <span>Your Personalized Surprise Link</span>
+                            </label>
+                            <span className="text-[10px] font-extrabold uppercase tracking-wider text-pink-600 bg-white px-2 py-0.5 rounded-full border border-pink-200 shadow-2xs">
+                              Custom Link
+                            </span>
+                          </div>
+
+                          <div className="flex items-center bg-white rounded-xl border border-pink-200 focus-within:border-[#FF2E63] focus-within:ring-2 focus-within:ring-pink-100 overflow-hidden shadow-2xs transition-all">
+                            <span className="px-3 py-2.5 bg-slate-50 border-r border-pink-100 text-xs font-semibold text-slate-500 select-none shrink-0">
+                              lovedrop.online/p/
+                            </span>
+                            <input
+                              type="text"
+                              value={
+                                isCustomSlugEdited
+                                  ? customSlug
+                                  : generateSecureSlug(recipientName || "My Love", senderName || "Me")
+                              }
+                              onChange={(e) => {
+                                setIsCustomSlugEdited(true);
+                                setCustomSlug(
+                                  e.target.value
+                                    .toLowerCase()
+                                    .replace(/[^a-z0-9-]/g, "-")
+                                    .replace(/-+/g, "-")
+                                );
+                              }}
+                              placeholder="pardeep-kumar"
+                              className="w-full px-3 py-2.5 text-xs font-bold text-[#FF2E63] outline-none bg-transparent"
+                            />
+                          </div>
+                          <p className="text-[11px] text-slate-500">
+                            Your recipient will open this exact private web link. You can customize the name above!
+                          </p>
+                        </div>
+
                         {/* Audio track selector */}
                         <div>
                           <div className="flex items-center justify-between mb-2">
@@ -2538,46 +2592,85 @@ export default function CreatorWizard({
                         gift card.
                       </p>
 
-                      {/* URL Box */}
-                      <div className="p-3.5 rounded-2xl bg-pink-50/70 border border-pink-100 flex items-center justify-between gap-2">
-                        <span className="text-xs font-mono font-bold text-slate-700 truncate pl-2">
-                          {siteUrl}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            navigator.clipboard.writeText(siteUrl);
-                            setCopiedLink(true);
-                            soundFx.playPop();
-                            setTimeout(() => setCopiedLink(false), 2500);
-                          }}
-                          className="px-4 py-2 rounded-xl bg-white hover:bg-pink-100/50 border border-pink-200 text-xs font-bold text-[#FF2E63] shrink-0 transition-colors cursor-pointer"
-                        >
-                          {copiedLink ? "Copied! ✓" : "Copy Link"}
-                        </button>
+                      {/* Ultra-Clear Romantic Link Card */}
+                      <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-pink-50/90 via-white to-rose-50/70 border-2 border-pink-200/90 text-left space-y-3.5 shadow-sm">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#FF2E63] flex items-center gap-1.5">
+                            <Sparkles className="w-3.5 h-3.5" />
+                            <span>Your Private Love Website Link</span>
+                          </span>
+                          <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            <span>Active &amp; Ready</span>
+                          </span>
+                        </div>
+
+                        {/* High-Clarity URL Display */}
+                        <div className="p-3 sm:p-3.5 rounded-2xl bg-white border border-pink-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                          <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                            <div className="w-8 h-8 rounded-xl bg-pink-50 text-[#FF2E63] flex items-center justify-center shrink-0 border border-pink-100">
+                              <Globe className="w-4 h-4" />
+                            </div>
+                            <div className="text-xs sm:text-sm font-semibold truncate leading-tight select-all">
+                              <span className="text-slate-400 font-medium">lovedrop.online/p/</span>
+                              <span className="text-[#FF2E63] font-black">{createdSlug}</span>
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              navigator.clipboard.writeText(siteUrl);
+                              setCopiedLink(true);
+                              soundFx.playPop();
+                              setTimeout(() => setCopiedLink(false), 2500);
+                            }}
+                            className={`px-4 py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shrink-0 shadow-2xs active:scale-95 ${
+                              copiedLink
+                                ? "bg-emerald-500 text-white"
+                                : "bg-[#FF2E63] hover:bg-[#E02656] text-white"
+                            }`}
+                          >
+                            {copiedLink ? (
+                              <>
+                                <Check className="w-3.5 h-3.5 stroke-[3]" />
+                                <span>Copied! ✓</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-3.5 h-3.5" />
+                                <span>Copy Link</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+
+                        <p className="text-[11px] text-slate-500 text-center font-medium">
+                          Share this private link with <strong className="text-slate-700 font-bold">{recipientName || "them"}</strong> via WhatsApp or Instagram!
+                        </p>
                       </div>
 
                       {/* Sharing buttons */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                         <a
                           href={`https://wa.me/?text=${encodeURIComponent(
                             `Hey ${recipientName}! ❤️ I made a special website just for you: ${siteUrl}`
                           )}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="py-3 px-4 rounded-2xl bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm"
+                          className="py-3 px-4 rounded-2xl bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-transform active:scale-95"
                         >
                           <MessageCircle className="w-4 h-4 fill-white" />
-                          <span>Send via WhatsApp</span>
+                          <span>Share on WhatsApp</span>
                         </a>
 
                         <Link
                           href={`/p/${createdSlug}`}
                           target="_blank"
-                          className="py-3 px-4 rounded-2xl bg-[#FF2E63] hover:bg-[#E02656] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm"
+                          className="py-3 px-4 rounded-2xl bg-white hover:bg-pink-50 text-slate-800 border border-pink-200 font-bold text-xs flex items-center justify-center gap-2 shadow-2xs transition-transform active:scale-95"
                         >
-                          <ExternalLink className="w-4 h-4" />
-                          <span>Open Website Now</span>
+                          <ExternalLink className="w-4 h-4 text-[#FF2E63]" />
+                          <span>Open &amp; Test Website</span>
                         </Link>
                       </div>
 
