@@ -419,22 +419,79 @@ export default function LoveSurpriseTemplate({
   const [showSongPicker, setShowSongPicker] = useState(false);
   const [isGeneratingCert, setIsGeneratingCert] = useState(false);
 
-  const musicTrackSrc =
-    selectedTrack === "summer-guitar"
-      ? "/music/summer-gouyad-5.mp3"
-      : "/music/love-bgm.mp3";
+  // Audio sources helper (Primary format M4A for iOS/Safari + MP3 fallback)
+  const isSummer = selectedTrack === "summer-guitar";
+  const m4aTrackSrc = isSummer ? "/music/summer-gouyad-5.m4a" : "/music/love-bgm.m4a";
+  const mp3TrackSrc = isSummer ? "/music/summer-gouyad-5.mp3" : "/music/love-bgm.mp3";
 
   useEffect(() => {
-    const audio = new Audio(musicTrackSrc);
-    audio.preload = "none";
-    audio.loop = true;
+    const audio = audioRef.current;
+    if (!audio) return;
+
     audio.volume = 0.65;
-    audioRef.current = audio;
+
+    // Detect format preference (iOS Safari natively prefers audio/mp4 for hardware AAC)
+    const canPlayM4A = audio.canPlayType("audio/mp4") || audio.canPlayType("audio/x-m4a");
+    const activeSrc = canPlayM4A ? m4aTrackSrc : mp3TrackSrc;
+
+    if (!audio.src.endsWith(activeSrc)) {
+      audio.src = activeSrc;
+      audio.load();
+    }
 
     const tryStartMusic = () => {
-      if (audioRef.current && audioRef.current.paused) {
-        audioRef.current
-          .play()
+      const el = audioRef.current;
+      if (!el) return;
+      const promise = el.play();
+      if (promise !== undefined) {
+        promise
+          .then(() => {
+            setIsPlayingMusic(true);
+            setMusicBlocked(false);
+          })
+          .catch(() => {
+            // Browser autoplay policy requires user gesture (iOS/Chrome)
+            setMusicBlocked(true);
+          });
+      }
+    };
+
+    // 1. Attempt immediate autoplay
+    tryStartMusic();
+
+    // 2. Universal gesture listeners: First touch/click/scroll anywhere immediately starts music!
+    const handleGesture = () => {
+      tryStartMusic();
+      removeGestureListeners();
+    };
+
+    const gestureEvents = ["click", "touchstart", "touchend", "pointerdown", "keydown"];
+    const removeGestureListeners = () => {
+      gestureEvents.forEach((evt) => {
+        window.removeEventListener(evt, handleGesture);
+      });
+    };
+
+    gestureEvents.forEach((evt) => {
+      window.addEventListener(evt, handleGesture, { passive: true, once: true });
+    });
+
+    return () => {
+      removeGestureListeners();
+    };
+  }, [selectedTrack, m4aTrackSrc, mp3TrackSrc]);
+
+  const toggleMusic = () => {
+    soundFx.playPop();
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (isPlayingMusic) {
+      audio.pause();
+      setIsPlayingMusic(false);
+    } else {
+      const promise = audio.play();
+      if (promise !== undefined) {
+        promise
           .then(() => {
             setIsPlayingMusic(true);
             setMusicBlocked(false);
@@ -443,48 +500,6 @@ export default function LoveSurpriseTemplate({
             setMusicBlocked(true);
           });
       }
-    };
-
-    tryStartMusic();
-
-    const handleFirstGesture = () => {
-      tryStartMusic();
-      window.removeEventListener("click", handleFirstGesture);
-      window.removeEventListener("touchstart", handleFirstGesture);
-      window.removeEventListener("keydown", handleFirstGesture);
-    };
-
-    window.addEventListener("click", handleFirstGesture, { passive: true });
-    window.addEventListener("touchstart", handleFirstGesture, { passive: true });
-    window.addEventListener("keydown", handleFirstGesture, { passive: true });
-
-    return () => {
-      window.removeEventListener("click", handleFirstGesture);
-      window.removeEventListener("touchstart", handleFirstGesture);
-      window.removeEventListener("keydown", handleFirstGesture);
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-    };
-  }, [musicTrackSrc]);
-
-  const toggleMusic = () => {
-    soundFx.playPop();
-    if (!audioRef.current) return;
-    if (isPlayingMusic) {
-      audioRef.current.pause();
-      setIsPlayingMusic(false);
-    } else {
-      audioRef.current
-        .play()
-        .then(() => {
-          setIsPlayingMusic(true);
-          setMusicBlocked(false);
-        })
-        .catch(() => {
-          setMusicBlocked(true);
-        });
     }
   };
 
@@ -1031,6 +1046,15 @@ export default function LoveSurpriseTemplate({
 
   const skipIntro = () => {
     soundFx.playPop();
+    if (audioRef.current && audioRef.current.paused) {
+      audioRef.current
+        .play()
+        .then(() => {
+          setIsPlayingMusic(true);
+          setMusicBlocked(false);
+        })
+        .catch(() => {});
+    }
     setIntroPhase("card-revealed");
   };
 
@@ -1390,6 +1414,25 @@ export default function LoveSurpriseTemplate({
       {/* RICH ANIMATED ROMANTIC BACKGROUND (Floating Hearts, Petals, Glowing Bokeh Orbs) */}
       <RomanticBackground />
 
+      {/* Hidden Native Audio Element with Dual Sources (M4A Apple AAC + MP3) */}
+      <audio
+        ref={audioRef}
+        loop
+        playsInline
+        preload="auto"
+        className="hidden"
+        onPlay={() => {
+          setIsPlayingMusic(true);
+          setMusicBlocked(false);
+        }}
+        onPause={() => {
+          setIsPlayingMusic(false);
+        }}
+      >
+        <source src={m4aTrackSrc} type="audio/mp4" />
+        <source src={mp3TrackSrc} type="audio/mpeg" />
+      </audio>
+
       {/* Autoplay Helper Banner (Disappears when music starts) */}
       <AnimatePresence>
         {musicBlocked && !isPlayingMusic && (
@@ -1662,6 +1705,15 @@ export default function LoveSurpriseTemplate({
                       type="button"
                       onClick={() => {
                         soundFx.playPop();
+                        if (audioRef.current && audioRef.current.paused) {
+                          audioRef.current
+                            .play()
+                            .then(() => {
+                              setIsPlayingMusic(true);
+                              setMusicBlocked(false);
+                            })
+                            .catch(() => {});
+                        }
                         setStep(getNextStep(1));
                       }}
                       className="w-full sm:w-auto px-10 py-3.5 rounded-full bg-[#FF2E63] hover:bg-[#E02656] text-white font-extrabold text-sm shadow-md shadow-pink-500/25 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2 mx-auto"

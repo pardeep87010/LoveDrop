@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
         passcodeHash,
         hasPasscode,
         dodgeIntensity: body.dodgeIntensity || "savage",
-        bgMusic: body.bgMusic || "summer-guitar",
+        bgMusic: body.bgMusic || "romantic-lofi",
         whatsappNumber: body.whatsappNumber,
         whatsappMessage: cleanUserInput(body.whatsappMessage || "", 500),
         creatorEmail: isValidEmail(body.creatorEmail) ? body.creatorEmail.trim() : undefined,
