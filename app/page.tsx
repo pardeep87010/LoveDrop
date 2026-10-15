@@ -346,7 +346,7 @@ export default function HomePage() {
 
               {/* Bold Main Headline */}
               <h1 className="font-extrabold text-4xl sm:text-5xl lg:text-6xl text-slate-900 tracking-tight leading-[1.12]">
-                Turn Your Love Into an{" "}
+                LoveDrop — Turn Your Love Into an{" "}
                 <span className="text-rose-600 block sm:inline">
                   Unforgettable Experience
                 </span>
