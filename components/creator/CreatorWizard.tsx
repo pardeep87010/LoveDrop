@@ -477,13 +477,13 @@ export default function CreatorWizard({
     soundFx.playPop();
     if (!audioPreviewRef.current) {
       const audio = new Audio(
-        bgMusic === "summer-guitar" ? "/music/summer-gouyad-5.mp3" : "/music/love-bgm.mp3"
+        bgMusic === "summer-guitar" ? "/music/summer-gouyad-5.mp3?v=2" : "/music/love-bgm.mp3?v=2"
       );
       audio.loop = true;
       audioPreviewRef.current = audio;
     } else {
       audioPreviewRef.current.src =
-        bgMusic === "summer-guitar" ? "/music/summer-gouyad-5.mp3" : "/music/love-bgm.mp3";
+        bgMusic === "summer-guitar" ? "/music/summer-gouyad-5.mp3?v=2" : "/music/love-bgm.mp3?v=2";
     }
 
     if (isAudioPlaying) {

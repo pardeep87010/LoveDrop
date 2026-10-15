@@ -1419,6 +1419,7 @@ export default function LoveSurpriseTemplate({
       <audio
         ref={audioRef}
         key={selectedTrack}
+        src={primaryTrackSrc}
         loop
         playsInline
         preload="auto"
