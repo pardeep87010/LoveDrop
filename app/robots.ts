@@ -7,8 +7,12 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: ["/", "/create", "/demo", "/apology"],
+        allow: "/",
         disallow: ["/api/", "/p/"], // Keep private surprise pages and internal APIs unindexed
+      },
+      {
+        userAgent: "Googlebot-Image",
+        allow: "/",
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,

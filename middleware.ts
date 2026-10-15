@@ -24,8 +24,9 @@ export function middleware(req: NextRequest) {
       url.pathname.startsWith("/stickers") ||
       url.pathname.startsWith("/music") ||
       url.pathname.startsWith("/favicon.ico") ||
-      url.pathname.startsWith("/icon.png") ||
-      url.pathname.startsWith("/logo.png")
+      url.pathname.startsWith("/icon") ||
+      url.pathname.startsWith("/logo") ||
+      url.pathname.startsWith("/apple-")
     ) {
       return NextResponse.next();
     }
@@ -45,6 +46,6 @@ export const config = {
     /*
      * Match all request paths except static files
      */
-    "/((?!_next/static|_next/image|favicon.ico|icon.png|logo.png).*)",
+    "/((?!_next/static|_next/image|favicon.ico|icon.*\\.png|logo.*\\.png|apple-.*\\.png).*)",
   ],
 };
