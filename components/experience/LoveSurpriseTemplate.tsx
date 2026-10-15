@@ -419,10 +419,14 @@ export default function LoveSurpriseTemplate({
   const [showSongPicker, setShowSongPicker] = useState(false);
   const [isGeneratingCert, setIsGeneratingCert] = useState(false);
 
-  // Audio sources helper (Primary format M4A for iOS/Safari + MP3 fallback)
+  // Audio sources helper with cache-busting version query string to bypass stale iOS disk caches
   const isSummer = selectedTrack === "summer-guitar";
-  const m4aTrackSrc = isSummer ? "/music/summer-gouyad-5.m4a" : "/music/love-bgm.m4a";
-  const mp3TrackSrc = isSummer ? "/music/summer-gouyad-5.mp3" : "/music/love-bgm.mp3";
+  const primaryTrackSrc = isSummer
+    ? "/music/summer-gouyad-5.mp3?v=2"
+    : "/music/love-bgm.mp3?v=2";
+  const m4aTrackSrc = isSummer
+    ? "/music/summer-gouyad-5.m4a?v=2"
+    : "/music/love-bgm.m4a?v=2";
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -430,42 +434,39 @@ export default function LoveSurpriseTemplate({
 
     audio.volume = 0.65;
 
-    // Detect format preference (iOS Safari natively prefers audio/mp4 for hardware AAC)
-    const canPlayM4A = audio.canPlayType("audio/mp4") || audio.canPlayType("audio/x-m4a");
-    const activeSrc = canPlayM4A ? m4aTrackSrc : mp3TrackSrc;
-
-    if (!audio.src.endsWith(activeSrc)) {
-      audio.src = activeSrc;
-      audio.load();
-    }
-
     const tryStartMusic = () => {
       const el = audioRef.current;
       if (!el) return;
-      const promise = el.play();
-      if (promise !== undefined) {
-        promise
-          .then(() => {
-            setIsPlayingMusic(true);
-            setMusicBlocked(false);
-          })
-          .catch(() => {
-            // Browser autoplay policy requires user gesture (iOS/Chrome)
-            setMusicBlocked(true);
-          });
+      if (el.paused) {
+        const promise = el.play();
+        if (promise !== undefined) {
+          promise
+            .then(() => {
+              setIsPlayingMusic(true);
+              setMusicBlocked(false);
+              removeGestureListeners();
+            })
+            .catch(() => {
+              // Still waiting for valid gesture (iOS policy)
+              setMusicBlocked(true);
+            });
+        }
+      } else {
+        setIsPlayingMusic(true);
+        setMusicBlocked(false);
+        removeGestureListeners();
       }
     };
 
     // 1. Attempt immediate autoplay
     tryStartMusic();
 
-    // 2. Universal gesture listeners: First touch/click/scroll anywhere immediately starts music!
+    // 2. Continuous gesture listeners: Keep listening on user touches until audio is confirmed playing!
     const handleGesture = () => {
       tryStartMusic();
-      removeGestureListeners();
     };
 
-    const gestureEvents = ["click", "touchstart", "touchend", "pointerdown", "keydown"];
+    const gestureEvents = ["click", "touchstart", "touchend", "pointerup", "keydown"];
     const removeGestureListeners = () => {
       gestureEvents.forEach((evt) => {
         window.removeEventListener(evt, handleGesture);
@@ -473,13 +474,13 @@ export default function LoveSurpriseTemplate({
     };
 
     gestureEvents.forEach((evt) => {
-      window.addEventListener(evt, handleGesture, { passive: true, once: true });
+      window.addEventListener(evt, handleGesture, { passive: true });
     });
 
     return () => {
       removeGestureListeners();
     };
-  }, [selectedTrack, m4aTrackSrc, mp3TrackSrc]);
+  }, [selectedTrack]);
 
   const toggleMusic = () => {
     soundFx.playPop();
@@ -1414,9 +1415,10 @@ export default function LoveSurpriseTemplate({
       {/* RICH ANIMATED ROMANTIC BACKGROUND (Floating Hearts, Petals, Glowing Bokeh Orbs) */}
       <RomanticBackground />
 
-      {/* Hidden Native Audio Element with Dual Sources (M4A Apple AAC + MP3) */}
+      {/* Hidden Native Audio Element with Dual Sources (Cache-Busting MP3 + M4A) */}
       <audio
         ref={audioRef}
+        key={selectedTrack}
         loop
         playsInline
         preload="auto"
@@ -1429,8 +1431,8 @@ export default function LoveSurpriseTemplate({
           setIsPlayingMusic(false);
         }}
       >
+        <source src={primaryTrackSrc} type="audio/mpeg" />
         <source src={m4aTrackSrc} type="audio/mp4" />
-        <source src={mp3TrackSrc} type="audio/mpeg" />
       </audio>
 
       {/* Autoplay Helper Banner (Disappears when music starts) */}
@@ -1441,7 +1443,7 @@ export default function LoveSurpriseTemplate({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             onClick={toggleMusic}
-            className="fixed top-12 left-1/2 -translate-x-1/2 z-40 px-4 py-2 rounded-full bg-white/95 border border-pink-200 shadow-xl text-[#FF2E63] font-black text-xs flex items-center gap-2 cursor-pointer hover:bg-pink-50 backdrop-blur-md active:scale-95"
+            className="fixed top-14 sm:top-16 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full bg-white/95 border border-pink-200 shadow-xl text-[#FF2E63] font-black text-xs flex items-center gap-2 cursor-pointer hover:bg-pink-50 backdrop-blur-md active:scale-95"
           >
             <Music className="w-3.5 h-3.5 text-[#FF2E63] animate-bounce" />
             <span>🎵 Tap here to start romantic music</span>
