@@ -1230,7 +1230,13 @@ export default function BirthdayTemplate({ data }: BirthdayTemplateProps) {
 
   // Render landing
   if (!started) {
-    return <SceneLanding data={data} onOpen={handleOpenGift} />;
+    return (
+      <div className="min-h-[100dvh] w-full bg-slate-900/5 sm:bg-gradient-to-b sm:from-[#FDE8F5] sm:via-[#FDF0F8] sm:to-[#F3E8FF] flex items-center justify-center p-0 sm:py-6 sm:px-4">
+        <div className="relative w-full max-w-md min-h-[100dvh] sm:min-h-[820px] sm:max-h-[880px] bg-white sm:rounded-[36px] sm:shadow-2xl sm:border sm:border-pink-200/60 overflow-hidden flex flex-col justify-between">
+          <SceneLanding data={data} onOpen={handleOpenGift} />
+        </div>
+      </div>
+    );
   }
 
   // Render chapter scene
@@ -1266,69 +1272,71 @@ export default function BirthdayTemplate({ data }: BirthdayTemplateProps) {
   };
 
   return (
-    <div className="relative min-h-[100dvh] w-full">
-      {/* Top navigation bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3"
-        style={{ background: "rgba(255,255,255,0.85)", backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(255,107,157,0.15)" }}>
+    <div className="min-h-[100dvh] w-full bg-slate-900/5 sm:bg-gradient-to-b sm:from-[#FDE8F5] sm:via-[#FDF0F8] sm:to-[#F3E8FF] flex items-center justify-center p-0 sm:py-6 sm:px-4">
+      {/* Centered Device Container on Desktop, Edge-to-Edge on Mobile */}
+      <div className="relative w-full max-w-md min-h-[100dvh] sm:min-h-[820px] sm:max-h-[880px] bg-white sm:rounded-[36px] sm:shadow-2xl sm:border sm:border-pink-200/60 overflow-hidden flex flex-col justify-between">
+        {/* Top navigation bar */}
+        <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3"
+          style={{ background: "rgba(255,255,255,0.85)", backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(255,107,157,0.15)" }}>
 
-        {/* Logo / Name */}
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-extrabold"
-            style={{ background: "linear-gradient(135deg, #FF6B9D, #C084FC)" }}>
-            🎂
+          {/* Logo / Name */}
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-extrabold"
+              style={{ background: "linear-gradient(135deg, #FF6B9D, #C084FC)" }}>
+              🎂
+            </div>
+            <span className="font-extrabold text-sm" style={{ color: "#1E1B2E" }}>Birthday party</span>
           </div>
-          <span className="font-extrabold text-sm" style={{ color: "#1E1B2E" }}>Birthday party</span>
+
+          {/* Right controls */}
+          <div className="flex items-center gap-2">
+            <button onClick={() => {}} className="text-xs font-bold px-3 py-1.5 rounded-full border"
+              style={{ borderColor: "#FF6B9D", color: "#FF6B9D" }}>
+              ✦ Change
+            </button>
+            <button onClick={toggleMusic}
+              className="w-8 h-8 rounded-full flex items-center justify-center"
+              style={{ background: "#FFF0F8" }}>
+              {isMusicOn ? <Music className="w-4 h-4" style={{ color: "#FF6B9D" }} /> : <Music2 className="w-4 h-4 text-gray-400" />}
+            </button>
+            <button onClick={() => setShowMenu(true)}
+              className="w-8 h-8 rounded-full flex items-center justify-center"
+              style={{ background: "#FFF0F8" }}>
+              <Settings2 className="w-4 h-4" style={{ color: "#FF6B9D" }} />
+            </button>
+          </div>
         </div>
 
-        {/* Right controls */}
-        <div className="flex items-center gap-2">
-          <button onClick={() => {}} className="text-xs font-bold px-3 py-1.5 rounded-full border"
-            style={{ borderColor: "#FF6B9D", color: "#FF6B9D" }}>
-            ✦ Change
-          </button>
-          <button onClick={toggleMusic}
-            className="w-8 h-8 rounded-full flex items-center justify-center"
-            style={{ background: "#FFF0F8" }}>
-            {isMusicOn ? <Music className="w-4 h-4" style={{ color: "#FF6B9D" }} /> : <Music2 className="w-4 h-4 text-gray-400" />}
-          </button>
-          <button onClick={() => setShowMenu(true)}
-            className="w-8 h-8 rounded-full flex items-center justify-center"
-            style={{ background: "#FFF0F8" }}>
-            <Settings2 className="w-4 h-4" style={{ color: "#FF6B9D" }} />
-          </button>
+        {/* Main scene content (with top padding for nav) */}
+        <div className="pt-14 pb-20 flex-1 overflow-y-auto overscroll-contain">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={scene}
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -30 }}
+              transition={{ duration: 0.35, ease: "easeInOut" }}
+            >
+              {renderScene()}
+            </motion.div>
+          </AnimatePresence>
         </div>
-      </div>
 
-      {/* Main scene content (with top padding for nav) */}
-      <div className="pt-14">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={scene}
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -30 }}
-            transition={{ duration: 0.35, ease: "easeInOut" }}
-          >
-            {renderScene()}
-          </motion.div>
-        </AnimatePresence>
-      </div>
+        {/* Bottom navigation bar */}
+        {scene >= 1 && scene <= 9 && (
+          <div className="absolute bottom-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3"
+            style={{ background: "rgba(255,255,255,0.92)", backdropFilter: "blur(12px)", borderTop: "1px solid rgba(255,107,157,0.15)" }}>
 
-      {/* Bottom navigation bar */}
-      {scene >= 1 && scene <= 9 && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3"
-          style={{ background: "rgba(255,255,255,0.92)", backdropFilter: "blur(12px)", borderTop: "1px solid rgba(255,107,157,0.15)" }}>
+            <button onClick={goPrev} disabled={scene <= 1}
+              className="w-9 h-9 rounded-full flex items-center justify-center disabled:opacity-30"
+              style={{ background: "#FFF0F8" }}>
+              <ChevronLeft className="w-5 h-5" style={{ color: "#FF6B9D" }} />
+            </button>
 
-          <button onClick={goPrev} disabled={scene <= 1}
-            className="w-9 h-9 rounded-full flex items-center justify-center disabled:opacity-30"
-            style={{ background: "#FFF0F8" }}>
-            <ChevronLeft className="w-5 h-5" style={{ color: "#FF6B9D" }} />
-          </button>
-
-          <div className="flex flex-col items-center gap-1.5">
-            <p className="text-xs font-extrabold" style={{ color: "#1E1B2E" }}>
-              {CHAPTER_NAMES[scene - 1] || "Chapter"}
-            </p>
+            <div className="flex flex-col items-center gap-1.5">
+              <p className="text-xs font-extrabold" style={{ color: "#1E1B2E" }}>
+                {CHAPTER_NAMES[scene - 1] || "Chapter"}
+              </p>
             <div className="flex gap-1">
               {[...Array(10)].map((_, i) => (
                 <div
@@ -1394,6 +1402,7 @@ export default function BirthdayTemplate({ data }: BirthdayTemplateProps) {
           </motion.div>
         )}
       </AnimatePresence>
+      </div>
     </div>
   );
 }

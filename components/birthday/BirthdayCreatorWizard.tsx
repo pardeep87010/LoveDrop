@@ -904,7 +904,7 @@ export default function BirthdayCreatorWizard() {
     <div className="min-h-screen" style={{ background: "linear-gradient(180deg, #FFF0F8 0%, #FDE8F5 100%)" }}>
       {/* Top bar */}
       <div className="sticky top-0 z-30 bg-white/90 backdrop-blur-sm border-b border-pink-100">
-        <div className="flex items-center justify-between px-4 py-3">
+        <div className="flex items-center justify-between px-4 py-3 max-w-xl mx-auto">
           <button onClick={goPrev} disabled={step <= 1}
             className="w-9 h-9 rounded-full flex items-center justify-center disabled:opacity-30"
             style={{ background: "#FFF0F8" }}>
@@ -920,11 +920,13 @@ export default function BirthdayCreatorWizard() {
 
           <div className="text-2xl">{STEPS[step - 1]?.icon}</div>
         </div>
-        <StepProgress step={step} total={10} />
+        <div className="max-w-xl mx-auto">
+          <StepProgress step={step} total={10} />
+        </div>
       </div>
 
       {/* Step content */}
-      <div className="px-4 py-6 max-w-lg mx-auto">
+      <div className="px-4 py-6 max-w-xl mx-auto">
         {/* Step title */}
         <motion.div
           key={step}
@@ -955,37 +957,39 @@ export default function BirthdayCreatorWizard() {
 
       {/* Bottom navigation */}
       <div className="sticky bottom-0 z-30 bg-white/90 backdrop-blur-sm border-t border-pink-100 px-4 py-4">
-        {step < 10 ? (
-          <motion.button
-            onClick={goNext}
-            disabled={!canGoNext()}
-            className="w-full py-4 rounded-2xl text-white font-extrabold text-base flex items-center justify-center gap-2 disabled:opacity-50"
-            style={{ background: canGoNext() ? BD_GRADIENT : "#E5E7EB" }}
-            whileTap={{ scale: 0.97 }}
-          >
-            Continue <ArrowRight className="w-5 h-5" />
-          </motion.button>
-        ) : (
-          <motion.button
-            onClick={handlePublish}
-            disabled={isPublishing}
-            className="w-full py-4 rounded-2xl text-white font-extrabold text-base flex items-center justify-center gap-2"
-            style={{ background: isPublishing ? "#E5E7EB" : BD_GRADIENT }}
-            whileTap={{ scale: 0.97 }}
-          >
-            {isPublishing ? (
-              <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> Creating...</>
-            ) : (
-              <>🎂 Launch Birthday Surprise!</>
-            )}
-          </motion.button>
-        )}
+        <div className="max-w-xl mx-auto">
+          {step < 10 ? (
+            <motion.button
+              onClick={goNext}
+              disabled={!canGoNext()}
+              className="w-full py-4 rounded-2xl text-white font-extrabold text-base flex items-center justify-center gap-2 disabled:opacity-50"
+              style={{ background: canGoNext() ? BD_GRADIENT : "#E5E7EB" }}
+              whileTap={{ scale: 0.97 }}
+            >
+              Continue <ArrowRight className="w-5 h-5" />
+            </motion.button>
+          ) : (
+            <motion.button
+              onClick={handlePublish}
+              disabled={isPublishing}
+              className="w-full py-4 rounded-2xl text-white font-extrabold text-base flex items-center justify-center gap-2"
+              style={{ background: isPublishing ? "#E5E7EB" : BD_GRADIENT }}
+              whileTap={{ scale: 0.97 }}
+            >
+              {isPublishing ? (
+                <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> Creating...</>
+              ) : (
+                <>🎂 Launch Birthday Surprise!</>
+              )}
+            </motion.button>
+          )}
 
-        {step < 10 && (
-          <p className="text-center text-xs text-gray-400 mt-2">
-            {10 - step} more step{10 - step !== 1 ? "s" : ""} to go
-          </p>
-        )}
+          {step < 10 && (
+            <p className="text-center text-xs text-gray-400 mt-2">
+              {10 - step} more step{10 - step !== 1 ? "s" : ""} to go
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );
