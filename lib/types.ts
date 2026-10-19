@@ -22,6 +22,7 @@ export interface BirthdayData {
   birthdayDate?: string;       // ISO date string e.g. "2024-10-18"
   letterText: string;          // The birthday letter
   letterTitle?: string;        // Letter heading
+  buttonText?: string;         // Button text on greeting card
   photos: string[];            // User's memories photos (max 10)
   ourStory?: string;           // "Our story" text (chapter by chapter)
   loveReasons?: string[];      // "What I love about you" (max 9 items)
