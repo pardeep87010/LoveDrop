@@ -1078,13 +1078,13 @@ export default function BirthdayCreatorWizard() {
                     <>
                       <div className="space-y-1">
                         <span className="text-[11px] font-extrabold uppercase tracking-wider text-pink-500">
-                          CHAPTER 1 • INTRO SCREEN
+                          Chapter 1 • Intro Screen
                         </span>
                         <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                           Who is this surprise for?
                         </h2>
                         <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                          They will see their name appear in an animated greeting with festive birthday music.
+                          They will see their name appear in an animated greeting with romantic music.
                         </p>
                       </div>
 
@@ -1103,7 +1103,7 @@ export default function BirthdayCreatorWizard() {
                           />
                           {/* Quick Presets */}
                           <div className="flex flex-wrap gap-1.5 pt-2">
-                            {["My Love", "Babe", "Honey", "Sweetheart", "Darling", "Bestie", "Birthday Star"].map((p) => (
+                            {["My Love", "Babe", "Honey", "Sweetheart", "Darling"].map((p) => (
                               <button
                                 key={p}
                                 type="button"
@@ -1132,7 +1132,7 @@ export default function BirthdayCreatorWizard() {
                             type="text"
                             value={senderName}
                             onChange={(e) => handleSenderNameChange(e.target.value)}
-                            placeholder="e.g. Michael, Naveen, Alex, Your Bestie..."
+                            placeholder="e.g. Michael, Naveen, Alex, Your Soulmate..."
                             className="w-full px-4 py-3 rounded-2xl border border-pink-200 focus:border-[#FF2E63] focus:ring-2 focus:ring-pink-100 outline-none text-sm font-semibold text-slate-800 bg-pink-50/20"
                           />
                         </div>
@@ -1146,39 +1146,9 @@ export default function BirthdayCreatorWizard() {
                             type="text"
                             value={buttonText}
                             onChange={(e) => setButtonText(e.target.value)}
-                            placeholder="e.g. Open my gift"
+                            placeholder="e.g. Let's Go"
                             className="w-full px-4 py-3 rounded-2xl border border-pink-200 focus:border-[#FF2E63] focus:ring-2 focus:ring-pink-100 outline-none text-sm font-semibold text-slate-800 bg-pink-50/20"
                           />
-                        </div>
-
-                        {/* Turning Age & Date */}
-                        <div className="grid grid-cols-2 gap-3 pt-1">
-                          <div>
-                            <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                              Turning Age (Optional)
-                            </label>
-                            <input
-                              type="number"
-                              value={birthdayAge}
-                              onChange={(e) => setBirthdayAge(e.target.value)}
-                              placeholder="e.g. 21"
-                              min={1}
-                              max={120}
-                              className="w-full px-4 py-3 rounded-2xl border border-pink-200 focus:border-[#FF2E63] focus:ring-2 focus:ring-pink-100 outline-none text-sm font-semibold text-slate-800 bg-pink-50/20"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                              Birthday Date (Optional)
-                            </label>
-                            <input
-                              type="date"
-                              value={birthdayDate}
-                              onChange={(e) => setBirthdayDate(e.target.value)}
-                              className="w-full px-4 py-3 rounded-2xl border border-pink-200 focus:border-[#FF2E63] focus:ring-2 focus:ring-pink-100 outline-none text-sm font-semibold text-slate-800 bg-pink-50/20"
-                            />
-                          </div>
                         </div>
 
                         {/* Visual Theme Picker (2x3 Grid) */}
@@ -1941,7 +1911,7 @@ export default function BirthdayCreatorWizard() {
           {/* RIGHT COLUMN: STICKY REALISTIC LIVE PHONE PREVIEW               */}
           {/* =============================================================== */}
           {!isCreated && (
-            <div className="hidden lg:flex lg:col-span-5 xl:col-span-5 justify-center sticky top-20 self-start">
+            <div className="lg:col-span-5 xl:col-span-5 flex justify-center sticky top-20">
               <BirthdayPreviewCard
                 currentStep={step}
                 data={liveData}

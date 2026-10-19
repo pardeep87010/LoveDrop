@@ -1121,20 +1121,20 @@ export default function BirthdayPreviewCard({
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
             </span>
             <span className="tracking-tight">Live Phone Preview</span>
-            <span className="text-[10px] text-[#D1264F] bg-rose-100/90 px-2 py-0.5 rounded-full font-black">
+            <span className="text-[10px] text-pink-600 bg-pink-100/90 px-2 py-0.5 rounded-full font-black">
               Page {activePreviewChapter}/10
             </span>
           </div>
 
           {/* Sync indicator */}
-          <div className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-50 text-[#D1264F] border border-rose-200">
+          <div className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-pink-50 text-pink-600 border border-pink-200">
             <Link2 className="w-3 h-3" />
             <span>Synced</span>
           </div>
         </div>
 
         {/* 10 Quick Page Switcher Buttons */}
-        <div className="flex items-center justify-between gap-1 p-1 bg-white/80 backdrop-blur-sm rounded-2xl border border-rose-100 shadow-2xs">
+        <div className="flex items-center justify-between gap-1 p-1 bg-white/80 backdrop-blur-sm rounded-2xl border border-pink-100 shadow-2xs">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((s) => {
             const isCurrent = activePreviewChapter === s;
             return (
@@ -1145,8 +1145,8 @@ export default function BirthdayPreviewCard({
                 title={`Jump to Page ${s}`}
                 className={`flex-1 py-1 text-[11px] font-black rounded-xl transition-all cursor-pointer relative ${
                   isCurrent
-                    ? "bg-[#D1264F] text-white shadow-xs scale-105"
-                    : "text-slate-500 hover:text-rose-600 hover:bg-rose-50/60"
+                    ? "bg-[#FF2E63] text-white shadow-xs scale-105"
+                    : "text-slate-500 hover:text-pink-600 hover:bg-pink-50/60"
                 }`}
               >
                 <span>{s}</span>
@@ -1160,7 +1160,7 @@ export default function BirthdayPreviewCard({
       {/* REALISTIC FLAGSHIP SMARTPHONE HARDWARE MOCKUP                    */}
       {/* Dimensions: 370px width x 720px height (True 9:19.5 aspect ratio)*/}
       {/* =============================================================== */}
-      <div className="relative w-[340px] sm:w-[370px] h-[680px] sm:h-[720px] bg-[#0E131C] rounded-[52px] p-2.5 sm:p-3 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.5),0_0_35px_rgba(209,38,79,0.15)] border-[4px] border-[#222A3B] ring-1 ring-white/10 flex flex-col justify-between overflow-visible">
+      <div className="relative w-[340px] sm:w-[370px] h-[680px] sm:h-[720px] bg-[#0E131C] rounded-[52px] p-2.5 sm:p-3 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.5),0_0_35px_rgba(255,46,99,0.15)] border-[4px] border-[#222A3B] ring-1 ring-white/10 flex flex-col justify-between overflow-visible">
         {/* Hardware Side Buttons */}
         {/* Action Button (Left) */}
         <div className="absolute -left-[6px] top-24 w-[3px] h-6 bg-slate-700 rounded-l-xs" />
@@ -1232,8 +1232,8 @@ export default function BirthdayPreviewCard({
                   onClick={() => goToChapter(dot)}
                   className={`rounded-full transition-all cursor-pointer ${
                     dot === activePreviewChapter
-                      ? "w-3 h-1 bg-[#D1264F]"
-                      : "w-1 h-1 bg-slate-300 hover:bg-rose-300"
+                      ? "w-3 h-1 bg-[#FF2E63]"
+                      : "w-1 h-1 bg-slate-300 hover:bg-pink-300"
                   }`}
                 />
               ))}
