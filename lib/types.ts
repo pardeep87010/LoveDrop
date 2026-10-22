@@ -7,7 +7,40 @@ export type OccasionType =
 
 export type DodgeIntensity = "gentle" | "savage" | "impossible";
 
-export type AudioTrackId = "summer-guitar" | "romantic-lofi" | "soft-piano";
+export type AudioTrackId = "summer-guitar" | "romantic-lofi" | "soft-piano" | "birthday-beats";
+
+export type TemplateType = "love-surprise" | "birthday-party";
+
+// ─── Birthday Theme Data ──────────────────────────────────────────────────────
+export interface BirthdayData {
+  id: string;
+  slug: string;
+  templateType: "birthday-party";
+  recipientName: string;       // Birthday person's name
+  senderName: string;          // Who is sending
+  birthdayAge?: number;        // e.g. 21, 25
+  birthdayDate?: string;       // ISO date string e.g. "2024-10-18"
+  letterText: string;          // The birthday letter
+  letterTitle?: string;        // Letter heading
+  buttonText?: string;         // Button text on greeting card
+  photos: string[];            // User's memories photos (max 10)
+  ourStory?: string;           // "Our story" text (chapter by chapter)
+  loveReasons?: string[];      // "What I love about you" (max 9 items)
+  wishes?: string[];           // Wishes in a jar (max 9 wishes)
+  ourPlaces?: { name: string; emoji: string }[]; // Our special places
+  ourDate?: string;            // A special date to remember
+  ourSong?: string;            // Song name / dedication text
+  bgMusic: AudioTrackId;
+  whatsappNumber?: string;
+  whatsappMessage?: string;
+  hasPasscode: boolean;
+  passcodeHash?: string;
+  creatorEmail?: string;
+  recipientEmail?: string;
+  isPaid: boolean;
+  createdAt: string;
+  expiresAt: string;
+}
 
 export interface LoveSurpriseData {
   id: string;
