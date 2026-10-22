@@ -1084,7 +1084,7 @@ export default function BirthdayCreatorWizard() {
                           Who is this surprise for?
                         </h2>
                         <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                          They will see their name appear in an animated greeting with romantic music.
+                          They will see their name appear in an animated greeting with festive birthday music & 3D cake.
                         </p>
                       </div>
 
@@ -1103,7 +1103,7 @@ export default function BirthdayCreatorWizard() {
                           />
                           {/* Quick Presets */}
                           <div className="flex flex-wrap gap-1.5 pt-2">
-                            {["My Love", "Babe", "Honey", "Sweetheart", "Darling"].map((p) => (
+                            {["Birthday Star", "Bestie", "My Love", "Babe", "Buddy", "Sweetheart"].map((p) => (
                               <button
                                 key={p}
                                 type="button"

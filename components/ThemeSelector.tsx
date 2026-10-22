@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -33,6 +33,23 @@ export interface ThemeItem {
 }
 
 const ALL_THEMES: ThemeItem[] = [
+  {
+    id: "birthday-party",
+    category: "birthday",
+    title: "Birthday Party",
+    tagline: "The viral birthday surprise with interactive 3D cake, wishing star jar and candle blowing.",
+    badge: "🎉 Popular",
+    badgeBg: "rgba(255, 46, 99, 0.12)",
+    badgeColor: "#FF2E63",
+    accent: "#FF2E63",
+    accentLight: "#FFF0F4",
+    route: "/create/birthday",
+    emoji: "🎂",
+    chaptersCount: "10 Chapters",
+    buttonText: "Create Birthday Surprise 🎂",
+    featured: true,
+  },
+
   {
     id: "classic-romance",
     category: "romance",
@@ -143,6 +160,7 @@ const ALL_THEMES: ThemeItem[] = [
 
 const CATEGORY_TABS: { id: ThemeCategory; label: string; icon: string }[] = [
   { id: "all", label: "All", icon: "✨" },
+  { id: "birthday", label: "Birthday", icon: "🎂" },
   { id: "romance", label: "Romance", icon: "💖" },
   { id: "proposal", label: "Proposal", icon: "💍" },
   { id: "distance", label: "Distance", icon: "✈️" },
@@ -151,7 +169,9 @@ const CATEGORY_TABS: { id: ThemeCategory; label: string; icon: string }[] = [
 
 export default function ThemeSelector() {
   const router = useRouter();
-  const [activeCategory, setActiveCategory] = useState<ThemeCategory>("all");
+  const searchParams = useSearchParams();
+  const occasionParam = searchParams.get("occasion");
+  const [activeCategory, setActiveCategory] = useState<ThemeCategory>(() => occasionParam === "birthday" ? "birthday" : "all");
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredThemes = useMemo(() => {
