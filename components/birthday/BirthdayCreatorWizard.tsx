@@ -755,6 +755,7 @@ export default function BirthdayCreatorWizard() {
       setEmailSendStatus("sending");
     }
 
+    let savedSlug = finalSlug;
     try {
       const res = await fetch("/api/birthday", {
         method: "POST",
@@ -767,8 +768,11 @@ export default function BirthdayCreatorWizard() {
       });
       const data = await res.json();
       if (data?.success) {
-        if (data.slug && data.slug !== finalSlug) {
-          setCreatedSlug(data.slug);
+        if (data.slug) {
+          savedSlug = data.slug;
+          try {
+            localStorage.setItem(`birthday_v1_${savedSlug}`, JSON.stringify({ ...birthdayPayload, slug: savedSlug }));
+          } catch { /* ignore */ }
         }
         if (creatorEmail.trim() || (sendToPartnerEmail && partnerEmail.trim())) {
           setEmailSendStatus("sent");
@@ -779,7 +783,7 @@ export default function BirthdayCreatorWizard() {
       /* API might be offline, localStorage fallback works reliably */
     }
 
-    setCreatedSlug(finalSlug);
+    setCreatedSlug(savedSlug);
     setIsCreated(true);
     setIsPublishing(false);
     soundFx.playSuccessChime();

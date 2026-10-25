@@ -128,14 +128,14 @@ function SceneLanding({
               borderBottom: "2px solid #FFD269",
             }}
           >
-            amazing
+            {data.recipientName || "amazing"}
           </span>
         </p>
         <p
           className="text-sm sm:text-base mt-3.5 font-normal"
           style={{ color: BD.textMuted }}
         >
-          Someone threw a little party just for you.
+          {data.senderName ? `${data.senderName} threw a little party just for you.` : "Someone threw a little party just for you."}
         </p>
       </motion.div>
 
@@ -190,7 +190,7 @@ function SceneLanding({
           whileTap={{ scale: 0.97 }}
         >
           <span className="text-xl">🎁</span>
-          <span>Open my gift</span>
+          <span>{data.buttonText || "Open my gift"}</span>
         </motion.button>
       </motion.div>
     </div>
