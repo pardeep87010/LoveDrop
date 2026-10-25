@@ -14,6 +14,8 @@ import {
   Mic,
   Wind,
   RotateCcw,
+  Download,
+  Award,
   Sparkles,
   Play,
   Pause,
@@ -26,6 +28,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { BirthdayData } from "@/lib/types";
+import { soundFx } from "@/lib/soundFx";
 
 // ─── Design Tokens & CSS Variables (from DESIGN.md) ──────────────────────────
 const BD = {
@@ -265,7 +268,7 @@ function SceneLetter({
   };
 
   return (
-    <div className="relative min-h-[calc(100dvh-130px)] flex flex-col items-center justify-center px-4 py-8 select-none">
+    <div className="relative min-h-[calc(100dvh-180px)] flex flex-col items-center justify-center px-4 pt-4 sm:pt-6 pb-12 select-none">
       <motion.div
         className="w-full max-w-lg z-10"
         initial={{ opacity: 0, y: 30 }}
@@ -281,7 +284,7 @@ function SceneLetter({
               borderColor: BD.cardBorder,
               boxShadow: BD.cardShadow,
             }}
-            initial={{ y: 90, opacity: 0, scale: 0.94 }}
+            initial={{ y: 50, opacity: 0, scale: 0.94 }}
             animate={
               isOpen
                 ? isExpanded
@@ -380,7 +383,7 @@ function SceneLetter({
           {/* Layer 2: Authentic Envelope Packet with Centered Wax Seal */}
           <div
             className={`relative w-full max-w-[440px] h-[240px] sm:h-[260px] z-20 transition-all ${
-              isOpen ? "mt-4 opacity-90" : "my-auto shadow-2xl"
+              isOpen ? "mt-6 sm:mt-8 opacity-90 scale-95" : "my-auto shadow-2xl"
             }`}
           >
             {/* Envelope Back Base */}
@@ -2076,6 +2079,7 @@ function SceneFinale({
 }) {
   const recipient = data.recipientName || "You";
   const sender = data.senderName || "With Love";
+  const [isGeneratingCert, setIsGeneratingCert] = useState(false);
 
   const shareSurprise = () => {
     const text = `🎉 Happy Birthday ${recipient}! A special birthday surprise was made for you! Open it here: ${
@@ -2088,8 +2092,431 @@ function SceneFinale({
     }
   };
 
+  // High-Resolution Official Birthday Certificate Generator (1200x1060 Luxury Canvas)
+  const handleDownloadCertificate = async () => {
+    if (isGeneratingCert) return;
+    setIsGeneratingCert(true);
+    soundFx.playSuccessChime();
+    confetti({ particleCount: 120, spread: 90, origin: { y: 0.6 } });
+
+    // Helper: Safely load image for canvas with CORS fallback
+    const loadCanvasImage = (src: string): Promise<HTMLImageElement | null> => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => resolve(img);
+        img.onerror = () => {
+          const fallback = new Image();
+          fallback.onload = () => resolve(fallback);
+          fallback.onerror = () => resolve(null);
+          fallback.src = src;
+        };
+        img.src = src;
+      });
+    };
+
+    // Candidate photos from birthday surprise
+    const candidatePhotos: string[] = [];
+    if (Array.isArray(data?.photos) && data.photos.length > 0) {
+      candidatePhotos.push(...data.photos.filter((p): p is string => Boolean(p && typeof p === "string")));
+    }
+    if (candidatePhotos.length === 0) {
+      candidatePhotos.push(
+        "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=800&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800&auto=format&fit=crop&q=80",
+        "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=800&auto=format&fit=crop&q=80"
+      );
+    }
+
+    const uniquePool = Array.from(new Set(candidatePhotos));
+    const shuffled = [...uniquePool].sort(() => Math.random() - 0.5);
+    const chosen3Urls: string[] = [];
+    for (let i = 0; i < 3; i++) {
+      chosen3Urls.push(shuffled[i % shuffled.length]);
+    }
+
+    let loadedImgs: (HTMLImageElement | null)[] = [];
+    try {
+      loadedImgs = await Promise.all(chosen3Urls.map((url) => loadCanvasImage(url)));
+    } catch {
+      loadedImgs = [null, null, null];
+    }
+
+    const canvas = document.createElement("canvas");
+    canvas.width = 1200;
+    canvas.height = 1060;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      setIsGeneratingCert(false);
+      return;
+    }
+
+    // 1. Rich Vintage Birthday Parchment Background
+    const bgGrad = ctx.createRadialGradient(600, 530, 100, 600, 530, 850);
+    bgGrad.addColorStop(0, "#FFFFFF");
+    bgGrad.addColorStop(0.5, "#FFFDF7");
+    bgGrad.addColorStop(0.85, "#FFF5F8");
+    bgGrad.addColorStop(1, "#FAECF2");
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, 1200, 1060);
+
+    // Subtle luxury gold vignette tint
+    ctx.fillStyle = "rgba(212, 175, 55, 0.03)";
+    ctx.fillRect(0, 0, 1200, 1060);
+
+    // 2. Outer Ornate Gold Foil Border
+    const goldGrad = ctx.createLinearGradient(0, 0, 1200, 1060);
+    goldGrad.addColorStop(0, "#B8860B");
+    goldGrad.addColorStop(0.2, "#E5C158");
+    goldGrad.addColorStop(0.4, "#FDF3D0");
+    goldGrad.addColorStop(0.6, "#D4AF37");
+    goldGrad.addColorStop(0.8, "#AA771C");
+    goldGrad.addColorStop(1, "#C59B27");
+
+    ctx.strokeStyle = goldGrad;
+    ctx.lineWidth = 14;
+    ctx.strokeRect(28, 28, 1144, 1004);
+
+    // Inner fine gold hairline
+    ctx.strokeStyle = "#C5A059";
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(42, 42, 1116, 976);
+
+    // Inner Festive Rose Accent Border
+    ctx.strokeStyle = "#D1264F";
+    ctx.lineWidth = 2.5;
+    ctx.strokeRect(52, 52, 1096, 956);
+
+    // 3. Baroque Corner Filigree Flourishes
+    const drawCornerFlourish = (cx: number, cy: number, flipX: number, flipY: number) => {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.scale(flipX, flipY);
+      ctx.strokeStyle = "#B8860B";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(10, 35);
+      ctx.bezierCurveTo(10, 15, 15, 10, 35, 10);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(18, 45);
+      ctx.bezierCurveTo(18, 22, 22, 18, 45, 18);
+      ctx.stroke();
+
+      ctx.fillStyle = "#D1264F";
+      ctx.font = "bold 16px serif";
+      ctx.textAlign = "center";
+      ctx.fillText("✦", 22, 26);
+      ctx.restore();
+    };
+
+    drawCornerFlourish(52, 52, 1, 1);
+    drawCornerFlourish(1148, 52, -1, 1);
+    drawCornerFlourish(52, 1008, 1, -1);
+    drawCornerFlourish(1148, 1008, -1, -1);
+
+    // 4. Header Top Crest Emblem
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#D4AF37";
+    ctx.font = "26px serif";
+    ctx.fillText("👑   ✦   🎂   ✦   👑", 600, 92);
+
+    // Grand Title
+    ctx.fillStyle = "#3A2340";
+    ctx.font = "bold 38px 'Playfair Display', Georgia, serif";
+    ctx.fillText("OFFICIAL BIRTHDAY CERTIFICATE", 600, 138);
+
+    // Subheader Ribbon Badge
+    ctx.fillStyle = "#D1264F";
+    ctx.font = "bold 13px 'Inter', sans-serif";
+    ctx.fillText("✦  RECOGNITION OF EXCEPTIONAL AWESOMENESS & PURE JOY  ✦", 600, 170);
+
+    // Ornate Divider Line
+    ctx.strokeStyle = "#E2E8F0";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(340, 190);
+    ctx.lineTo(540, 190);
+    ctx.moveTo(660, 190);
+    ctx.lineTo(860, 190);
+    ctx.stroke();
+
+    ctx.fillStyle = "#B8860B";
+    ctx.font = "bold 18px serif";
+    ctx.fillText("❦", 600, 196);
+
+    // 5. Body Presentation Text
+    ctx.fillStyle = "#64748B";
+    ctx.font = "italic 18px Georgia, serif";
+    ctx.fillText("This official decree solemnly & joyfully certifies that", 600, 228);
+
+    // Recipient Name
+    ctx.fillStyle = "#D1264F";
+    ctx.font = "bold 46px 'Playfair Display', Georgia, serif";
+    ctx.fillText(recipient, 600, 280);
+
+    // Golden Accent Line below recipient name
+    const nameWidth = ctx.measureText(recipient).width;
+    const lineHalf = Math.max(nameWidth / 2 + 30, 120);
+    ctx.strokeStyle = "#F59E0B";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(600 - lineHalf, 292);
+    ctx.lineTo(600 + lineHalf, 292);
+    ctx.stroke();
+
+    ctx.fillStyle = "#64748B";
+    ctx.font = "italic 17px Georgia, serif";
+    ctx.fillText("is hereby crowned the Most Loved & Incomparable Birthday Star, presented by", 600, 326);
+
+    // Sender Name
+    ctx.fillStyle = "#3A2340";
+    ctx.font = "bold 36px 'Playfair Display', Georgia, serif";
+    ctx.fillText(sender, 600, 370);
+
+    // 6. THE 3 TILTED POLAROID PHOTOS
+    const drawPolaroidCard = (
+      cx: number,
+      cy: number,
+      angleRad: number,
+      img: HTMLImageElement | null,
+      isTop: boolean
+    ) => {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(angleRad);
+
+      const cardW = 216;
+      const cardH = 236;
+      const borderSide = 10;
+      const borderBottom = 26;
+
+      ctx.shadowColor = isTop ? "rgba(0, 0, 0, 0.30)" : "rgba(0, 0, 0, 0.18)";
+      ctx.shadowBlur = isTop ? 24 : 16;
+      ctx.shadowOffsetX = 4;
+      ctx.shadowOffsetY = isTop ? 12 : 8;
+
+      ctx.fillStyle = "#FFFFFF";
+      ctx.beginPath();
+      ctx.roundRect(-cardW / 2, -cardH / 2, cardW, cardH, 4);
+      ctx.fill();
+
+      ctx.shadowColor = "transparent";
+      ctx.strokeStyle = "rgba(0, 0, 0, 0.08)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      const imgX = -cardW / 2 + borderSide;
+      const imgY = -cardH / 2 + borderSide;
+      const imgW = cardW - borderSide * 2;
+      const imgH = cardH - borderSide - borderBottom;
+
+      if (img && img.naturalWidth > 0 && img.naturalHeight > 0) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect(imgX, imgY, imgW, imgH, 2);
+        ctx.clip();
+
+        const imgRatio = img.naturalWidth / img.naturalHeight;
+        const targetRatio = imgW / imgH;
+        let sx = 0, sy = 0, sw = img.naturalWidth, sh = img.naturalHeight;
+        if (imgRatio > targetRatio) {
+          sw = img.naturalHeight * targetRatio;
+          sx = (img.naturalWidth - sw) / 2;
+        } else {
+          sh = img.naturalWidth / targetRatio;
+          sy = (img.naturalHeight - sh) / 2;
+        }
+        ctx.drawImage(img, sx, sy, sw, sh, imgX, imgY, imgW, imgH);
+        ctx.restore();
+
+        ctx.strokeStyle = "rgba(0, 0, 0, 0.08)";
+        ctx.lineWidth = 1;
+        ctx.strokeRect(imgX, imgY, imgW, imgH);
+      } else {
+        ctx.fillStyle = "#FFF0F4";
+        ctx.fillRect(imgX, imgY, imgW, imgH);
+        ctx.fillStyle = "#D1264F";
+        ctx.font = "32px serif";
+        ctx.textAlign = "center";
+        ctx.fillText("🎂", 0, imgY + imgH / 2 + 10);
+      }
+
+      ctx.fillStyle = "rgba(209, 38, 79, 0.6)";
+      ctx.font = "bold 9px 'Inter', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("♥ BIRTHDAY MEMORY ♥", 0, cardH / 2 - 9);
+
+      ctx.restore();
+    };
+
+    // Draw Left photo (-6.5° tilt)
+    drawPolaroidCard(405, 520, -0.11, loadedImgs[0], false);
+    // Draw Right photo (+5.5° tilt)
+    drawPolaroidCard(795, 520, 0.10, loadedImgs[1], false);
+    // Draw Center photo (straight, sits in front)
+    drawPolaroidCard(600, 505, -0.015, loadedImgs[2], true);
+
+    // 7. Middle Celebration Statement
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#4A364D";
+    ctx.font = "italic 15px Georgia, serif";
+    ctx.fillText(
+      "May every chapter ahead overflow with laughter, dreams fulfilled, radiant health, and boundless joy.",
+      600,
+      675
+    );
+
+    // 4 Official Attribute Badges
+    const drawBadge = (x: number, y: number, text: string) => {
+      ctx.save();
+      ctx.font = "bold 11px 'Inter', sans-serif";
+      const w = ctx.measureText(text).width + 24;
+      ctx.fillStyle = "#FFF7EC";
+      ctx.strokeStyle = "#FDBA74";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(x - w / 2, y - 12, w, 24, 12);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = "#9A3412";
+      ctx.textAlign = "center";
+      ctx.fillText(text, x, y + 4);
+      ctx.restore();
+    };
+    drawBadge(360, 715, "⭐ 100% Guaranteed Smiles");
+    drawBadge(530, 715, "💖 Lifetime Pure Love");
+    drawBadge(690, 715, "🚀 Unstoppable Success");
+    drawBadge(845, 715, "🎂 Cake & Confetti");
+
+    // 8. Seal of Authenticity (Center Bottom)
+    const sealX = 600, sealY = 825, sealR = 50;
+    // Seal Ribbon tails
+    ctx.fillStyle = "#9F1239";
+    ctx.beginPath();
+    ctx.moveTo(sealX - 16, sealY + sealR - 10);
+    ctx.lineTo(sealX - 32, sealY + sealR + 42);
+    ctx.lineTo(sealX - 16, sealY + sealR + 32);
+    ctx.lineTo(sealX, sealY + sealR + 42);
+    ctx.lineTo(sealX - 2, sealY + sealR - 10);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(sealX + 2, sealY + sealR - 10);
+    ctx.lineTo(sealX, sealY + sealR + 42);
+    ctx.lineTo(sealX + 16, sealY + sealR + 32);
+    ctx.lineTo(sealX + 32, sealY + sealR + 42);
+    ctx.lineTo(sealX + 16, sealY + sealR - 10);
+    ctx.fill();
+
+    // Wax seal circle
+    const sealGrad = ctx.createRadialGradient(sealX - 12, sealY - 12, 10, sealX, sealY, sealR);
+    sealGrad.addColorStop(0, "#F59E0B");
+    sealGrad.addColorStop(0.5, "#D97706");
+    sealGrad.addColorStop(0.85, "#B45309");
+    sealGrad.addColorStop(1, "#78350F");
+
+    ctx.save();
+    ctx.shadowColor = "rgba(0, 0, 0, 0.28)";
+    ctx.shadowBlur = 14;
+    ctx.shadowOffsetY = 6;
+    ctx.fillStyle = sealGrad;
+    ctx.beginPath();
+    ctx.arc(sealX, sealY, sealR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // Seal inner ring
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(sealX, sealY, sealR - 6, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.fillStyle = "#FFFFFF";
+    ctx.font = "bold 9px 'Inter', sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("CERTIFIED", sealX, sealY - 14);
+    ctx.font = "20px serif";
+    ctx.fillText("★ 100% ★", sealX, sealY + 7);
+    ctx.font = "bold 8px 'Inter', sans-serif";
+    ctx.fillText("PURE HAPPINESS", sealX, sealY + 22);
+
+    // 9. Signatures (Left: Giver, Right: LoveDrop Registry)
+    ctx.textAlign = "left";
+    ctx.strokeStyle = "#94A3B8";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(170, 875);
+    ctx.lineTo(390, 875);
+    ctx.stroke();
+
+    ctx.fillStyle = "#D1264F";
+    ctx.font = "italic 28px 'Caveat', cursive, Georgia";
+    ctx.fillText(`~ ${sender}`, 180, 860);
+
+    ctx.fillStyle = "#64748B";
+    ctx.font = "bold 10px 'Inter', sans-serif";
+    ctx.fillText("CONFERRED WITH LOVE BY (GIVER)", 170, 895);
+
+    ctx.fillStyle = "#94A3B8";
+    ctx.font = "9px 'Inter', sans-serif";
+    const bdayDateText = data.birthdayDate || data.ourDate || new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+    ctx.fillText(`Date: ${bdayDateText}`, 170, 912);
+
+    // Right: Registry Stamp
+    ctx.textAlign = "right";
+    ctx.strokeStyle = "#94A3B8";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(810, 875);
+    ctx.lineTo(1030, 875);
+    ctx.stroke();
+
+    ctx.fillStyle = "#B8860B";
+    ctx.font = "bold 14px 'Playfair Display', serif";
+    ctx.fillText("LoveDrop Birthday Registry", 1030, 860);
+
+    ctx.fillStyle = "#64748B";
+    ctx.font = "bold 10px 'Inter', sans-serif";
+    ctx.fillText("OFFICIAL STAMP & VERIFICATION", 1030, 895);
+
+    const certSlug = data.slug ? data.slug.slice(0, 8).toUpperCase() : "ROYAL";
+    ctx.fillStyle = "#94A3B8";
+    ctx.font = "9px 'Inter', sans-serif";
+    ctx.fillText(`Certificate ID: BDAY-2026-${certSlug}`, 1030, 912);
+
+    // 10. Footer Bottom Note
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#94A3B8";
+    ctx.font = "italic 11px Georgia, serif";
+    ctx.fillText(
+      `Registry No: BDAY-2026-${certSlug}  •  Official Certificate of Birthday Excellence  •  LoveDrop`,
+      600,
+      978
+    );
+
+    // Trigger PNG Download
+    try {
+      const dataUrl = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      const safeRecipient = recipient.replace(/[^a-zA-Z0-9_-]/g, "_");
+      const safeSender = sender.replace(/[^a-zA-Z0-9_-]/g, "_");
+      link.download = `Birthday_Certificate_${safeRecipient}_from_${safeSender}.png`;
+      link.href = dataUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (e) {
+      console.error("Certificate download error:", e);
+    } finally {
+      setIsGeneratingCert(false);
+    }
+  };
+
   return (
-    <div className="relative min-h-[calc(100dvh-130px)] flex flex-col items-center justify-center px-4 py-8 select-none">
+    <div className="relative min-h-[calc(100dvh-180px)] flex flex-col items-center justify-center px-4 pt-4 sm:pt-6 pb-12 select-none">
       <motion.div
         className="w-full max-w-lg mx-auto bg-white rounded-3xl p-6 sm:p-8 shadow-xl border text-center relative z-10"
         style={{ borderColor: BD.cardBorder, boxShadow: BD.cardShadow }}
@@ -2150,7 +2577,7 @@ function SceneFinale({
         </div>
 
         {/* 4 Celebration Attribute Badges */}
-        <div className="flex flex-wrap items-center justify-center gap-2 mb-5">
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-4">
           {[
             { emoji: "🎂", text: "Sweet Cake" },
             { emoji: "🎈", text: "Big Smiles" },
@@ -2170,6 +2597,70 @@ function SceneFinale({
               <span>{b.text}</span>
             </span>
           ))}
+        </div>
+
+        {/* 📜 Official Birthday Certificate of Awesomeness Card */}
+        <div
+          className="rounded-2xl p-4 sm:p-5 my-4 border relative overflow-hidden text-center shadow-md"
+          style={{
+            background: "linear-gradient(135deg, #FFFBF5 0%, #FFF0F4 50%, #FDF2F8 100%)",
+            borderColor: "rgba(209, 38, 79, 0.28)",
+          }}
+        >
+          {/* Top Gold Ribbon Tag */}
+          <div className="flex items-center justify-center gap-1.5 mb-2">
+            <span className="text-[10px] sm:text-xs font-extrabold uppercase tracking-[0.2em] px-3 py-1 rounded-full text-amber-800 bg-amber-100/90 border border-amber-300 shadow-2xs">
+              📜 Official Birthday Certificate
+            </span>
+          </div>
+
+          <h3 className="text-xl sm:text-2xl font-bold font-serif mb-1" style={{ color: BD.text }}>
+            Certificate of Awesomeness
+          </h3>
+          <p className="text-xs text-slate-600 mb-3 max-w-sm mx-auto leading-relaxed">
+            An official royal decree honoring <strong className="text-[#D1264F]">{recipient}</strong> on this special birthday, presented with infinite love by <strong className="text-slate-800">{sender}</strong>.
+          </p>
+
+          {/* Certificate Mini Preview Box */}
+          <div className="p-3.5 rounded-xl border border-dashed border-amber-300 bg-white/80 mb-3.5 flex flex-col items-center gap-1.5 text-xs">
+            <div className="flex items-center justify-between w-full text-[11px] text-slate-500 font-mono border-b pb-1">
+              <span>REG: BDAY-ROYAL-{data.slug ? data.slug.slice(0, 6).toUpperCase() : "2026"}</span>
+              <span className="text-emerald-600 font-bold">✓ 100% VERIFIED</span>
+            </div>
+            <p className="font-serif text-base font-bold text-[#D1264F] mt-0.5">
+              {recipient} • Certified Birthday Star 🌟
+            </p>
+            <p className="text-[11px] text-slate-500 italic">
+              Conferred &amp; Sealed with all our heart by ~ <span className="font-semibold text-slate-700">{sender}</span>
+            </p>
+            <div className="flex items-center gap-2 mt-1 text-[11px] text-amber-800 font-semibold flex-wrap justify-center">
+              <span>⭐ Infinite Joy</span>
+              <span>•</span>
+              <span>💖 Lifetime Hugs</span>
+              <span>•</span>
+              <span>🎂 Sweet Memories</span>
+            </div>
+          </div>
+
+          {/* Download Certificate Button */}
+          <motion.button
+            onClick={handleDownloadCertificate}
+            disabled={isGeneratingCert}
+            className="w-full py-3.5 px-6 rounded-full font-bold text-xs uppercase tracking-wider text-white flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer"
+            style={{
+              background: "linear-gradient(135deg, #D1264F 0%, #E11D48 60%, #BE123C 100%)",
+            }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Download className="w-4 h-4 animate-bounce" />
+            <span>
+              {isGeneratingCert ? "Rendering High-Res Certificate..." : "Download Birthday Certificate 📜"}
+            </span>
+          </motion.button>
+          <p className="text-[10px] text-slate-500 mt-2">
+            Includes high-resolution keepsake, 3 photo memories, gold wax seal &amp; signatures!
+          </p>
         </div>
 
         {/* Revisit Chapters Row */}
@@ -2533,7 +3024,7 @@ export default function BirthdayTemplate({ data }: BirthdayTemplateProps) {
       {!started ? (
         <SceneLanding data={data} onOpen={handleOpenGift} />
       ) : (
-        <main className="relative pt-12 pb-24 min-h-[100dvh]">
+        <main className="relative pt-20 sm:pt-24 pb-32 min-h-[100dvh]">
           <AnimatePresence mode="wait">
             <motion.div
               key={chapter}
