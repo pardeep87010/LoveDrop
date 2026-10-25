@@ -1154,53 +1154,6 @@ export default function BirthdayCreatorWizard() {
                             className="w-full px-4 py-3 rounded-2xl border border-pink-200 focus:border-[#FF2E63] focus:ring-2 focus:ring-pink-100 outline-none text-sm font-semibold text-slate-800 bg-pink-50/20"
                           />
                         </div>
-
-                        {/* Visual Theme Picker (2x3 Grid) */}
-                        <div className="pt-2">
-                          <label className="block text-xs font-bold text-slate-700 mb-2">
-                            Choose Visual Theme
-                          </label>
-                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                            {[
-                              { id: "birthday-party", name: "Birthday Party", accent: "#FF2E63", isCurrent: true },
-                              { id: "classic-romance", name: "Classic Romance", accent: "#FF2E63", href: "/create" },
-                              { id: "first-love", name: "First Love", accent: "#00B894", href: "/create?theme=first-love" },
-                              { id: "minimalist-love", name: "Minimalist Love", accent: "#6C5CE7", href: "/create?theme=minimalist-love" },
-                              { id: "eternal-vows", name: "Eternal Vows", accent: "#D63031", href: "/create?theme=eternal-vows" },
-                              { id: "garden-of-love", name: "Garden of Love", accent: "#00A86B", href: "/create?theme=garden-of-love" },
-                            ].map((thm) =>
-                              thm.isCurrent ? (
-                                <div
-                                  key={thm.id}
-                                  className="p-3 rounded-2xl border text-left flex items-center gap-2.5 border-[#FF2E63] bg-pink-50/60 shadow-xs ring-2 ring-[#FF2E63]/20 cursor-default"
-                                >
-                                  <span
-                                    className="w-4 h-4 rounded-full shrink-0 shadow-2xs"
-                                    style={{ backgroundColor: thm.accent }}
-                                  />
-                                  <span className="text-xs font-bold text-slate-800 truncate">
-                                    {thm.name}
-                                  </span>
-                                </div>
-                              ) : (
-                                <Link
-                                  key={thm.id}
-                                  href={thm.href || "/create"}
-                                  onClick={() => soundFx.playPop()}
-                                  className="p-3 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-2.5 border-slate-200 hover:border-pink-300 bg-white"
-                                >
-                                  <span
-                                    className="w-4 h-4 rounded-full shrink-0 shadow-2xs"
-                                    style={{ backgroundColor: thm.accent }}
-                                  />
-                                  <span className="text-xs font-bold text-slate-800 truncate">
-                                    {thm.name}
-                                  </span>
-                                </Link>
-                              )
-                            )}
-                          </div>
-                        </div>
                       </div>
                     </>
                   )}
