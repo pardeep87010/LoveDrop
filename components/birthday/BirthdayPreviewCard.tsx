@@ -75,9 +75,9 @@ export default function BirthdayPreviewCard({
                 Happy birthday!
               </h1>
               <p className="text-sm font-cursive text-[#3A2340] mt-0.5">
-                for being so{" "}
+                To{" "}
                 <span className="font-semibold px-1 rounded bg-amber-100 text-[#D1264F]">
-                  {data.recipientName ? data.recipientName : "amazing"}
+                  {data.recipientName ? data.recipientName : "Someone Special"}
                 </span>
               </p>
               <p className="text-[10px] text-[#6E5869] mt-1">

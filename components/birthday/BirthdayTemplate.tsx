@@ -220,14 +220,13 @@ function SceneLetter({
     });
   };
 
-  // Start typewriter effect after letter slides upwards
+  // Start typewriter effect after letter opens
   useEffect(() => {
     if (!isOpen) {
       setTypedLength(0);
       setIsTyping(false);
       return;
     }
-    // Delay slightly to let the card slide out first
     const delayTimer = setTimeout(() => {
       setIsTyping(true);
       let currentLen = 0;
@@ -242,7 +241,7 @@ function SceneLetter({
         }
       }, 25);
       return () => clearInterval(interval);
-    }, 500);
+    }, 400);
 
     return () => clearTimeout(delayTimer);
   }, [isOpen, fullLetterText]);
@@ -260,133 +259,37 @@ function SceneLetter({
   };
 
   return (
-    <div className="relative min-h-[calc(100dvh-180px)] flex flex-col items-center justify-center px-4 pt-8 sm:pt-12 pb-16 select-none">
+    <div className="relative min-h-[calc(100dvh-180px)] flex flex-col items-center justify-start px-4 pt-4 sm:pt-6 pb-20 select-none">
       <motion.div
         className="w-full max-w-lg z-10"
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7 }}
+        transition={{ duration: 0.5 }}
       >
-        {/* Envelope & Letter Stacking Container */}
-        <div className="relative flex flex-col items-center justify-center min-h-[460px] sm:min-h-[520px]">
-          {/* Layer 1: Sliding Letter Card */}
-          <motion.div
-            className="w-[92%] sm:w-[94%] bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border transition-all z-10"
-            style={{
-              borderColor: BD.cardBorder,
-              boxShadow: BD.cardShadow,
-            }}
-            initial={{ y: 50, opacity: 0, scale: 0.94 }}
-            animate={
-              isOpen
-                ? isExpanded
-                  ? { y: -80, opacity: 1, scale: 1.02, pointerEvents: "auto" }
-                  : { y: -130, opacity: 1, scale: 1, pointerEvents: "auto" }
-                : { y: 90, opacity: 0, scale: 0.94, pointerEvents: "none" }
-            }
-            transition={{ type: "spring", damping: 22, stiffness: 180 }}
-          >
-            {/* Letter Header */}
-            <div
-              className="flex items-start justify-between border-b pb-3 mb-4"
-              style={{ borderColor: "rgba(58,35,64,0.08)" }}
-            >
-              <div>
-                <p
-                  className="text-xs font-bold tracking-[0.2em] uppercase mb-1"
-                  style={{ color: BD.primary }}
-                >
-                  OPEN THE ENVELOPE
-                </p>
-                <h2
-                  className="text-2xl sm:text-3xl font-normal font-serif"
-                  style={{ color: BD.text }}
-                >
-                  {data.letterTitle || "A letter for you"}
-                </h2>
-              </div>
-              <div className="flex items-center gap-1.5">
-                {isTyping && (
-                  <button
-                    onClick={handleSkipTyping}
-                    className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-pink-50 hover:bg-pink-100 text-[#D1264F] border border-pink-200 transition-colors"
-                  >
-                    Skip typing ⏩
-                  </button>
-                )}
-                <button
-                  onClick={() => setIsExpanded(!isExpanded)}
-                  className="w-8 h-8 rounded-full border flex items-center justify-center hover:bg-slate-50 transition-colors"
-                  style={{ borderColor: "rgba(58,35,64,0.15)", color: BD.text }}
-                  title={isExpanded ? "Collapse" : "Expand"}
-                >
-                  <ChevronUp
-                    className={`w-4 h-4 transition-transform duration-300 ${
-                      isExpanded ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-                <button
-                  onClick={handleCloseEnvelope}
-                  className="w-8 h-8 rounded-full border flex items-center justify-center hover:bg-slate-50 transition-colors"
-                  style={{ borderColor: "rgba(58,35,64,0.15)", color: BD.text }}
-                  title="Close envelope"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* Letter Content with Smooth Typewriter Effect */}
-            <div
-              onClick={isTyping ? handleSkipTyping : undefined}
-              className={`max-h-[280px] sm:max-h-[340px] overflow-y-auto pr-1 ${
-                isTyping ? "cursor-pointer" : ""
-              }`}
-            >
-              <p
-                className="text-sm sm:text-base leading-relaxed whitespace-pre-wrap font-sans"
+        {!isOpen ? (
+          /* UNOPENED STATE: Centered Envelope with Pulsating Wax Seal */
+          <div className="relative flex flex-col items-center justify-center min-h-[380px] sm:min-h-[440px] py-4">
+            <div className="text-center mb-6">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-widest uppercase bg-pink-100 text-[#D1264F] mb-2 shadow-sm">
+                <span>💌</span> A Special Letter For You
+              </span>
+              <h2
+                className="text-2xl sm:text-3xl font-normal font-serif"
                 style={{ color: BD.text }}
               >
-                {fullLetterText.slice(0, typedLength)}
-                {isTyping && (
-                  <span
-                    className="inline-block w-0.5 h-4 ml-0.5 align-middle animate-pulse"
-                    style={{ backgroundColor: BD.primary }}
-                  />
-                )}
-              </p>
+                {data.letterTitle || "A letter for you"}
+              </h2>
             </div>
 
-            {/* Signature fades in once typing finishes */}
-            <motion.div
-              className="mt-6 pt-3 border-t flex justify-end"
-              style={{ borderColor: "rgba(58,35,64,0.08)" }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: typedLength >= fullLetterText.length ? 1 : 0.2 }}
-              transition={{ duration: 0.4 }}
-            >
-              <p className="font-cursive text-2xl" style={{ color: BD.primary }}>
-                ~ {data.senderName || "With Love"} 💖
-              </p>
-            </motion.div>
-          </motion.div>
-
-          {/* Layer 2: Authentic Envelope Packet with Centered Wax Seal */}
-          <div
-            className={`relative w-full max-w-[440px] h-[240px] sm:h-[260px] z-20 transition-all ${
-              isOpen ? "mt-6 sm:mt-8 opacity-90 scale-95" : "my-auto shadow-2xl"
-            }`}
-          >
-            {/* Envelope Back Base */}
             <div
-              className="absolute inset-0 rounded-3xl overflow-hidden shadow-2xl"
+              onClick={handleOpenEnvelope}
+              className="relative w-full max-w-[420px] h-[230px] sm:h-[260px] rounded-3xl overflow-hidden cursor-pointer shadow-2xl transition-transform hover:scale-[1.02]"
               style={{
                 background: "linear-gradient(135deg, #F8B4C8 0%, #F49EB8 50%, #EE8DAE 100%)",
                 border: "1px solid rgba(209, 38, 79, 0.25)",
               }}
             >
-              {/* Envelope Triangular Diagonal Fold SVGs (all meeting at EXACT 50% 50% = 200, 130) */}
+              {/* Envelope Triangular Diagonal Fold SVGs */}
               <svg
                 viewBox="0 0 400 260"
                 className="absolute inset-0 w-full h-full pointer-events-none"
@@ -413,23 +316,23 @@ function SceneLetter({
                   stroke="rgba(255, 255, 255, 0.5)"
                   strokeWidth="2"
                 />
-
-                {/* Top Flap (Closed state pointing down to exact center 200, 130) */}
-                {!isOpen && (
-                  <path
-                    d="M0 0 L200 130 L400 0 Z"
-                    fill="rgba(252, 198, 214, 0.96)"
-                    stroke="rgba(255, 255, 255, 0.6)"
-                    strokeWidth="2"
-                    filter="drop-shadow(0 4px 6px rgba(116, 12, 36, 0.15))"
-                  />
-                )}
+                {/* Top Flap */}
+                <path
+                  d="M0 0 L200 130 L400 0 Z"
+                  fill="rgba(252, 198, 214, 0.96)"
+                  stroke="rgba(255, 255, 255, 0.6)"
+                  strokeWidth="2"
+                  filter="drop-shadow(0 4px 6px rgba(116, 12, 36, 0.15))"
+                />
               </svg>
 
-              {/* Red Wax Seal Button in DEAD CENTER (50% X, 50% Y) */}
+              {/* Red Wax Seal Button in DEAD CENTER */}
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30">
                 <motion.button
-                  onClick={isOpen ? handleCloseEnvelope : handleOpenEnvelope}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpenEnvelope();
+                  }}
                   className="w-16 h-16 rounded-full flex items-center justify-center cursor-pointer shadow-xl relative group focus:outline-none"
                   style={{
                     background:
@@ -439,22 +342,17 @@ function SceneLetter({
                   }}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.92 }}
-                  animate={
-                    !isOpen
-                      ? {
-                          scale: [1, 1.05, 1],
-                          boxShadow: [
-                            "0 8px 24px rgba(108, 14, 32, 0.45)",
-                            "0 12px 30px rgba(209, 38, 79, 0.6)",
-                            "0 8px 24px rgba(108, 14, 32, 0.45)",
-                          ],
-                        }
-                      : {}
-                  }
+                  animate={{
+                    scale: [1, 1.05, 1],
+                    boxShadow: [
+                      "0 8px 24px rgba(108, 14, 32, 0.45)",
+                      "0 12px 30px rgba(209, 38, 79, 0.6)",
+                      "0 8px 24px rgba(108, 14, 32, 0.45)",
+                    ],
+                  }}
                   transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-                  title={isOpen ? "Click to close envelope" : "Click to open letter"}
+                  title="Click to open letter"
                 >
-                  {/* Outer Wax Rim */}
                   <div className="w-11 h-11 rounded-full border-2 border-red-200/50 flex items-center justify-center shadow-inner">
                     <Heart className="w-6 h-6 text-white fill-white drop-shadow-md" />
                   </div>
@@ -464,15 +362,138 @@ function SceneLetter({
               {/* Bottom Instruction Hint */}
               <div className="absolute bottom-3 left-0 right-0 text-center pointer-events-none z-20">
                 <p className="text-[11px] sm:text-xs font-bold tracking-widest uppercase text-white/90 drop-shadow flex items-center justify-center gap-1.5">
-                  <ChevronUp
-                    className={`w-3.5 h-3.5 ${isOpen ? "rotate-180" : "animate-bounce"}`}
-                  />
-                  <span>{isOpen ? "TAP SEAL TO CLOSE" : "TAP SEAL TO OPEN LETTER"}</span>
+                  <ChevronUp className="w-3.5 h-3.5 animate-bounce" />
+                  <span>TAP SEAL TO OPEN LETTER</span>
                 </p>
               </div>
             </div>
           </div>
-        </div>
+        ) : (
+          /* OPENED STATE: Elegantly Positioned Letter Card (Safe distance from header, zero overlap!) */
+          <div className="relative flex flex-col items-center justify-start w-full">
+            {/* Sliding Letter Card */}
+            <motion.div
+              className="w-full bg-white rounded-3xl p-5 sm:p-7 shadow-2xl border transition-all z-20"
+              style={{
+                borderColor: BD.cardBorder,
+                boxShadow: BD.cardShadow,
+              }}
+              initial={{ opacity: 0, y: 25, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ type: "spring", damping: 24, stiffness: 200 }}
+            >
+              {/* Letter Header */}
+              <div
+                className="flex items-start justify-between border-b pb-3 mb-3.5"
+                style={{ borderColor: "rgba(58,35,64,0.08)" }}
+              >
+                <div>
+                  <p
+                    className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase mb-1"
+                    style={{ color: BD.primary }}
+                  >
+                    OPEN THE ENVELOPE
+                  </p>
+                  <h2
+                    className="text-xl sm:text-2xl font-normal font-serif leading-tight"
+                    style={{ color: BD.text }}
+                  >
+                    {data.letterTitle || "A letter for you"}
+                  </h2>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {isTyping && (
+                    <button
+                      onClick={handleSkipTyping}
+                      className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-pink-50 hover:bg-pink-100 text-[#D1264F] border border-pink-200 transition-colors"
+                    >
+                      Skip typing ⏩
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="w-8 h-8 rounded-full border flex items-center justify-center hover:bg-slate-50 transition-colors"
+                    style={{ borderColor: "rgba(58,35,64,0.15)", color: BD.text }}
+                    title={isExpanded ? "Collapse" : "Expand"}
+                  >
+                    <ChevronUp
+                      className={`w-4 h-4 transition-transform duration-300 ${
+                        isExpanded ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+                  <button
+                    onClick={handleCloseEnvelope}
+                    className="w-8 h-8 rounded-full border flex items-center justify-center hover:bg-slate-50 transition-colors"
+                    style={{ borderColor: "rgba(58,35,64,0.15)", color: BD.text }}
+                    title="Close envelope"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Letter Content with Smooth Typewriter Effect */}
+              <div
+                onClick={isTyping ? handleSkipTyping : undefined}
+                className={`${
+                  isExpanded ? "max-h-[380px] sm:max-h-[460px]" : "max-h-[200px] sm:max-h-[260px]"
+                } overflow-y-auto pr-1 transition-all duration-300 ${
+                  isTyping ? "cursor-pointer" : ""
+                }`}
+              >
+                <p
+                  className="text-sm sm:text-base leading-relaxed whitespace-pre-wrap font-sans"
+                  style={{ color: BD.text }}
+                >
+                  {fullLetterText.slice(0, typedLength)}
+                  {isTyping && (
+                    <span
+                      className="inline-block w-0.5 h-4 ml-0.5 align-middle animate-pulse"
+                      style={{ backgroundColor: BD.primary }}
+                    />
+                  )}
+                </p>
+              </div>
+
+              {/* Signature fades in once typing finishes */}
+              <motion.div
+                className="mt-4 pt-3 border-t flex justify-end"
+                style={{ borderColor: "rgba(58,35,64,0.08)" }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: typedLength >= fullLetterText.length ? 1 : 0.2 }}
+                transition={{ duration: 0.4 }}
+              >
+                <p className="font-cursive text-xl sm:text-2xl" style={{ color: BD.primary }}>
+                  ~ {data.senderName || "With Love"} 💖
+                </p>
+              </motion.div>
+            </motion.div>
+
+            {/* Compact Envelope Pocket Dock below the card */}
+            <div
+              onClick={handleCloseEnvelope}
+              className="w-[88%] sm:w-[92%] h-[52px] sm:h-[60px] rounded-b-2xl -mt-2 cursor-pointer shadow-md flex items-center justify-between px-4 transition-all hover:brightness-105 select-none"
+              style={{
+                background: "linear-gradient(135deg, #F8B4C8 0%, #EE8DAE 100%)",
+                border: "1px solid rgba(209, 38, 79, 0.25)",
+              }}
+              title="Tap to tuck letter back into envelope"
+            >
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-full bg-[#A51A3C] flex items-center justify-center shadow-sm">
+                  <Heart className="w-3.5 h-3.5 text-white fill-white" />
+                </div>
+                <span className="text-[11px] sm:text-xs font-semibold text-rose-950">
+                  Envelope open • Tap to tuck back
+                </span>
+              </div>
+              <span className="text-[11px] font-bold text-rose-800 uppercase tracking-wider">
+                Close ✕
+              </span>
+            </div>
+          </div>
+        )}
 
         {/* Continue to Reasons Button */}
         {onNext && (
