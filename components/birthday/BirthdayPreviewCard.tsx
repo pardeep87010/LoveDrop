@@ -54,7 +54,7 @@ export default function BirthdayPreviewCard({
   }, [currentStep]);
 
   const goToChapter = (ch: number) => {
-    if (ch >= 1 && ch <= 10) {
+    if (ch >= 1 && ch <= 8) {
       setActivePreviewChapter(ch);
       if (onStepChange) onStepChange(ch);
     }
@@ -423,7 +423,7 @@ export default function BirthdayPreviewCard({
           </div>
         );
 
-      // Step 5: Wishes Jar (Upper Floating Wishes & Exact Tap Logic)
+      // Step 5: Wishes Jar (Non-overlapping & Heartfelt Birthday Wishes)
       case 5:
         const wishesList = data.wishes?.length
           ? data.wishes
@@ -445,22 +445,19 @@ export default function BirthdayPreviewCard({
               colors: ["#FFD700", "#FF69B4", "#7B68EE"],
             });
           }
-          // If already >= wishesList.length, DO NOTHING!
         };
 
-        // Positions for revealed wishes in the upper area around the jar:
-        const wishFloatingPositions = [
-          { top: "11%", left: "4%", rotate: "-3deg", bg: "rgba(255, 249, 196, 0.95)", border: "#FBC02D" },
-          { top: "23%", right: "4%", rotate: "2deg", bg: "rgba(255, 235, 238, 0.95)", border: "#F06292" },
-          { top: "35%", left: "5%", rotate: "1deg", bg: "rgba(243, 229, 245, 0.95)", border: "#BA68C8" },
-          { top: "47%", right: "5%", rotate: "-2deg", bg: "rgba(232, 245, 233, 0.95)", border: "#81C784" },
+        const wishColors = [
+          { bg: "rgba(255, 249, 196, 0.98)", border: "#FBC02D" },
+          { bg: "rgba(255, 235, 238, 0.98)", border: "#F06292" },
+          { bg: "rgba(243, 229, 245, 0.98)", border: "#BA68C8" },
         ];
 
         return (
           <div className="h-full flex flex-col items-center justify-between p-3 text-center select-none relative overflow-hidden">
             <div className="z-20">
-              <p className="text-[8px] font-bold uppercase text-[#D1264F]">MAKE A WISH</p>
-              <h3 className="text-base font-serif font-bold text-[#3A2340]">Wishes for your new year</h3>
+              <p className="text-[8px] font-bold uppercase text-[#D1264F]">A JAR FULL OF DREAMS</p>
+              <h3 className="text-base font-serif font-bold text-[#3A2340]">Heartfelt Birthday Wishes</h3>
               <p className="text-[9px] text-[#6E5869]">
                 {allWishesRevealed
                   ? "All wishes have been released! ✨"
@@ -468,40 +465,23 @@ export default function BirthdayPreviewCard({
               </p>
             </div>
 
-            {/* UPPER FLOATING WISHES (Floating in different places above/around jar) */}
-            <div className="absolute inset-0 pointer-events-none z-10">
+            {/* NON-OVERLAPPING CLEAN STACKED WISH CARDS */}
+            <div className="w-full flex flex-col gap-1.5 my-auto px-1 z-20 min-h-[120px] justify-center">
               <AnimatePresence>
                 {revealedWishes.map((idx) => {
-                  const pos = wishFloatingPositions[idx % wishFloatingPositions.length];
+                  const col = wishColors[idx % wishColors.length];
                   return (
                     <motion.div
                       key={idx}
-                      initial={{ scale: 0, opacity: 0, y: 30 }}
-                      animate={{
-                        scale: 1,
-                        opacity: 1,
-                        y: [-2, 2, -2],
-                      }}
-                      transition={{
-                        y: { duration: 2.5 + idx * 0.4, repeat: Infinity, ease: "easeInOut" },
-                        scale: { duration: 0.4, type: "spring" },
-                      }}
-                      className="absolute max-w-[210px] p-2 rounded-2xl shadow-md border pointer-events-auto text-left"
-                      style={{
-                        top: pos.top,
-                        left: pos.left,
-                        right: pos.right,
-                        transform: `rotate(${pos.rotate})`,
-                        backgroundColor: pos.bg,
-                        borderColor: pos.border,
-                      }}
+                      initial={{ scale: 0.85, opacity: 0, y: 15 }}
+                      animate={{ scale: 1, opacity: 1, y: 0 }}
+                      className="w-full p-2 rounded-xl shadow-xs border text-left flex items-center gap-2"
+                      style={{ backgroundColor: col.bg, borderColor: col.border }}
                     >
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-xs">⭐</span>
-                        <p className="text-[9px] font-bold text-[#3A2340] leading-tight">
-                          {wishesList[idx]}
-                        </p>
-                      </div>
+                      <span className="text-xs shrink-0">⭐</span>
+                      <p className="text-[10px] font-bold text-[#3A2340] leading-snug">
+                        {wishesList[idx]}
+                      </p>
                     </motion.div>
                   );
                 })}
@@ -511,7 +491,7 @@ export default function BirthdayPreviewCard({
             {/* Magical Star Jar (Lower Center) */}
             <div
               onClick={handleJarTap}
-              className={`mt-auto mb-2 relative z-20 transition-all ${
+              className={`mt-auto mb-1 relative z-20 transition-all ${
                 allWishesRevealed ? "cursor-default" : "cursor-pointer group"
               }`}
             >
@@ -527,7 +507,7 @@ export default function BirthdayPreviewCard({
                 <img
                   src="/themes/birthday/wishes/star-jar.avif"
                   alt="Star Jar"
-                  className="w-32 h-34 object-contain drop-shadow-lg mx-auto"
+                  className="w-28 h-30 object-contain drop-shadow-lg mx-auto"
                 />
               </motion.div>
 
@@ -546,7 +526,7 @@ export default function BirthdayPreviewCard({
               </div>
             </div>
 
-            {/* Bottom Next Page Option: Always accessible or highlighted when all wishes revealed */}
+            {/* Bottom Next Page Option */}
             <div className="w-full pt-1 z-20 min-h-[36px]">
               {allWishesRevealed ? (
                 <motion.button
@@ -563,9 +543,10 @@ export default function BirthdayPreviewCard({
                 <button
                   type="button"
                   onClick={() => goToChapter(6)}
-                  className="w-full py-1 text-slate-400 text-[10px] font-medium hover:text-[#D1264F] transition-colors"
+                  className="text-[10px] font-semibold text-slate-400 hover:text-[#D1264F] transition-colors py-1 flex items-center justify-center gap-1 mx-auto cursor-pointer"
                 >
-                  Skip to Moments ➔
+                  <span>Skip to Moments</span>
+                  <ArrowRight className="w-3 h-3" />
                 </button>
               )}
             </div>
@@ -668,7 +649,7 @@ export default function BirthdayPreviewCard({
                 onClick={() => goToChapter(7)}
                 className="w-full py-2 px-3 rounded-full bg-[#D1264F] hover:bg-[#AA254B] text-white font-bold text-[11px] flex items-center justify-center gap-1.5 shadow-xs cursor-pointer transition-colors"
               >
-                <span>See Our Places 📍</span>
+                <span>Continue to Special Date 📅</span>
                 <ArrowRight className="w-3 h-3" />
               </button>
             </div>
@@ -676,79 +657,61 @@ export default function BirthdayPreviewCard({
         );
 
       // Step 7: Our Places (Interactive Travel Journey)
-      case 7:
-        const placesList = data.ourPlaces?.length
-          ? data.ourPlaces
-          : [
-              { name: "Where we first met", emoji: "☕" },
-              { name: "Our favorite late-night hangout", emoji: "🍕" },
-              { name: "The secret sunset viewpoint", emoji: "🌅" },
-            ];
+      case 7: {
+        const bDateStr = data.birthdayDate || data.ourDate || new Date().toISOString();
+        let bDateObj = new Date(bDateStr);
+        if (isNaN(bDateObj.getTime())) bDateObj = new Date();
+        const bMonth = bDateObj.toLocaleDateString("en-US", { month: "short" }).toUpperCase();
+        const bDay = bDateObj.getDate();
+        const bYear = bDateObj.getFullYear();
+        const bWeek = bDateObj.toLocaleDateString("en-US", { weekday: "short" });
 
         return (
           <div className="h-full flex flex-col items-center justify-between p-3 text-center select-none">
             <div>
-              <p className="text-[8px] font-bold uppercase text-[#D1264F]">WHERE WE HAVE BEEN</p>
-              <h3 className="text-base font-serif font-bold text-[#3A2340]">Our places</h3>
-              <p className="text-[9px] text-[#6E5869]">A roadmap of our favorite spots 📍</p>
+              <span className="text-[8px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded-full text-amber-800 bg-amber-100 border border-amber-300 inline-block mb-1">
+                ✦ GOLDEN MILESTONE ✦
+              </span>
+              <h3 className="text-base font-serif font-bold text-[#3A2340]">A date to keep</h3>
+              <p className="text-[9px] text-[#6E5869]">The day the world got a lot brighter ✨</p>
             </div>
 
-            {/* Interactive Travel Journey Card */}
-            <div className="w-full my-auto py-1 space-y-2">
-              {/* 3D Map Banner */}
-              <div className="relative w-full h-24 rounded-2xl overflow-hidden bg-gradient-to-r from-teal-50 via-pink-50 to-amber-50 border border-pink-200 shadow-sm flex items-center justify-center p-2">
+            {/* 3D Calendar Card with Golden Ribbon */}
+            <div className="my-auto flex flex-col items-center justify-center w-full px-2">
+              <div
+                className="relative cursor-pointer group"
+                onClick={() => confetti({ particleCount: 30, spread: 60 })}
+              >
+                <div className="absolute inset-0 rounded-full bg-pink-200/40 blur-xl group-hover:scale-110 transition-all" />
                 <img
-                  src="/themes/birthday/places/map-3d.avif"
-                  alt="Map"
-                  className="w-28 object-contain drop-shadow-md"
+                  src="/themes/birthday/calendar/calendar-3d.avif"
+                  alt="3D Calendar"
+                  className="w-36 h-36 object-contain drop-shadow-xl relative z-10"
                 />
-                <motion.div
-                  className="absolute top-3 right-8 flex items-center gap-1 bg-white/90 px-2 py-0.5 rounded-full shadow-xs border border-pink-200"
-                  animate={{ y: [-2, 2, -2] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <MapPin className="w-3 h-3 text-[#D1264F] fill-[#D1264F]" />
-                  <span className="text-[8px] font-bold text-[#D1264F]">Special Moments</span>
-                </motion.div>
+
+                <div className="absolute inset-0 flex flex-col items-center justify-center pt-3 pointer-events-none z-20">
+                  <span className="text-[9px] font-extrabold uppercase text-[#D1264F] tracking-wider">
+                    {bMonth}
+                  </span>
+                  <span className="text-3xl font-black font-serif text-[#3A2340] leading-none my-0.5">
+                    {bDay}
+                  </span>
+                  <span className="text-[8px] font-bold text-[#6E5869]">
+                    {bWeek} • {bYear}
+                  </span>
+                </div>
               </div>
 
-              {/* Dotted Route Stops */}
-              <div className="space-y-1.5 text-left">
-                {placesList.slice(0, 3).map((p, i) => {
-                  const isSelected = selectedPlaceIndex === i;
-                  return (
-                    <motion.div
-                      key={i}
-                      onClick={() => {
-                        setSelectedPlaceIndex(i);
-                        confetti({ particleCount: 15, spread: 35, origin: { y: 0.7 } });
-                      }}
-                      className={`p-2 rounded-2xl border transition-all cursor-pointer flex items-center gap-2.5 shadow-2xs ${
-                        isSelected
-                          ? "bg-white border-[#D1264F] ring-1 ring-[#D1264F]/30 shadow-xs"
-                          : "bg-white/70 border-pink-100 hover:border-pink-200"
-                      }`}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <div className="w-7 h-7 rounded-xl bg-pink-100/70 text-sm flex items-center justify-center shrink-0 shadow-2xs">
-                        {p.emoji || "📍"}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-[8px] font-extrabold text-[#D1264F] uppercase tracking-wider">
-                            Stop #{i + 1}
-                          </span>
-                          {isSelected && (
-                            <span className="text-[8px] text-pink-500 font-bold">✨ Favorite</span>
-                          )}
-                        </div>
-                        <p className="text-[10px] font-bold text-[#3A2340] truncate leading-tight">
-                          {p.name}
-                        </p>
-                      </div>
-                    </motion.div>
-                  );
-                })}
+              {/* Attractive Milestone Card */}
+              <div className="w-full mt-3 p-2.5 rounded-2xl bg-white border border-pink-200/80 shadow-xs text-left">
+                <p className="text-[9px] font-extrabold text-[#D1264F] uppercase tracking-wider">
+                  {data.birthdayAge
+                    ? `Celebrating ${data.birthdayAge} Wonderfully Bright Years 🎂`
+                    : "Celebrating Another Joyful Year 🎂"}
+                </p>
+                <p className="text-[8px] text-slate-500 mt-0.5 leading-snug">
+                  May your year ahead be filled with laughter, big smiles, and dreams fulfilled!
+                </p>
               </div>
             </div>
 
@@ -756,216 +719,18 @@ export default function BirthdayPreviewCard({
               <button
                 type="button"
                 onClick={() => goToChapter(8)}
-                className="w-full py-2 px-3 rounded-full bg-[#D1264F] hover:bg-[#AA254B] text-white font-bold text-[11px] flex items-center justify-center gap-1.5 shadow-xs cursor-pointer transition-colors"
+                className="w-full py-2.5 px-3 rounded-full bg-[#D1264F] hover:bg-[#AA254B] text-white font-bold text-[11px] flex items-center justify-center gap-1.5 shadow-md cursor-pointer transition-all"
               >
-                <span>Mark the Date 🗓️</span>
+                <span>Continue to Launch 🚀</span>
                 <ArrowRight className="w-3 h-3" />
               </button>
             </div>
           </div>
         );
+      }
 
-      // Step 8: Special Date / Calendar (Rich Interactive 3D Date)
+      // Step 8: Finale & Candles Celebration
       case 8:
-        const bDateStr = data.birthdayDate || data.ourDate || new Date().toISOString();
-        let bDateObj = new Date(bDateStr);
-        if (isNaN(bDateObj.getTime())) bDateObj = new Date();
-        const bMonth = bDateObj.toLocaleDateString("en-US", { month: "short" }).toUpperCase();
-        const bDay = bDateObj.getDate();
-        const bYear = bDateObj.getFullYear();
-        const bWeekday = bDateObj.toLocaleDateString("en-US", { weekday: "long" });
-
-        return (
-          <div className="h-full flex flex-col items-center justify-between p-3 text-center select-none">
-            <div>
-              <p className="text-[8px] font-bold uppercase text-[#D1264F]">MARK THE CALENDAR</p>
-              <h3 className="text-base font-serif font-bold text-[#3A2340]">A date to keep</h3>
-              <p className="text-[9px] text-[#6E5869]">The day the world got a lot brighter ✨</p>
-            </div>
-
-            {/* 3D Calendar Card with Golden Ribbon */}
-            <div className="relative my-auto flex flex-col items-center">
-              <div
-                className="relative group cursor-pointer"
-                onClick={() => confetti({ particleCount: 30, spread: 60 })}
-              >
-                <img
-                  src="/themes/birthday/calendar/calendar-3d.avif"
-                  alt="Calendar"
-                  className="w-40 object-contain drop-shadow-xl mx-auto"
-                />
-                <div className="absolute inset-0 flex flex-col items-center justify-center pt-3 pointer-events-none">
-                  <span className="text-[9px] font-black tracking-widest text-[#D1264F]">
-                    {bMonth}
-                  </span>
-                  <span className="text-3xl font-black font-serif text-[#3A2340] leading-none my-0.5">
-                    {bDay}
-                  </span>
-                  <span className="text-[9px] font-bold text-[#6E5869]">{bYear}</span>
-                </div>
-              </div>
-
-              {/* Celebrating Banner */}
-              <div className="mt-3 p-2.5 rounded-2xl bg-gradient-to-r from-pink-50 via-rose-50 to-amber-50 border border-pink-200 text-center shadow-xs max-w-[240px]">
-                <p className="text-[10px] font-black text-[#D1264F] flex items-center justify-center gap-1">
-                  <span>🎉</span>
-                  <span>{bWeekday} Celebration</span>
-                  <span>🎉</span>
-                </p>
-                {data.birthdayAge && (
-                  <p className="text-[9px] text-slate-600 font-semibold mt-0.5">
-                    Turning {data.birthdayAge} years of pure awesomeness!
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div className="w-full pt-1">
-              <button
-                type="button"
-                onClick={() => goToChapter(9)}
-                className="w-full py-2 px-3 rounded-full bg-[#D1264F] hover:bg-[#AA254B] text-white font-bold text-[11px] flex items-center justify-center gap-1.5 shadow-xs cursor-pointer transition-colors"
-              >
-                <span>Listen to Our Song 🎵</span>
-                <ArrowRight className="w-3 h-3" />
-              </button>
-            </div>
-          </div>
-        );
-
-      // Step 9: Our Song / Interactive Vinyl Record Turntable
-      case 9:
-        return (
-          <div className="h-full flex flex-col items-center justify-between p-3 text-center select-none">
-            <div>
-              <p className="text-[8px] font-bold uppercase text-[#D1264F]">PRESS PLAY</p>
-              <h3 className="text-base font-serif font-bold text-[#3A2340]">Our song</h3>
-              <p className="text-[10px] text-[#6E5869] font-medium truncate max-w-[200px] mx-auto mt-0.5">
-                {data.ourSong || "Romantic Lo-Fi Melodies"}
-              </p>
-            </div>
-
-            {/* Turntable Console with Spinning Vinyl & Equalizer */}
-            <div className="relative my-auto flex flex-col items-center">
-              {/* Floating Music Notes */}
-              <div className="absolute -top-6 inset-x-0 flex justify-around pointer-events-none">
-                <motion.span
-                  className="text-xs text-pink-500"
-                  animate={{ y: [-5, -15, -5], opacity: [0.3, 1, 0.3] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                >
-                  🎵
-                </motion.span>
-                <motion.span
-                  className="text-xs text-purple-500"
-                  animate={{ y: [-8, -20, -8], opacity: [0.4, 1, 0.4] }}
-                  transition={{ duration: 2.4, repeat: Infinity, delay: 0.5 }}
-                >
-                  🎶
-                </motion.span>
-                <motion.span
-                  className="text-xs text-amber-500"
-                  animate={{ y: [-4, -16, -4], opacity: [0.3, 1, 0.3] }}
-                  transition={{ duration: 2.2, repeat: Infinity, delay: 1 }}
-                >
-                  ✨
-                </motion.span>
-              </div>
-
-              {/* Turntable Body */}
-              <div
-                onClick={() => setIsVinylSpinning(!isVinylSpinning)}
-                className="w-44 h-40 rounded-3xl bg-gradient-to-br from-[#FFF5F8] to-[#FFE8EF] border-2 border-white shadow-xl p-3 relative flex items-center justify-center cursor-pointer group"
-              >
-                {/* Vinyl Record */}
-                <motion.div
-                  className="w-28 h-28 rounded-full shadow-2xl relative flex items-center justify-center overflow-hidden border border-black/80"
-                  style={{
-                    background:
-                      "radial-gradient(circle, #2C2C2C 15%, #111111 50%, #222222 75%, #0A0A0A 100%)",
-                  }}
-                  animate={isVinylSpinning ? { rotate: 360 } : { rotate: 0 }}
-                  transition={
-                    isVinylSpinning
-                      ? { duration: 3.5, repeat: Infinity, ease: "linear" }
-                      : { duration: 0.5 }
-                  }
-                >
-                  {/* Subtle Vinyl Grooves */}
-                  <div className="absolute inset-2 rounded-full border border-white/10" />
-                  <div className="absolute inset-4 rounded-full border border-white/10" />
-                  <div className="absolute inset-6 rounded-full border border-white/10" />
-
-                  {/* Center Label */}
-                  <div className="w-10 h-10 rounded-full bg-[#D1264F] flex items-center justify-center shadow-inner text-white text-[9px] font-bold">
-                    <span>❤️</span>
-                  </div>
-                </motion.div>
-
-                {/* Turntable Tonearm Needle */}
-                <motion.div
-                  className="absolute top-2 right-2 w-9 h-22 pointer-events-none origin-top-right"
-                  animate={isVinylSpinning ? { rotate: 18 } : { rotate: 0 }}
-                  transition={{ duration: 0.6 }}
-                >
-                  <img
-                    src="/themes/birthday/music/turntable-arm.svg"
-                    alt="Tonearm"
-                    className="w-full h-full object-contain drop-shadow-sm"
-                  />
-                </motion.div>
-              </div>
-
-              {/* Sound Equalizer Waves */}
-              <div className="flex items-center gap-1 mt-2.5 h-4">
-                {[1, 2, 3, 4, 5, 6, 7].map((bar) => (
-                  <motion.span
-                    key={bar}
-                    className="w-1 rounded-full bg-[#D1264F]"
-                    animate={
-                      isVinylSpinning
-                        ? { height: ["4px", `${8 + (bar % 3) * 6}px`, "4px"] }
-                        : { height: "4px" }
-                    }
-                    transition={{
-                      duration: 0.5 + bar * 0.1,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
-                  />
-                ))}
-              </div>
-
-              {/* Play / Pause Toggle Pill */}
-              <button
-                type="button"
-                onClick={() => setIsVinylSpinning(!isVinylSpinning)}
-                className="mt-1 px-3 py-1 rounded-full bg-white border border-pink-200 text-[#D1264F] font-bold text-[10px] shadow-2xs flex items-center gap-1.5 cursor-pointer"
-              >
-                {isVinylSpinning ? (
-                  <Pause className="w-3 h-3 fill-current" />
-                ) : (
-                  <Play className="w-3 h-3 fill-current" />
-                )}
-                <span>{isVinylSpinning ? "Now Playing" : "Tap to Play"}</span>
-              </button>
-            </div>
-
-            <div className="w-full pt-1">
-              <button
-                type="button"
-                onClick={() => goToChapter(10)}
-                className="w-full py-2 px-3 rounded-full bg-[#D1264F] hover:bg-[#AA254B] text-white font-bold text-[11px] flex items-center justify-center gap-1.5 shadow-xs cursor-pointer transition-colors"
-              >
-                <span>Blow Birthday Candles 🎂</span>
-                <ArrowRight className="w-3 h-3" />
-              </button>
-            </div>
-          </div>
-        );
-
-      // Step 10: Blow Candles & Grand Finale Celebration
-      case 10:
         return (
           <div className="h-full flex flex-col items-center justify-between p-3 text-center select-none overflow-y-auto no-scrollbar">
             <div>
@@ -973,133 +738,40 @@ export default function BirthdayPreviewCard({
                 {candlesBlown ? "SURPRISE COMPLETE 🎉" : "MAKE A WISH"}
               </p>
               <h3 className="text-base font-serif font-bold text-[#3A2340]">
-                {candlesBlown
-                  ? `Happy birthday, ${data.recipientName || "Friend"}!`
-                  : "Blow out the candles"}
+                {candlesBlown ? `Happy birthday, ${data.recipientName || "Friend"}!` : "Blow out the candles!"}
               </h3>
+              <p className="text-[9px] text-[#6E5869]">
+                {candlesBlown
+                  ? "Every wish is sealed with infinite love 💖"
+                  : "Tap the candle flames to make your wishes come true! 🎂"}
+              </p>
             </div>
 
-            {!candlesBlown ? (
-              /* State A: Lit Cake Ready to Blow */
-              <div className="relative my-auto py-2 flex flex-col items-center justify-center">
-                <div className="relative">
-                  <motion.img
-                    src="/themes/birthday/candles/cake-lit-wide.webp"
-                    alt="Cake Lit"
-                    className="w-40 object-contain mx-auto"
-                    style={{
-                      mixBlendMode: "multiply",
-                      WebkitMaskImage:
-                        "radial-gradient(ellipse at 50% 50%, black 50%, rgba(0,0,0,0.85) 75%, transparent 97%)",
-                      maskImage:
-                        "radial-gradient(ellipse at 50% 50%, black 50%, rgba(0,0,0,0.85) 75%, transparent 97%)",
-                    }}
-                    animate={{ y: [-2, 2, -2] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                  />
+            <div className="my-auto py-2 flex flex-col items-center">
+              <img
+                src="/themes/birthday/cover/cake-wide.webp"
+                alt="Celebration Cake"
+                className="w-36 max-h-36 object-contain drop-shadow-md select-none"
+                style={{ mixBlendMode: "multiply" }}
+              />
 
-                  {/* Warm Breathing Candle Glow */}
-                  <motion.div
-                    className="absolute top-4 left-1/2 -translate-x-1/2 w-28 h-10 rounded-full pointer-events-none"
-                    style={{
-                      background:
-                        "radial-gradient(ellipse at 50% 50%, rgba(255, 210, 110, 0.45) 0%, rgba(255, 140, 50, 0.15) 55%, transparent 80%)",
-                      filter: "blur(6px)",
-                    }}
-                    animate={{
-                      opacity: [0.75, 1, 0.75],
-                      scale: [0.98, 1.05, 0.98],
-                    }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                  />
-                </div>
-
-                <div className="w-full mt-3">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setCandlesBlown(true);
-                      confetti({
-                        particleCount: 80,
-                        spread: 80,
-                        origin: { y: 0.6 },
-                        colors: ["#D1264F", "#FFD700", "#FF69B4", "#00B894"],
-                      });
-                    }}
-                    className="w-full py-2.5 rounded-full font-bold text-xs text-white shadow-md flex items-center justify-center gap-1.5 transition-all cursor-pointer hover:scale-102 active:scale-98"
-                    style={{ backgroundColor: "#D1264F" }}
-                  >
-                    <Wind className="w-4 h-4" />
-                    <span>Blow Candles 🌬️</span>
-                  </button>
-                </div>
-              </div>
-            ) : (
-              /* State B: Grand Celebration Card Unwrapped */
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4 }}
-                className="w-full my-auto py-1 flex flex-col items-center space-y-2.5"
+              <button
+                type="button"
+                onClick={() => {
+                  setCandlesBlown(true);
+                  confetti({ particleCount: 50, spread: 80 });
+                }}
+                className="mt-3 px-4 py-1.5 rounded-full bg-[#D1264F] text-white text-[10px] font-bold shadow-md cursor-pointer"
               >
-                {/* 3D Cake / Trophy with Ribbon */}
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-100 to-yellow-100 border border-amber-200 flex items-center justify-center shadow-md">
-                  <span className="text-2xl animate-bounce">🎁</span>
-                </div>
+                {candlesBlown ? "✨ Candles Blown! ✨" : "💨 Tap to Blow Candles"}
+              </button>
+            </div>
 
-                {/* Celebration Message */}
-                <div className="bg-white rounded-2xl p-3 border border-pink-100 shadow-md w-full space-y-1.5">
-                  <div className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 font-extrabold text-[8px] inline-flex items-center gap-1 mx-auto">
-                    <Check className="w-2.5 h-2.5 stroke-[3]" />
-                    <span>Wish Sent to the Stars! ✨</span>
-                  </div>
-                  <h4 className="text-xs font-black text-slate-900 leading-tight">
-                    Happy Birthday, {data.recipientName || "Friend"}! 🎂
-                  </h4>
-                  <p className="text-[10px] text-slate-500 font-medium leading-relaxed">
-                    May this year bring you endless sunshine, laughter, and your wildest dreams come true!
-                  </p>
-                  <p className="text-[9px] font-cursive text-right text-[#D1264F]">
-                    Forever cheering for you, {data.senderName || "Me"} 💖
-                  </p>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="w-full space-y-1.5">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const text = encodeURIComponent(
-                        `Hey ${data.senderName || "there"}! Thank you so much for the birthday surprise website! Loved every chapter! ❤️🎂`
-                      );
-                      window.open(`https://wa.me/?text=${text}`, "_blank");
-                    }}
-                    className="w-full py-2 rounded-xl bg-[#25D366] hover:bg-[#20BD5A] text-white font-bold text-[11px] shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-                  >
-                    <MessageCircle className="w-3.5 h-3.5" />
-                    <span>Reply on WhatsApp 💬</span>
-                  </button>
-
-                  <div className="flex gap-2 w-full">
-                    <button
-                      type="button"
-                      onClick={() => setCandlesBlown(false)}
-                      className="flex-1 py-1.5 rounded-xl bg-pink-50 text-[#D1264F] font-bold text-[10px] border border-pink-200 flex items-center justify-center gap-1 cursor-pointer"
-                    >
-                      <RotateCcw className="w-3 h-3" />
-                      <span>Relight 🕯️</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => goToChapter(1)}
-                      className="flex-1 py-1.5 rounded-xl bg-slate-900 text-white font-bold text-[10px] flex items-center justify-center gap-1 cursor-pointer"
-                    >
-                      <span>Replay 🔁</span>
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            )}
+            <div className="w-full pt-1">
+              <div className="p-2 rounded-xl bg-pink-50 border border-pink-200 text-[10px] font-bold text-[#D1264F]">
+                📜 Official Birthday Certificate Included!
+              </div>
+            </div>
           </div>
         );
 
@@ -1122,7 +794,7 @@ export default function BirthdayPreviewCard({
             </span>
             <span className="tracking-tight">Live Phone Preview</span>
             <span className="text-[10px] text-pink-600 bg-pink-100/90 px-2 py-0.5 rounded-full font-black">
-              Page {activePreviewChapter}/10
+              Page {activePreviewChapter}/8
             </span>
           </div>
 
@@ -1135,7 +807,7 @@ export default function BirthdayPreviewCard({
 
         {/* 10 Quick Page Switcher Buttons */}
         <div className="flex items-center justify-between gap-1 p-1 bg-white/80 backdrop-blur-sm rounded-2xl border border-pink-100 shadow-2xs">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((s) => {
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => {
             const isCurrent = activePreviewChapter === s;
             return (
               <button
@@ -1226,7 +898,7 @@ export default function BirthdayPreviewCard({
           <div className="relative z-20 pb-2 pt-1 flex flex-col items-center gap-1.5">
             {/* Step navigation dots */}
             <div className="flex items-center justify-center gap-1">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((dot) => (
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((dot) => (
                 <span
                   key={dot}
                   onClick={() => goToChapter(dot)}

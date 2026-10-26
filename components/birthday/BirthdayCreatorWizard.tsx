@@ -61,9 +61,7 @@ const STEP_TITLES = [
   "Our Story",
   "Wishes Jar",
   "Moments",
-  "Our Places",
   "Special Date",
-  "Candles & Cake",
   "Launch & Publish",
 ];
 
@@ -847,7 +845,7 @@ export default function BirthdayCreatorWizard() {
 
           <div className="text-center">
             <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#FF2E63] block">
-              {isCreated ? "SURPRISE READY 🎉" : `PAGE ${step} OF 10`}
+              {isCreated ? "SURPRISE READY 🎉" : `PAGE ${step} OF 8`}
             </span>
             <span className="text-xs font-bold text-slate-800">
               {isCreated ? "Birthday Website Created Successfully" : STEP_TITLES[step - 1]}
@@ -868,7 +866,7 @@ export default function BirthdayCreatorWizard() {
         {!isCreated && (
           <div className="max-w-2xl mx-auto pt-2 pb-0.5">
             <div className="flex items-center justify-between gap-1">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((s) => {
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => {
                 const isCurrent = step === s;
                 const isCompleted = step > s;
                 return (
@@ -1373,119 +1371,12 @@ export default function BirthdayCreatorWizard() {
                     </>
                   )}
 
-                  {/* Step 7: Our Places */}
+                  {/* Step 7: Special Date */}
                   {step === 7 && (
                     <>
                       <div className="space-y-1">
                         <span className="text-[11px] font-extrabold uppercase tracking-wider text-pink-500">
-                          Chapter 7 • Memory Map
-                        </span>
-                        <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                          Special Places Together
-                        </h2>
-                        <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                          Mark the cities, cafes, or spots where unforgettable memories happened.
-                        </p>
-                      </div>
-
-                      {/* Page Toggle */}
-                      <PageToggleBanner
-                        title="Memory Map & Places"
-                        isEnabled={enabledPages.chapter7_places}
-                        onToggle={() => togglePageEnabled("chapter7_places")}
-                      />
-
-                      {enabledPages.chapter7_places ? (
-                        <div className="bg-white rounded-3xl p-5 sm:p-6 border border-pink-100 shadow-sm space-y-4">
-                          <div className="flex gap-2">
-                            <input
-                              type="text"
-                              value={placeEmoji}
-                              onChange={(e) => setPlaceEmoji(e.target.value.slice(-2))}
-                              maxLength={2}
-                              className="w-14 px-2 py-3 rounded-2xl border border-pink-200 text-center text-xl outline-none focus:border-[#FF2E63] bg-pink-50/20"
-                              placeholder="📍"
-                            />
-                            <input
-                              type="text"
-                              value={placeInput}
-                              onChange={(e) => setPlaceInput(e.target.value)}
-                              onKeyDown={(e) => {
-                                if (
-                                  e.key === "Enter" &&
-                                  placeInput.trim() &&
-                                  places.length < MAX_LIMITS.PLACES
-                                ) {
-                                  setPlaces((prev) => [
-                                    ...prev,
-                                    { name: placeInput.trim(), emoji: placeEmoji || "📍" },
-                                  ]);
-                                  setPlaceInput("");
-                                  soundFx.playPop();
-                                }
-                              }}
-                              placeholder="e.g. Our favorite cafe, Road trip to the hills..."
-                              maxLength={80}
-                              className="flex-1 px-4 py-3 rounded-2xl border border-pink-200 focus:border-[#FF2E63] focus:ring-2 focus:ring-pink-100 outline-none text-sm font-semibold text-slate-800 bg-pink-50/20"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => {
-                                if (placeInput.trim() && places.length < MAX_LIMITS.PLACES) {
-                                  setPlaces((prev) => [
-                                    ...prev,
-                                    { name: placeInput.trim(), emoji: placeEmoji || "📍" },
-                                  ]);
-                                  setPlaceInput("");
-                                  soundFx.playPop();
-                                }
-                              }}
-                              disabled={!placeInput.trim() || places.length >= MAX_LIMITS.PLACES}
-                              className="px-5 rounded-2xl bg-[#FF2E63] hover:bg-[#E02656] text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95 disabled:opacity-50 shrink-0"
-                            >
-                              <Plus className="w-4 h-4 mr-1" />
-                              <span className="text-xs font-bold">Add</span>
-                            </button>
-                          </div>
-
-                          <div className="space-y-2">
-                            {places.map((place, i) => (
-                              <motion.div
-                                key={i}
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                className="flex items-center gap-3 p-3 rounded-2xl bg-pink-50/40 border border-pink-100 shadow-2xs"
-                              >
-                                <span className="text-xl">{place.emoji}</span>
-                                <p className="flex-1 text-xs sm:text-sm font-semibold text-slate-800">
-                                  {place.name}
-                                </p>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    soundFx.playPop();
-                                    setPlaces((prev) => prev.filter((_, idx) => idx !== i));
-                                  }}
-                                  className="w-6 h-6 rounded-full hover:bg-red-50 text-slate-400 hover:text-red-500 flex items-center justify-center transition-colors cursor-pointer"
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                </button>
-                              </motion.div>
-                            ))}
-                          </div>
-                        </div>
-                      ) : (
-                        <PageSkippedCard onRestore={() => togglePageEnabled("chapter7_places")} />
-                      )}
-                    </>
-                  )}
-
-                  {/* Step 8: Special Date */}
-                  {step === 8 && (
-                    <>
-                      <div className="space-y-1">
-                        <span className="text-[11px] font-extrabold uppercase tracking-wider text-pink-500">
-                          Chapter 8 • 3D Calendar
+                          Chapter 7 • 3D Calendar
                         </span>
                         <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                           A Date to Keep
@@ -1529,52 +1420,8 @@ export default function BirthdayCreatorWizard() {
                     </>
                   )}
 
-                  {/* Step 9: Our Song */}
-                  {step === 9 && (
-                    <>
-                      <div className="space-y-1">
-                        <span className="text-[11px] font-extrabold uppercase tracking-wider text-pink-500">
-                          Chapter 9 • Vinyl Record
-                        </span>
-                        <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                          Our Song &amp; Melodies
-                        </h2>
-                        <p className="text-xs sm:text-sm text-slate-500 font-medium">
-                          Name a special track that shows up spinning on the retro vinyl turntable.
-                        </p>
-                      </div>
-
-                      {/* Page Toggle */}
-                      <PageToggleBanner
-                        title="Vinyl Record & Song"
-                        isEnabled={enabledPages.chapter9_song}
-                        onToggle={() => togglePageEnabled("chapter9_song")}
-                      />
-
-                      {enabledPages.chapter9_song ? (
-                        <div className="bg-white rounded-3xl p-5 sm:p-6 border border-pink-100 shadow-sm space-y-4">
-                          <div>
-                            <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                              Song Title &amp; Artist
-                            </label>
-                            <input
-                              type="text"
-                              value={ourSong}
-                              onChange={(e) => setOurSong(e.target.value)}
-                              placeholder="e.g. Perfect by Ed Sheeran, Tum Hi Ho, Happy Birthday..."
-                              maxLength={100}
-                              className="w-full px-4 py-3 rounded-2xl border border-pink-200 focus:border-[#FF2E63] focus:ring-2 focus:ring-pink-100 outline-none text-sm font-semibold text-slate-800 bg-pink-50/20"
-                            />
-                          </div>
-                        </div>
-                      ) : (
-                        <PageSkippedCard onRestore={() => togglePageEnabled("chapter9_song")} />
-                      )}
-                    </>
-                  )}
-
                   {/* Step 10: Launch, Pricing, PIN & Music */}
-                  {step === 10 && (
+                  {step === 8 && (
                     <>
                       <div className="space-y-1">
                         <span className="text-[11px] font-extrabold uppercase tracking-wider text-pink-500">
@@ -1975,11 +1822,11 @@ export default function BirthdayCreatorWizard() {
 
             <div className="text-center hidden sm:block">
               <span className="text-[11px] font-semibold text-slate-400">
-                Step {step} of 10 • All changes auto-saved
+                Step {step} of 8 • All changes auto-saved
               </span>
             </div>
 
-            {step < 10 ? (
+            {step < 8 ? (
               <button
                 type="button"
                 onClick={goNext}
